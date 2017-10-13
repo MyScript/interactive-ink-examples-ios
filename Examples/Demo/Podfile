@@ -1,0 +1,9 @@
+platform :ios, '9.1'
+
+target 'Demo' do
+
+  # Pods for Demo
+
+  pod 'MyScriptInteractiveInk-UIReferenceImplementation', :path => '../..'
+
+end

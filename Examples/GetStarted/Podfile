@@ -1,0 +1,10 @@
+platform :ios, '9.1'
+
+
+target 'GetStarted' do
+
+  # Pods for GetStarted
+
+  pod 'MyScriptInteractiveInk-UIReferenceImplementation', :path => '../..'
+
+end

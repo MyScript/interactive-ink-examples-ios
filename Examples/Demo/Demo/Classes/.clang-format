@@ -1,0 +1,23 @@
+BasedOnStyle:  LLVM
+BreakBeforeBraces: Allman
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 0
+AllowShortIfStatementsOnASingleLine: true
+IndentCaseLabels: false
+UseTab: ForIndentation
+SpaceBeforeParens: ControlStatements
+AccessModifierOffset: -2
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+AlignTrailingComments: true
+MaxEmptyLinesToKeep: 1
+SpacesBeforeTrailingComments: 1
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: true
+SpaceBeforeAssignmentOperators: true
+# Methods with an ending block are broken, no solution so far.
