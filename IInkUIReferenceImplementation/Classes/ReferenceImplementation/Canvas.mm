@@ -19,6 +19,7 @@
 
 @property (nonatomic) CGAffineTransform aTransform;
 @property (nonatomic) NSDictionary *fontAttributeDict;
+@property (nonatomic, strong) NSString *clippedGroupIdentifier;
 
 @end
 
@@ -206,21 +207,25 @@
 
 - (void)startGroup:(NSString *)identifier region:(CGRect)region clip:(BOOL)clipContent
 {
-    [self.style clearChangeFlags];
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
-
     if (clipContent)
     {
+        self.clippedGroupIdentifier = identifier;
+        [self.style clearChangeFlags];
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSaveGState(context);
         CGContextClipToRect(context, CGRectMake(region.origin.x, region.origin.y, CGRectGetWidth(region), CGRectGetHeight(region)));
     }
 }
 
 - (void)endGroup:(NSString *)identifier
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextRestoreGState(context);
-    [self.style applyTo:self];
+    if ([identifier isEqualToString:self.clippedGroupIdentifier])
+    {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextRestoreGState(context);
+        [self.style applyTo:self];
+        self.clippedGroupIdentifier = nil;
+    }
 }
 
 - (void)startItem:(NSString *)identifier
