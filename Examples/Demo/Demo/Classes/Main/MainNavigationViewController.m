@@ -36,6 +36,9 @@
     // Configure the iink runtime environment
     NSString *configurationPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"recognition-assets/conf"];
     [self.engine.configuration setStringArray:@"configuration-manager.search-path" value:@[ configurationPath ] error:nil];
+    
+    // Set the temporary directory
+    [self.engine.configuration setString:@"content-package.temp-folder" value:NSTemporaryDirectory() error:nil];
 }
 
 @end

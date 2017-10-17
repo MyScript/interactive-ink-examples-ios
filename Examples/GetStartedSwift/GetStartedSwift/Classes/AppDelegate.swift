@@ -39,6 +39,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Should not happen, please check your resources assets : " + error.localizedDescription)
             return nil
         }
+        
+        // Set the temporary directory
+        do {
+            try engine?.configuration.setString("content-package.temp-folder", value: NSTemporaryDirectory())
+        } catch {
+            print("Failed to set temporary folder: " + error.localizedDescription)
+            return nil
+        }
 
         return engine
     }()
