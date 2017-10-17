@@ -2,9 +2,12 @@
 
 Interactive Ink SDK is the best way to integrate handwriting recognition capabilities into your iOS application. Interactive Ink extends digital ink to allow users to more intuitively create, interact with, and share content in digital form. Handwritten text, mathematical equations or even diagrams are interpreted in real-time to be editable via simple gestures, responsive and easy to convert to a neat output.
 
+This repository contains a "get started" (in both Objective-C and Swift), a complete example (in Objective-C) and a reference implementation of the iOS integration part (in Objective-C) that developers using Interactive Ink SDK can reuse inside their projects.
+
 ## Getting started
 
 ### Prerequisites
+
 This getting started section has been tested with Xcode 9 and supports iOS 9+.
 [Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) needs to be installed on your computer.
 
@@ -14,19 +17,20 @@ This getting started section has been tested with Xcode 9 and supports iOS 9+.
 
 2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript/com/getting-started)
 
-3. Copy this certificate you received when registering as a MyScript developer in `Examples/GetStarted/GetStarted/MyScriptCertificate`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate` and `Examples/iinkSDKIOSExample/iinkSDKIOSExample/MyScriptCertificate`
+3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate/MyCertificate.c`, and `Examples/iinkSDKIOSExample/iinkSDKIOSExample/MyScriptCertificate/MyCertificate.c`
 
 ## Building your own integration
-This repository provides you with a ready-to-use reference implementation of the iOS integration part, covering aspects like ink capture and rendering. It is located in `MyScriptInteractiveInk-UIReferenceImplementation` directory and can be simply added to your project by appending the following line to your pod file:
+
+This repository provides you with a ready-to-use reference implementation of the iOS integration part, covering aspects like ink capture and rendering. It is located in `IInkUIReferenceImplementation` directory and can be simply added to your project by appending the following line to your pod file:
 
 ```ruby
 pod "MyScriptInteractiveInk-UIReferenceImplementation"
 ```
-   
+
 ## Documentation
 
 A complete guide is available on [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/1.0/ios/).
-The API Reference is available directly in XCode once the dependencies are downloaded.
+The API Reference is available directly in Xcode once the dependencies are downloaded.
 
 ## Getting support, giving feedback
 
@@ -39,6 +43,6 @@ We’re planning to showcase apps powered by MyScript technology so let us know 
 
 ## Contributing
 
-We welcome your contributions: 
+We welcome your contributions:
 If you would like to extend those examples for your needs, feel free to fork it!
 Please sign our [Contributor License Agreement](CONTRIBUTING.md) before submitting your pull request.
