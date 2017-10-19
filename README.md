@@ -15,7 +15,7 @@ This getting started section has been tested with Xcode 9 and supports iOS 9+.
 
 1. Clone the examples repository  `git clone https://github.com/MyScript/interactive-ink-examples-ios.git`
 
-2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript/com/getting-started)
+2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript.com/getting-started)
 
 3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate/MyCertificate.c`, and `Examples/iinkSDKIOSExample/iinkSDKIOSExample/MyScriptCertificate/MyCertificate.c`
 
