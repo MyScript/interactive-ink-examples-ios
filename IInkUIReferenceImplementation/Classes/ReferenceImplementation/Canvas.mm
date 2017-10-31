@@ -18,7 +18,7 @@
 }
 
 @property (nonatomic) CGAffineTransform aTransform;
-@property (nonatomic) NSDictionary *fontAttributeDict;
+@property (nonatomic) NSMutableDictionary *fontAttributeDict;
 @property (nonatomic, strong) NSString *clippedGroupIdentifier;
 
 @end
@@ -39,6 +39,7 @@
 {
     self.style = [[IINKStyle alloc] init];
     self.aTransform = CGAffineTransformIdentity;
+    self.fontAttributeDict = [[NSMutableDictionary alloc] init];
 
     if (UIGraphicsGetCurrentContext())
     {
@@ -170,6 +171,7 @@
     self.style.fillColor = color;
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [IInkUIRefImplUtils uiColor:color].CGColor);
+    [self.fontAttributeDict setObject:[IInkUIRefImplUtils uiColor:color] forKey:NSForegroundColorAttributeName];
 }
 
 - (void)setFillRule:(IINKFillRule)rule
@@ -195,12 +197,9 @@
     self.font = [UIFont fontFromStyle:self.style];
     NSMutableParagraphStyle *s = [[NSMutableParagraphStyle alloc] init];
     [s setLineSpacing:self.style.fontLineHeight];
-    self.fontAttributeDict = @{
-                               NSFontAttributeName : self.font,
-                               NSLigatureAttributeName         : @(0), // No ligatures
-                               NSParagraphStyleAttributeName   : s,
-                               NSForegroundColorAttributeName  : [IInkUIRefImplUtils uiColor:self.style.fillColor]
-                               };
+    [self.fontAttributeDict setObject:self.font forKey:NSFontAttributeName];
+    [self.fontAttributeDict setValue:@(0) forKey:NSLigatureAttributeName];
+    [self.fontAttributeDict setObject:s forKey:NSParagraphStyleAttributeName];
 }
 
 #pragma mark - Group Management
