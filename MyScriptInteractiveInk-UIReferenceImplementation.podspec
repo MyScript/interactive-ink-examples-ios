@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'MyScriptInteractiveInk-UIReferenceImplementation'
   #TODO Change before release
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'InteractiveInkUIReferenceImplementation : IInkRuntime UI interfaces reference implementation for iOS platforms.'
 
 # This description is used to generate tags and improve search results.
