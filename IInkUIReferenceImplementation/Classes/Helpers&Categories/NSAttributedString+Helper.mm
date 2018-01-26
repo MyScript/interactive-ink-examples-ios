@@ -79,7 +79,7 @@
 
 - (BOOL)shouldTakeOffset
 {
-    BOOL takeOffset = NO;
+    BOOL takeOffset = YES;
     NSString *SDKName = [[NSBundle mainBundle] infoDictionary][@"DTSDKName"];
     NSCharacterSet *characterSet = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
     NSPredicate *lengthPredicate = [NSPredicate predicateWithFormat:@"length != 0"];
