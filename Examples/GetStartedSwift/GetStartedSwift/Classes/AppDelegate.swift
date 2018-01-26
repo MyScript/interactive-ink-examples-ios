@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      */
     lazy var engine: IINKEngine? = {
         // Check that the MyScript certificate is present
-        if (myCertificate.length == 0)
+        if myCertificate.length == 0
         {
             self.engineErrorMessage = "Please replace the content of MyCertificate.c with the certificate you received from the developer portal"
             return nil
@@ -24,8 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Create the iink runtime environment
         let data = Data(bytes: myCertificate.bytes, count: myCertificate.length)
-        let engine = IINKEngine(certificate: data)
-        if (engine == nil)
+        guard let engine = IINKEngine(certificate: data) else
         {
             self.engineErrorMessage = "Invalid certificate"
             return nil
@@ -34,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Configure the iink runtime environment
         let configurationPath = Bundle.main.bundlePath.appending("/recognition-assets/conf")
         do {
-            try engine?.configuration.setStringArray("configuration-manager.search-path", value: [configurationPath]) // Tells the engine where to load the recognition assets from.
+            try engine.configuration.setStringArray("configuration-manager.search-path", value: [configurationPath]) // Tells the engine where to load the recognition assets from.
         } catch {
             print("Should not happen, please check your resources assets : " + error.localizedDescription)
             return nil
@@ -42,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set the temporary directory
         do {
-            try engine?.configuration.setString("content-package.temp-folder", value: NSTemporaryDirectory())
+            try engine.configuration.setString("content-package.temp-folder", value: NSTemporaryDirectory())
         } catch {
             print("Failed to set temporary folder: " + error.localizedDescription)
             return nil
