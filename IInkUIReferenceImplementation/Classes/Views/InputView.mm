@@ -77,10 +77,10 @@
         for (UITouch *coalescedTouch in coalescedTouches)
         {
             CapturePoint capturePoint = [CapturePointHelper capturePointFromTouch:coalescedTouch inView:self inputMode:self.inputMode];
-            *p++ = IINKPointerEventMakeMove(capturePoint.point, -1, 0, capturePoint.pointerType, 0);
+            *p++ = IINKPointerEventMakeMove(capturePoint.point, -1, capturePoint.f, capturePoint.pointerType, 0);
         }
         CapturePoint capturePoint = [CapturePointHelper capturePointFromTouch:touch inView:self inputMode:self.inputMode];
-        *p++ = IINKPointerEventMakeMove(capturePoint.point, -1, 0, capturePoint.pointerType, 0);
+        *p++ = IINKPointerEventMakeMove(capturePoint.point, -1, capturePoint.f, capturePoint.pointerType, 0);
         [self.editor pointerEvents:events count:n+1 doProcessGestures:YES error:nil];
     }
     else
