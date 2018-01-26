@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import <iink/IINKEngine.h>
 #import <IInkUIReferenceImplementation/InputView.h>
+#import "SmartGuideViewController.h"
 
 @class DisplayViewController;
 
@@ -13,6 +14,7 @@
 
 @property (strong, nonatomic, readonly) DisplayViewController *displayViewController;
 @property (strong, nonatomic, readonly) InputView *inputView;
+@property (strong, nonatomic, readonly) SmartGuideViewController *smartGuideViewController;
 
 @property (nonatomic) InputMode inputMode;
 

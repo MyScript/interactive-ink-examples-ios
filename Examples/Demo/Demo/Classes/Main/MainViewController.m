@@ -9,7 +9,7 @@
 #import "FilesController.h"
 #import "File.h"
 
-@interface MainViewController ()
+@interface MainViewController () <SmartGuideViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
@@ -49,6 +49,7 @@
 
 	self.editorViewController = self.childViewControllers[0];
     self.editorViewController.engine = [self engine];
+    self.editorViewController.smartGuideViewController.delegate = self;
     
     self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognizerAction:)];
     [self.editorViewController.view addGestureRecognizer:self.longPressGestureRecognizer];
@@ -274,6 +275,120 @@
     }
 }
 
+#pragma mark - More menu
+
+- (void)showMoreMenuWithBlock:(IINKContentBlock *)block position:(CGPoint)p sourceView:(UIView *)sourceView sourceRect:(CGRect)sourceRect
+{
+    IINKEditor *editor = self.editorViewController.editor;
+    NSArray<NSString *> *supportedAddBlockTypes = editor.supportedAddBlockTypes;
+
+    bool isContainer = [block.type isEqualToString:@"Container"];
+    bool isRoot = [block.identifier isEqualToString:[editor rootBlock].identifier];
+
+    bool displayConvert  = !isContainer;
+    bool displayAddBlock = supportedAddBlockTypes.count > 0 && isContainer;
+    bool displayAddImage = NO; // count > 0 && isContainer;
+    bool displayRemove   = !isRoot && !isContainer;
+    bool displayCopy     = !isRoot && !isContainer;
+    bool displayPaste    = supportedAddBlockTypes.count > 0 && isContainer;
+    bool displayImport   = NO;
+    bool displayExport   = NO;
+
+    UIAlertController *menu = [UIAlertController alertControllerWithTitle:nil
+                                                                  message:nil
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+
+    if (displayConvert)
+    {
+        UIAlertAction *convert = [UIAlertAction actionWithTitle:@"Convert" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor convert:block targetState:[editor getSupportedTargetConversionState:block][0].value error:nil];
+        }];
+        [menu addAction:convert];
+    }
+
+    if (displayAddBlock)
+    {
+        for (NSUInteger i = 0, count = [supportedAddBlockTypes count]; i < count; ++i)
+        {
+            NSString *type = [supportedAddBlockTypes objectAtIndex:i];
+            if ([type isEqualToString:@"Text"])
+                continue; // We don't allow adding text here because it needs content
+            NSString *addTitle = [NSString stringWithFormat:@"Add %@", type];
+            UIAlertAction *add = [UIAlertAction actionWithTitle:addTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [editor addBlock:p type:type error:nil];
+            }];
+            [menu addAction:add];
+        }
+    }
+
+    if (displayAddImage)
+    {
+        UIAlertAction *addImage = [UIAlertAction actionWithTitle:@"Add image" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            // TODO
+        }];
+        [menu addAction:addImage];
+    }
+
+    if (displayPaste)
+    {
+        UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor paste:p error:nil];
+        }];
+        [menu addAction:paste];
+    }
+
+    if (displayRemove)
+    {
+        UIAlertAction *remove = [UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor removeBlock:block error:nil];
+        }];
+        [menu addAction:remove];
+    }
+
+    if (displayCopy)
+    {
+        UIAlertAction *copy = [UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor copy:block error:nil];
+        }];
+        [menu addAction:copy];
+    }
+
+    if (displayImport)
+    {
+        UIAlertAction *import = [UIAlertAction actionWithTitle:@"Import" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            // TODO
+        }];
+        [menu addAction:import];
+    }
+
+    if (displayExport)
+    {
+        UIAlertAction *export = [UIAlertAction actionWithTitle:@"Export" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            // TODO
+        }];
+        [menu addAction:export];
+    }
+
+    UIPopoverPresentationController *popover = menu.popoverPresentationController;
+    if (popover)
+    {
+        popover.sourceView = sourceView;
+        popover.sourceRect = sourceRect;
+    }
+    else
+    {
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+        [menu addAction:cancel];
+    }
+
+    [self presentViewController:menu animated:YES completion:nil];
+}
+
+- (void)smartGuideViewController:(SmartGuideViewController *)smartGuideViewController didTapOnMoreButton:(UIButton *)moreButton forBlock:(IINKContentBlock *)block
+{
+    [self showMoreMenuWithBlock:block position:CGPointZero sourceView:moreButton sourceRect:moreButton.bounds];
+}
+
 #pragma mark - Gesture recognizer
 
 - (IBAction)longPressGestureRecognizerAction:(UILongPressGestureRecognizer *)longPressGestureRecognizer
@@ -286,111 +401,8 @@
         IINKContentBlock *block = [editor hitBlock:p];
         if (block == nil)
             block = editor.rootBlock;
-        
-        NSArray<NSString *> *supportedAddBlockTypes = editor.supportedAddBlockTypes;
-        
-        bool isContainer = [block.type isEqualToString:@"Container"];
-        bool isRoot = [block.identifier isEqualToString:[editor rootBlock].identifier];
+        [self showMoreMenuWithBlock:block position:p sourceView:longPressGestureRecognizer.view sourceRect:CGRectMake(p.x, p.y, 1, 1)];
 
-        bool displayConvert  = !isContainer;
-        bool displayAddBlock = supportedAddBlockTypes.count > 0 && isContainer;
-        bool displayAddImage = NO; // count > 0 && isContainer;
-        bool displayRemove   = !isRoot && !isContainer;
-        bool displayCopy     = !isRoot && !isContainer;
-        bool displayPaste    = supportedAddBlockTypes.count > 0 && isContainer;
-        bool displayImport   = NO;
-        bool displayExport   = NO;
-
-        NSString *title = [NSString stringWithFormat:@"%@ (id: %@)", block.type, block.identifier];
-
-        UIAlertController *menu = [UIAlertController alertControllerWithTitle:title
-                                                                      message:nil
-                                                               preferredStyle:UIAlertControllerStyleActionSheet];
-
-        if (displayConvert)
-        {
-            UIAlertAction *convert = [UIAlertAction actionWithTitle:@"Convert" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [editor convert:block targetState:[editor getSupportedTargetConversionState:block][0].value error:nil];
-            }];
-            [menu addAction:convert];
-        }
-
-        if (displayAddBlock)
-        {
-            for (NSUInteger i = 0, count = [supportedAddBlockTypes count]; i < count; ++i)
-            {
-                NSString *type = [supportedAddBlockTypes objectAtIndex:i];
-                if ([type isEqualToString:@"Text"])
-                    continue; // We don't allow adding text here because it needs content
-                NSString *addTitle = [NSString stringWithFormat:@"Add %@", type];
-                UIAlertAction *add = [UIAlertAction actionWithTitle:addTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    [editor addBlock:p type:type error:nil];
-                }];
-                [menu addAction:add];
-            }
-        }
-
-        if (displayAddImage)
-        {
-            UIAlertAction *addImage = [UIAlertAction actionWithTitle:@"Add image" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                // TODO
-            }];
-            [menu addAction:addImage];
-        }
-
-        if (displayPaste)
-        {
-            UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [editor paste:p error:nil];
-            }];
-            [menu addAction:paste];
-        }
-
-        if (displayRemove)
-        {
-            UIAlertAction *remove = [UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [editor removeBlock:block error:nil];
-            }];
-            [menu addAction:remove];
-        }
-
-        if (displayCopy)
-        {
-            UIAlertAction *copy = [UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [editor copy:block error:nil];
-            }];
-            [menu addAction:copy];
-        }
-
-        if (displayImport)
-        {
-            UIAlertAction *import = [UIAlertAction actionWithTitle:@"Import" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                // TODO
-            }];
-            [menu addAction:import];
-        }
-
-        if (displayExport)
-        {
-            UIAlertAction *export = [UIAlertAction actionWithTitle:@"Export" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                // TODO
-            }];
-            [menu addAction:export];
-        }
-
-        UIPopoverPresentationController *popover = menu.popoverPresentationController;
-        if (popover)
-        {
-            popover.sourceView = longPressGestureRecognizer.view;
-            popover.sourceRect = CGRectMake(p.x, p.y, 1, 1);
-        }
-        else
-        {
-            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-            [menu addAction:cancel];
-        }
-        
-        [self presentViewController:menu animated:YES completion:nil];
     }
 }
 
@@ -411,20 +423,20 @@
     [editor setViewSize:CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)];
     editor.part = part;
 
-    self.containerView.userInteractionEnabled = (self.editorViewController.editor != nil);
+    self.containerView.userInteractionEnabled = (editor != nil);
 
     self.undoButton.enabled = YES;
     self.redoButton.enabled = YES;
 	self.convertItem.enabled = YES;
 	self.moreItem.enabled = YES;
 
-	NSInteger index = [self.currentPackage indexOfPart:self.editorViewController.editor.part error:nil];
+	NSInteger index = [self.currentPackage indexOfPart:editor.part error:nil];
 	NSInteger partCount = self.currentPackage.partCount;
 
 	self.nextPartItem.enabled = index < partCount - 1;
 	self.previousPartItem.enabled = index > 0;
     
-    self.title = [NSString stringWithFormat:@"%@ - %@", self.currentFilename, self.editorViewController.editor.part.type];
+    self.title = [NSString stringWithFormat:@"%@ - %@", self.currentFilename, editor.part.type];
 }
 
 - (void)unloadPart

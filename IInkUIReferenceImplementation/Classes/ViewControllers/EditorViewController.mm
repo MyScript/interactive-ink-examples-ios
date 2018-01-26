@@ -5,11 +5,13 @@
 #import "ImageLoader.h"
 
 #import "DisplayViewController.h"
+#import "SmartGuideViewController.h"
 #import "FontMetricsProvider.h"
 #import "Helper.h"
 #import "InputView.h"
 #import <iink/IINKEditor.h>
 #import <iink/IINKRenderer.h>
+#import <iink/IINKConfiguration.h>
 #import "CaptureTypes.h"
 #import "CapturePointHelper.h"
 
@@ -51,9 +53,11 @@
     self.inputView.backgroundColor = [UIColor clearColor];
     
     [self initDisplayViewController];
+    [self initSmartGuideViewController];
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizerAction:)];
@@ -78,9 +82,19 @@
     [self.displayViewController didMoveToParentViewController:self];
 }
 
+- (void)initSmartGuideViewController
+{
+    _smartGuideViewController = [[SmartGuideViewController alloc] init];
+    [self addChildViewController:self.smartGuideViewController];
+    [self.view addSubview:self.smartGuideViewController.view];
+    self.smartGuideViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.smartGuideViewController didMoveToParentViewController:self];
+}
+
 #pragma mark -
 
-- (void)setEngine:(IINKEngine *)engine {
+- (void)setEngine:(IINKEngine *)engine
+{
     _engine = engine;
     [self initEditor];
 }
@@ -101,6 +115,20 @@
     self.displayViewController.renderer = renderer;
     self.displayViewController.imageLoader = imageLoader;
     self.inputView.editor = self.editor;
+
+    self.smartGuideViewController.editor = self.editor;
+
+    IINKConfiguration *conf = self.engine.configuration;
+    double horizontalMarginMM = 5;
+    double verticalMarginMM = 15;
+    [conf setNumber:@"text.margin.top" value:verticalMarginMM error:nil];
+    [conf setNumber:@"text.margin.top" value:verticalMarginMM error:nil];
+    [conf setNumber:@"text.margin.left" value:horizontalMarginMM error:nil];
+    [conf setNumber:@"text.margin.right" value:horizontalMarginMM error:nil];
+    [conf setNumber:@"math.margin.top" value:verticalMarginMM error:nil];
+    [conf setNumber:@"math.margin.bottom" value:verticalMarginMM error:nil];
+    [conf setNumber:@"math.margin.left" value:horizontalMarginMM error:nil];
+    [conf setNumber:@"math.margin.right" value:horizontalMarginMM error:nil];
 }
 
 #pragma mark - Layout
