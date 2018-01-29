@@ -11,9 +11,9 @@ EXTERNAL SOURCES:
     :path: ../..
 
 SPEC CHECKSUMS:
-  MyScriptInteractiveInk-Runtime: 5dd3338e9acecd616d70fd34e1c3f1f04e29ebe2
+  MyScriptInteractiveInk-Runtime: 4f3b4b48c601d89bf2f01e06fbbbff83d62975dc
   MyScriptInteractiveInk-UIReferenceImplementation: 2d2001072a9ddd1050482e501bedacaa4bbe17ea
 
-PODFILE CHECKSUM: 3920c1e8293527df929e5f2becf96b8a771e0c3d
+PODFILE CHECKSUM: 87c369b5a8382697baa9f5f8e30cfbfd821f630c
 
 COCOAPODS: 1.3.1
