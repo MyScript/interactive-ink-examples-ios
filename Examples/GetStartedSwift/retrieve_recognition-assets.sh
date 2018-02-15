@@ -16,13 +16,13 @@ if [ ! -d "$ProjectRootFolder/Resources/recognition-assets" ] || [ ! -d "$Projec
 
 echo MyScript en-US recognition assets retriever
 
-curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.0.0/myscript-iink-recognition-diagram.zip
+curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.1.0/myscript-iink-recognition-diagram.zip
 unzip -o myscript-iink-recognition-diagram.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.0.0/myscript-iink-recognition-math.zip
+curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.1.0/myscript-iink-recognition-math.zip
 unzip -o myscript-iink-recognition-math.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.0.0/myscript-iink-recognition-text-en_US.zip
+curl -O https://s3-us-west-2.amazonaws.com/iink/assets/1.1.0/myscript-iink-recognition-text-en_US.zip
 unzip -o myscript-iink-recognition-text-en_US.zip -d $ProjectRootFolder/Resources/
 
 rm myscript-iink-recognition-diagram.zip
