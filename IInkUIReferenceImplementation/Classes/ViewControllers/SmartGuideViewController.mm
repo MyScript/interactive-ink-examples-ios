@@ -102,7 +102,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.text = isWhitespace ? @" " : word.label;
         self.textColor = word.modified ? [UIColor blackColor] : WORD_GRAY_COLOR;
 
-        if (word.candidates && word.candidates.count > 1)
+        if (!isWhitespace)
         {
             self.userInteractionEnabled = YES;
             UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
@@ -505,12 +505,16 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.fadeOutTimer = nil;
     }
 
+    NSArray<NSString *> *candidates = smartGuideWordView.word.candidates;
+    if (!candidates)
+        candidates = [NSArray arrayWithObject:smartGuideWordView.word.label];
+
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
-    for (NSUInteger i = 0; i < smartGuideWordView.word.candidates.count; ++i)
+    for (NSUInteger i = 0; i < candidates.count; ++i)
     {
-        NSString *label = smartGuideWordView.word.candidates[i];
+        NSString *label = candidates[i];
         BOOL selected = [label isEqualToString:smartGuideWordView.word.label];
         UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             if (!selected)
