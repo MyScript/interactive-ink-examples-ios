@@ -12,8 +12,6 @@
 #import <iink/IINKEditor.h>
 #import <iink/IINKRenderer.h>
 #import <iink/IINKConfiguration.h>
-#import "CaptureTypes.h"
-#import "CapturePointHelper.h"
 
 @interface EditorViewController () <UIGestureRecognizerDelegate>
 

@@ -1,7 +1,12 @@
 // Copyright MyScript. All right reserved.
 
 #import <UIKit/UIKit.h>
-#import <IInkUIReferenceImplementation/CaptureTypes.h>
+
+typedef NS_ENUM(NSUInteger, InputMode) {
+    InputModeForcePen,
+    InputModeForceTouch,
+    InputModeAuto,
+};
 
 @class IINKEditor;
 
