@@ -3,6 +3,8 @@
 #import "SmartGuideViewController.h"
 #import "IInkUIRefImplUtils.h"
 #import <iink/IINKRenderer.h>
+#import <iink/IINKEngine.h>
+#import <iink/IINKConfiguration.h>
 
 /** The gray color used for controls (buttons and ruler). */
 #define CONTROL_GRAY_COLOR [IInkUIRefImplUtils uiColor:0x959DA6ff]
@@ -98,22 +100,13 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.word = word;
         self.index = index;
         self.text = isWhitespace ? @" " : word.label;
+        self.textColor = word.modified ? [UIColor blackColor] : WORD_GRAY_COLOR;
 
         if (word.candidates && word.candidates.count > 1)
         {
             self.userInteractionEnabled = YES;
             UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
             [self addGestureRecognizer:tapGesture];
-        }
-
-        if (word.modified)
-        {
-            self.textColor = [UIColor blackColor];
-            [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(removeHighlightTimerFireMethod:) userInfo:nil repeats:NO];
-        }
-        else
-        {
-            self.textColor = WORD_GRAY_COLOR;
         }
     }
     return self;
@@ -123,11 +116,6 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(smartGuideWordViewDidReceiveTap:)])
         [self.delegate smartGuideWordViewDidReceiveTap:self];
-}
-
-- (void)removeHighlightTimerFireMethod:(NSTimer *)timer
-{
-    self.textColor = WORD_GRAY_COLOR;
 }
 
 @end
@@ -152,6 +140,11 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 @property (strong, nonatomic) IINKContentBlock *block;
 @property (strong, nonatomic) NSArray<SmartGuideWord *> *words;
 @property (strong, nonatomic) NSTimer *fadeOutTimer;
+@property (nonatomic) NSTimeInterval fadeOutWriteInDiagramDelay;
+@property (nonatomic) NSTimeInterval fadeOutWriteDelay;
+@property (nonatomic) NSTimeInterval fadeOutOtherDelay;
+@property (strong, nonatomic) NSTimer *removeHighlightTimer;
+@property (nonatomic) NSTimeInterval removeHighlightDelay;
 
 @end
 
@@ -236,6 +229,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
     [self.editor addDelegate:self];
     [self.editor.renderer addDelegate:self];
+
+    IINKConfiguration *configuration = editor.engine.configuration;
+    self.fadeOutWriteInDiagramDelay = [configuration getNumber:@"smart-guide.fade-out-delay.write-in-diagram" orValue:3.0];
+    self.fadeOutWriteDelay = [configuration getNumber:@"smart-guide.fade-out-delay.write" orValue:0.0];
+    self.fadeOutOtherDelay = [configuration getNumber:@"smart-guide.fade-out-delay.other" orValue:0.0];
+    self.removeHighlightDelay = [configuration getNumber:@"smart-guide.highlight-removal-delay" orValue:2.0];
 }
 
 - (void)setTextBlockStyle:(TextBlockStyle)textBlockStyle
@@ -338,12 +337,6 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
 - (void)updateWithBlock:(IINKContentBlock *)block cause:(UpdateCause)cause
 {
-    if (self.fadeOutTimer)
-    {
-        [self.fadeOutTimer invalidate];
-        self.fadeOutTimer = nil;
-    }
-
     if (block && [block.type isEqualToString:@"Text"])
     {
         // Update size and position
@@ -403,13 +396,15 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         BOOL isInDiagram = [block.identifier hasPrefix:@"diagram/"];
 
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+
             self.leftConstraint.constant = x;
             self.topConstraint.constant = y - self.view.frame.size.height;
             self.widthConstraint.constant = width;
             [self setTextBlockStyle:textBlockStyle];
+
+            SmartGuideWordView *lastModifiedWordView = nil;
             if (updateWords)
             {
-                SmartGuideWordView *lastModifiedWordView = nil;
                 [[self.wordStackView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
                 BOOL previousWasWhitespace = NO;
                 for (NSUInteger i = 0; i < words.count; ++i)
@@ -433,10 +428,45 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
                     [self.wordScrollView scrollRectToVisible:rect animated:YES];
                 }
             }
-            self.view.hidden = NO;
-            if (isInDiagram && cause == UpdateCauseEdit)
+
+            if (cause != UpdateCauseView)
             {
-                self.fadeOutTimer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(fadeOutTimerFireMethod:) userInfo:nil repeats:NO];
+                [self.fadeOutTimer invalidate];
+                self.fadeOutTimer = nil;
+                [self.removeHighlightTimer invalidate];
+                self.removeHighlightTimer = nil;
+
+                NSTimeInterval fadeOutDelay;
+                if (cause == UpdateCauseEdit)
+                {
+                    if (isInDiagram)
+                        fadeOutDelay = self.fadeOutWriteInDiagramDelay;
+                    else
+                        fadeOutDelay = self.fadeOutWriteDelay;
+                }
+                else
+                {
+                    fadeOutDelay = self.fadeOutOtherDelay;
+                }
+
+                self.view.hidden = NO;
+
+                if (fadeOutDelay > 0)
+                {
+                    self.fadeOutTimer = [NSTimer scheduledTimerWithTimeInterval:fadeOutDelay
+                                                                         target:self
+                                                                       selector:@selector(fadeOutTimerFireMethod:)
+                                                                       userInfo:nil
+                                                                        repeats:NO];
+                }
+                if (lastModifiedWordView && self.removeHighlightDelay > 0)
+                {
+                    self.removeHighlightTimer = [NSTimer scheduledTimerWithTimeInterval:self.removeHighlightDelay
+                                                                                 target:self
+                                                                               selector:@selector(removeHighlightTimerFireMethod:)
+                                                                               userInfo:nil
+                                                                                repeats:NO];
+                }
             }
         }];
 
@@ -458,6 +488,13 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 {
     self.fadeOutTimer = nil;
     self.view.hidden = YES;
+}
+
+- (void)removeHighlightTimerFireMethod:(NSTimer *)timer
+{
+    self.removeHighlightTimer = nil;
+    for (SmartGuideWordView *wordView in [self.wordStackView subviews])
+        wordView.textColor = WORD_GRAY_COLOR;
 }
 
 - (void)smartGuideWordViewDidReceiveTap:(SmartGuideWordView *)smartGuideWordView
