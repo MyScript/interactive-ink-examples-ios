@@ -127,12 +127,11 @@
     if (coalescedTouches)
     {
         NSUInteger n = [coalescedTouches count];
-        IINKPointerEvent events[n+1];
+        IINKPointerEvent events[n];
         IINKPointerEvent *p = events;
         for (UITouch *coalescedTouch in coalescedTouches)
             *p++ = [self pointerMoveEventFromTouch:coalescedTouch];
-        *p++ = [self pointerMoveEventFromTouch:touch];
-        [self.editor pointerEvents:events count:n+1 doProcessGestures:YES error:nil];
+        [self.editor pointerEvents:events count:n doProcessGestures:YES error:nil];
     }
     else
     {
