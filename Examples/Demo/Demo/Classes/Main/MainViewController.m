@@ -420,7 +420,7 @@
     editor.renderer.viewOffset = CGPointMake(0, 0);
 
     // Bind the part to the editor
-    [editor setViewSize:CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)];
+    [editor setViewSize:CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height) error:nil];
     editor.part = part;
 
     self.containerView.userInteractionEnabled = (editor != nil);

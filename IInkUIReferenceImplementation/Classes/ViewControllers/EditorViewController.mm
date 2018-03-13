@@ -105,7 +105,7 @@
     IINKRenderer *renderer = [self.engine createRendererWithDpiX:scaledDpi() dpiY:scaledDpi() target:self.displayViewController];
     
     self.editor = [self.engine createEditor:renderer];
-    [self.editor setViewSize:self.view.bounds.size];
+    [self.editor setViewSize:self.view.bounds.size error:nil];
     self.fontMetricsProvider = [[FontMetricsProvider alloc] init];
     [self.editor setFontMetricsProvider:self.fontMetricsProvider];
     imageLoader.editor = self.editor;
@@ -134,7 +134,7 @@
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    [self.editor setViewSize:self.view.bounds.size];
+    [self.editor setViewSize:self.view.bounds.size error:nil];
 }
 
 #pragma mark - UIGestureRecognizerDelegate
