@@ -158,7 +158,7 @@
 
 - (IBAction)previousPart:(id)sender
 {
-	NSInteger index = [self.currentPackage indexOfPart:self.editorViewController.editor.part error:nil];
+	NSInteger index = [self.currentPackage indexOfPart:self.editorViewController.editor.part];
 	if (index > 0)
 	{
 		[self loadPart:[self.currentPackage getPartAt:--index error:nil]];
@@ -167,7 +167,7 @@
 
 - (IBAction)nextPart:(id)sender
 {
-	NSInteger index = [self.currentPackage indexOfPart:self.editorViewController.editor.part error:nil];
+	NSInteger index = [self.currentPackage indexOfPart:self.editorViewController.editor.part];
 	NSInteger partCount = self.currentPackage.partCount;
 	if (index < partCount - 1)
 	{
@@ -430,7 +430,7 @@
 	self.convertItem.enabled = YES;
 	self.moreItem.enabled = YES;
 
-	NSInteger index = [self.currentPackage indexOfPart:editor.part error:nil];
+	NSInteger index = [self.currentPackage indexOfPart:editor.part];
 	NSInteger partCount = self.currentPackage.partCount;
 
 	self.nextPartItem.enabled = index < partCount - 1;
