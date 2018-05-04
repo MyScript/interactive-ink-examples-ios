@@ -42,8 +42,8 @@
     self.containerView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.containerView];
     self.containerView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.containerView.backgroundColor = [UIColor clearColor];
-    self.containerView.opaque = NO;
+    self.containerView.backgroundColor = [UIColor whiteColor];
+    self.containerView.opaque = YES;
     
     self.inputView = [[InputView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.inputView];
