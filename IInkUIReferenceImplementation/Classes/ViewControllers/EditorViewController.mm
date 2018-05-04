@@ -102,7 +102,7 @@
     ImageLoader *imageLoader = [[ImageLoader alloc] init];
     imageLoader.cacheFolderPath = [[NSFileManager defaultManager] tmpDirectory];
     
-    IINKRenderer *renderer = [self.engine createRendererWithDpiX:scaledDpi() dpiY:scaledDpi() target:self.displayViewController];
+    IINKRenderer *renderer = [self.engine createRendererWithDpiX:scaledDpi() dpiY:scaledDpi() target:self.displayViewController error:nil];
     
     self.editor = [self.engine createEditor:renderer];
     [self.editor setViewSize:self.view.bounds.size error:nil];
