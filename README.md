@@ -32,6 +32,10 @@ pod "MyScriptInteractiveInk-UIReferenceImplementation"
 A complete guide is available on [MyScript Developer website](https://developer.myscript.com/docs/interactive-ink/1.0/ios/).
 The API Reference is available directly in Xcode once the dependencies are downloaded.
 
+## Troubleshooting
+
+You may experience build fail when upgrading Xcode (e.g.: getting arm64 link error when upgrading from Xcode 9.2 to Xcode 9.3). Cleaning the project should be enough to fix the problem: in Xcode select menu "Product" / "Clean" and then "Product" / "Clean build folder...", accessible by pressing alt key.
+
 ## Getting support, giving feedback
 
 You can get some support or give feedback from the dedicated section on [MyScript Developer website](https://developer.myscript.com/support/).
