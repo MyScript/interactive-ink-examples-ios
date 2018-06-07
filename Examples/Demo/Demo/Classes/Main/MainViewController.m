@@ -469,7 +469,7 @@
     int num = 0;
     do
     {
-        newName = [NSString stringWithFormat:@"File%zd.iink", ++num];
+        newName = [NSString stringWithFormat:@"File%d.iink", ++num];
     }
     while ([existingIInkFiles indexOfObjectPassingTest:^BOOL(File * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         return [obj.filename isEqualToString:newName];
