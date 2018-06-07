@@ -119,14 +119,14 @@
     IINKConfiguration *conf = self.engine.configuration;
     double horizontalMarginMM = 5;
     double verticalMarginMM = 15;
-    [conf setNumber:@"text.margin.top" value:verticalMarginMM error:nil];
-    [conf setNumber:@"text.margin.top" value:verticalMarginMM error:nil];
-    [conf setNumber:@"text.margin.left" value:horizontalMarginMM error:nil];
-    [conf setNumber:@"text.margin.right" value:horizontalMarginMM error:nil];
-    [conf setNumber:@"math.margin.top" value:verticalMarginMM error:nil];
-    [conf setNumber:@"math.margin.bottom" value:verticalMarginMM error:nil];
-    [conf setNumber:@"math.margin.left" value:horizontalMarginMM error:nil];
-    [conf setNumber:@"math.margin.right" value:horizontalMarginMM error:nil];
+    [conf setNumber:verticalMarginMM forKey:@"text.margin.top" error:nil];
+    [conf setNumber:verticalMarginMM forKey:@"text.margin.top" error:nil];
+    [conf setNumber:horizontalMarginMM forKey:@"text.margin.left" error:nil];
+    [conf setNumber:horizontalMarginMM forKey:@"text.margin.right" error:nil];
+    [conf setNumber:verticalMarginMM forKey:@"math.margin.top" error:nil];
+    [conf setNumber:verticalMarginMM forKey:@"math.margin.bottom" error:nil];
+    [conf setNumber:horizontalMarginMM forKey:@"math.margin.left" error:nil];
+    [conf setNumber:horizontalMarginMM forKey:@"math.margin.right" error:nil];
 }
 
 #pragma mark - Layout

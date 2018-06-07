@@ -231,10 +231,10 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self.editor.renderer addDelegate:self];
 
     IINKConfiguration *configuration = editor.engine.configuration;
-    self.fadeOutWriteInDiagramDelay = [configuration getNumber:@"smart-guide.fade-out-delay.write-in-diagram" orValue:3.0];
-    self.fadeOutWriteDelay = [configuration getNumber:@"smart-guide.fade-out-delay.write" orValue:0.0];
-    self.fadeOutOtherDelay = [configuration getNumber:@"smart-guide.fade-out-delay.other" orValue:0.0];
-    self.removeHighlightDelay = [configuration getNumber:@"smart-guide.highlight-removal-delay" orValue:2.0];
+    self.fadeOutWriteInDiagramDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write-in-diagram" defaultValue:3.0];
+    self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0];
+    self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0];
+    self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
 }
 
 - (void)setTextBlockStyle:(TextBlockStyle)textBlockStyle

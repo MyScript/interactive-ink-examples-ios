@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Configure the iink runtime environment
         let configurationPath = Bundle.main.bundlePath.appending("/recognition-assets/conf")
         do {
-            try engine.configuration.setStringArray("configuration-manager.search-path", value: [configurationPath]) // Tells the engine where to load the recognition assets from.
+            try engine.configuration.setStringArray([configurationPath], forKey:"configuration-manager.search-path") // Tells the engine where to load the recognition assets from.
         } catch {
             print("Should not happen, please check your resources assets : " + error.localizedDescription)
             return nil
@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set the temporary directory
         do {
-            try engine.configuration.setString("content-package.temp-folder", value: NSTemporaryDirectory())
+            try engine.configuration.setString(NSTemporaryDirectory(), forKey: "content-package.temp-folder")
         } catch {
             print("Failed to set temporary folder: " + error.localizedDescription)
             return nil
