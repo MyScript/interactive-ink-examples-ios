@@ -8,6 +8,8 @@
 
 @interface ImageDrawer : NSObject <IINKIImageDrawer>
 
-@property (nonatomic, strong) ImageLoader *imageLoader;
+@property (nullable, nonatomic, strong) ImageLoader *imageLoader;
+/** The image background color. **/
+@property(nullable, nonatomic,copy) UIColor *backgroundColor;
 
 @end

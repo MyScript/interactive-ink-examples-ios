@@ -60,7 +60,12 @@
     // Specific transform for text since we use CoreText to draw
     CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
     transform = CGAffineTransformTranslate(transform, 0, - self.imageSize.height);
-    
+
+    if (self.backgroundColor)
+    {
+        CGContextSetFillColorWithColor(context, self.backgroundColor.CGColor);
+        CGContextFillRect(context, (CGRect){CGPointZero, self.imageSize});
+    }
     if (layers & IINKLayerTypeCapture)
     {
         CGContextSaveGState(context);
