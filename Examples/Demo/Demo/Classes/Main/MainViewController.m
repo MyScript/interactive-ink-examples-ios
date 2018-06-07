@@ -149,9 +149,11 @@
 
 - (IBAction)convert:(id)sender
 {
-    [self.editorViewController.editor convert:nil
-                                  targetState:[self.editorViewController.editor getSupportedTargetConversionState:nil][0].value
-                                        error:nil];
+    NSArray<IINKConversionStateValue *> *supportedTargetStates = [self.editorViewController.editor getSupportedTargetConversionState:nil];
+    if (supportedTargetStates.count > 0)
+        [self.editorViewController.editor convert:nil
+                                      targetState:supportedTargetStates[0].value
+                                            error:nil];
 }
 
 #pragma mark - Parts and packages actions and segues
@@ -281,11 +283,12 @@
 {
     IINKEditor *editor = self.editorViewController.editor;
     NSArray<NSString *> *supportedAddBlockTypes = editor.supportedAddBlockTypes;
+    NSArray<IINKConversionStateValue *> *supportedConversionStates = [editor getSupportedTargetConversionState:block];
 
     bool isContainer = [block.type isEqualToString:@"Container"];
     bool isRoot = [block.identifier isEqualToString:[editor rootBlock].identifier];
 
-    bool displayConvert  = !isContainer;
+    bool displayConvert  = supportedConversionStates.count > 0 && !isContainer;
     bool displayAddBlock = supportedAddBlockTypes.count > 0 && isContainer;
     bool displayAddImage = NO; // count > 0 && isContainer;
     bool displayRemove   = !isRoot && !isContainer;
@@ -294,16 +297,14 @@
     bool displayImport   = NO;
     bool displayExport   = NO;
 
-    UIAlertController *menu = [UIAlertController alertControllerWithTitle:nil
-                                                                  message:nil
-                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+    NSMutableArray<UIAlertAction*> *actions = [NSMutableArray array];
 
     if (displayConvert)
     {
         UIAlertAction *convert = [UIAlertAction actionWithTitle:@"Convert" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [editor convert:block targetState:[editor getSupportedTargetConversionState:block][0].value error:nil];
+            [editor convert:block targetState:supportedConversionStates[0].value error:nil];
         }];
-        [menu addAction:convert];
+        [actions addObject:convert];
     }
 
     if (displayAddBlock)
@@ -317,7 +318,7 @@
             UIAlertAction *add = [UIAlertAction actionWithTitle:addTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [editor addBlock:p type:type error:nil];
             }];
-            [menu addAction:add];
+            [actions addObject:add];
         }
     }
 
@@ -326,7 +327,7 @@
         UIAlertAction *addImage = [UIAlertAction actionWithTitle:@"Add image" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             // TODO
         }];
-        [menu addAction:addImage];
+        [actions addObject:addImage];
     }
 
     if (displayPaste)
@@ -334,7 +335,7 @@
         UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [editor paste:p error:nil];
         }];
-        [menu addAction:paste];
+        [actions addObject:paste];
     }
 
     if (displayRemove)
@@ -342,7 +343,7 @@
         UIAlertAction *remove = [UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [editor removeBlock:block error:nil];
         }];
-        [menu addAction:remove];
+        [actions addObject:remove];
     }
 
     if (displayCopy)
@@ -350,7 +351,7 @@
         UIAlertAction *copy = [UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [editor copy:block error:nil];
         }];
-        [menu addAction:copy];
+        [actions addObject:copy];
     }
 
     if (displayImport)
@@ -358,7 +359,7 @@
         UIAlertAction *import = [UIAlertAction actionWithTitle:@"Import" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             // TODO
         }];
-        [menu addAction:import];
+        [actions addObject:import];
     }
 
     if (displayExport)
@@ -366,22 +367,32 @@
         UIAlertAction *export = [UIAlertAction actionWithTitle:@"Export" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             // TODO
         }];
-        [menu addAction:export];
+        [actions addObject:export];
     }
 
-    UIPopoverPresentationController *popover = menu.popoverPresentationController;
-    if (popover)
+    if (actions.count > 0)
     {
-        popover.sourceView = sourceView;
-        popover.sourceRect = sourceRect;
-    }
-    else
-    {
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
-        [menu addAction:cancel];
-    }
+        UIAlertController *menu = [UIAlertController alertControllerWithTitle:nil
+                                                                      message:nil
+                                                               preferredStyle:UIAlertControllerStyleActionSheet];
+        for (UIAlertAction *action in actions) {
+            [menu addAction:action];
+        }
+        
+        UIPopoverPresentationController *popover = menu.popoverPresentationController;
+        if (popover)
+        {
+            popover.sourceView = sourceView;
+            popover.sourceRect = sourceRect;
+        }
+        else
+        {
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            [menu addAction:cancel];
+        }
 
-    [self presentViewController:menu animated:YES completion:nil];
+        [self presentViewController:menu animated:YES completion:nil];
+    }
 }
 
 - (void)smartGuideViewController:(SmartGuideViewController *)smartGuideViewController didTapOnMoreButton:(UIButton *)moreButton forBlock:(IINKContentBlock *)block

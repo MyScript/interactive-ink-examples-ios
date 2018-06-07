@@ -66,9 +66,11 @@
 
 - (IBAction)convertButtonWasTouchedUpInside:(id)sender
 {
-    [self.editorViewController.editor convert:nil
-                                  targetState:[self.editorViewController.editor getSupportedTargetConversionState:nil][0].value
-                                        error:nil];
+    NSArray<IINKConversionStateValue *> *supportedStates = [self.editorViewController.editor getSupportedTargetConversionState:nil];
+    if (supportedStates.count > 0)
+        [self.editorViewController.editor convert:nil
+                                      targetState:supportedStates[0].value
+                                            error:nil];
 }
 
 #pragma mark - Segmented control actions
