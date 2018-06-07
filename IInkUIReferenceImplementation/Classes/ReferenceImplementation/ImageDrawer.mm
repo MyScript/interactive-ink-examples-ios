@@ -12,16 +12,19 @@
 @interface ImageDrawer ()
 
 @property (nonatomic, assign) CGSize imageSize;
+@property (nonatomic, assign) IINKMimeType type;
 
 @end
 
 @implementation ImageDrawer
 
-- (instancetype)init
+- (instancetype)initWithExtension:(IINKMimeType)type
 {
+    NSAssert(type == IINKMimeTypeJPEG || type == IINKMimeTypePNG, @"unsupported image format");
     self = [super init];
     if (self)
     {
+        self.type = type;
     }
     return self;
 }
@@ -37,7 +40,20 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    NSData* imageData = UIImagePNGRepresentation(image);
+    NSData* imageData = nil;
+
+    switch (self.type)
+    {
+        case IINKMimeTypeJPEG:
+            imageData = UIImageJPEGRepresentation(image, 1);
+            break;
+        case IINKMimeTypePNG:
+            imageData = UIImagePNGRepresentation(image);
+            break;
+        default:
+            break;
+    }
+
     [imageData writeToFile:path atomically:YES];
 }
 

@@ -50,13 +50,13 @@
 	self.editorViewController = self.childViewControllers[0];
     self.editorViewController.engine = [self engine];
     self.editorViewController.smartGuideViewController.delegate = self;
-    
+
     self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognizerAction:)];
     [self.editorViewController.view addGestureRecognizer:self.longPressGestureRecognizer];
     [self configureGestureRecognizer];
 
 	self.versionLabel.text = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
         [self performSegueWithIdentifier:@"NewPartSegueId" sender:self];
     });
