@@ -3,12 +3,13 @@
 #import "NSAttributedString+Helper.h"
 #import <CoreText/CoreText.h>
 #import <iink/text/IINKText.h>
+#import <iink/text/IINKIFontMetricsProvider.h>
 #import <iink/text/IINKTextSpan.h>
 #import "UIfont+Helper.h"
 
 @implementation NSAttributedString (Helper)
 
-- (NSArray<NSValue *> *)charactersBoundingBoxers
+- (NSArray<NSValue *> *)charactersBoundingBoxes
 {
     BOOL takeOffset = [self shouldTakeOffset];
 
@@ -41,6 +42,64 @@
     
     return charBoxes;
 }
+
+- (NSArray<NSValue *> *)glyphMetrics
+{
+    NSMutableArray<NSValue *> *charBoxes = [[NSMutableArray alloc] initWithCapacity:self.length];
+
+    CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)self);
+    CFArrayRef runArray = CTLineGetGlyphRuns(line);
+
+    CFIndex runCount = CFArrayGetCount(runArray);
+    int charIndex = 0;
+    for (int runIndex = 0; runIndex < runCount; ++runIndex)
+    {
+        CTRunRef run = (CTRunRef)CFArrayGetValueAtIndex(runArray, runIndex);
+
+        CFDictionaryRef dict = CTRunGetAttributes(run);
+        UIFont* font = (UIFont*)CFDictionaryGetValue(dict, kCTFontAttributeName);
+        CTFontRef ctfont = CTFontCreateWithName((CFStringRef)[font fontName], [font pointSize], NULL);
+
+        CFIndex glyphCount = CTRunGetGlyphCount(run);
+
+        CGGlyph glyphs[glyphCount];
+        CFRange range = CFRangeMake(0, 0);
+        CTRunGetGlyphs(run, range, glyphs);
+
+        CGPoint positions[glyphCount];
+        CTRunGetPositions(run, range, positions);
+
+        CGRect boundingRects[glyphCount];
+        CTFontGetBoundingRectsForGlyphs(ctfont, kCTFontOrientationDefault, glyphs, boundingRects, glyphCount);
+
+        CGFloat y = 0;
+        CGFloat previousCharWidth = 0;
+
+        for (int glyphIndex = 0; glyphIndex < glyphCount; ++glyphIndex)
+        {
+            IINKGlyphMetrics metrics;
+            CGPoint bearing = boundingRects[glyphIndex].origin;
+            CGPoint position = positions[glyphIndex];
+
+            metrics.boundingBox.origin.x = position.x + bearing.x;
+            metrics.boundingBox.origin.y = y - bearing.y - boundingRects[glyphIndex].size.height;
+            metrics.boundingBox.size.width = boundingRects[glyphIndex].size.width;
+            metrics.boundingBox.size.height = boundingRects[glyphIndex].size.height;
+            metrics.leftSideBearing = -bearing.x;
+            metrics.rightSideBearing = 0;
+
+            previousCharWidth = metrics.boundingBox.size.width;
+
+            charBoxes[charIndex] = [NSValue valueWithBytes:&metrics objCType:@encode(IINKGlyphMetrics)];
+            charIndex++;
+        }
+    }
+
+    CFRelease(line);
+
+    return charBoxes;
+}
+
 
 + (NSAttributedString *)attributedStringWithText:(IINKText *)label
                                           spans:(NSArray<IINKTextSpan *> *)spans

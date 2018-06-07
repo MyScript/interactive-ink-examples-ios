@@ -9,12 +9,18 @@
 - (NSArray *)getCharacterBoundingBoxes:(IINKText *)text spans:(NSArray *)spans
 {
     NSAttributedString *attributedString = [NSAttributedString attributedStringWithText:text spans:spans];
-    return [attributedString charactersBoundingBoxers];
+    return [attributedString charactersBoundingBoxes];
 }
 
 - (float)getFontSizePx:(IINKStyle *)style
 {
     return style.fontSize;
+}
+
+- (NSArray<NSValue *> *)getGlyphMetrics:(IINKText *)text spans:(NSArray<IINKTextSpan *> *)spans
+{
+    NSAttributedString *attributedString = [NSAttributedString attributedStringWithText:text spans:spans];
+    return [attributedString glyphMetrics];
 }
 
 @end
