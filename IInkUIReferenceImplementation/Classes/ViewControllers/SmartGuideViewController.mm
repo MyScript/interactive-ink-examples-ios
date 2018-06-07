@@ -539,8 +539,6 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             if (!selected)
             {
-                smartGuideWordView.word.label = label;
-                smartGuideWordView.text = label;
 
                 NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX error:nil];
                 NSData *jiixData = [jiixStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -555,7 +553,15 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
                 [jiix setObject:jiixWords forKey:@"words"];
                 jiixData = [NSJSONSerialization dataWithJSONObject:jiix options:0 error:nil];
                 jiixStr = [[NSString alloc] initWithData:jiixData encoding:NSUTF8StringEncoding];
-                [self.editor import_:IINKMimeTypeJIIX data:jiixStr block:self.block error:nil];
+
+                NSError *error = nil;
+                [self.editor import_:IINKMimeTypeJIIX data:jiixStr block:self.block error:&error];
+
+                if (!error)
+                {
+                    smartGuideWordView.word.label = label;
+                    smartGuideWordView.text = label;
+                }
             }
         }];
         [alertController addAction:action];
