@@ -150,6 +150,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
 @implementation SmartGuideViewController
 
+
 #pragma mark - Life cycle
 
 - (void)loadView
@@ -179,6 +180,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self.moreButton setTitleColor:CONTROL_GRAY_COLOR forState:UIControlStateNormal];
     self.moreButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.moreButton];
+    self.moreButton.hidden = YES;
 
     self.rulerView = [[UIView alloc] init];
     self.rulerView.userInteractionEnabled = NO;
@@ -586,6 +588,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
+- (void)setDelegate:(id<SmartGuideViewControllerDelegate>)delegate
+{
+    self.moreButton.hidden = (delegate == nil);
+    _delegate = delegate;
+}
+
 - (IBAction)moreButtonTapped:(UIButton *)sender
 {
     if (self.fadeOutTimer)
@@ -594,7 +602,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.fadeOutTimer = nil;
     }
 
-    if (self.delegate && [self.delegate respondsToSelector:@selector(smartGuideViewController:didTapOnMoreButton:forBlock:)])
+    if (self.delegate && !self.moreButton.hidden && [self.delegate respondsToSelector:@selector(smartGuideViewController:didTapOnMoreButton:forBlock:)])
         [self.delegate smartGuideViewController:self didTapOnMoreButton:sender forBlock:self.block];
 }
 
@@ -653,7 +661,13 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         blockId:(nonnull NSString*)blockId
         message:(nonnull NSString*)message
 {
-
+    NSLog(@"onError: %@", message);
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unexpected Error"
+                                                                             message:message
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)viewTransformChanged:(IINKRenderer *)renderer
