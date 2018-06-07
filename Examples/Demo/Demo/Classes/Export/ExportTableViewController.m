@@ -72,6 +72,7 @@
 	NSString *part = self.editor.part.identifier;
 	NSString *type = self.editor.part.type;
     NSString *extension = [IINKMimeTypeValue IINKMimeTypeGetFileExtensions:mimeTypeNumber.value];
+    extension = [extension componentsSeparatedByString:@","].firstObject;
 	NSString *fileName = [NSString stringWithFormat:@"%@-%@%@", part, type, extension];
 	NSString *path = [[NSFileManager defaultManager] pathForFileInDocumentDirectory:fileName];
 
