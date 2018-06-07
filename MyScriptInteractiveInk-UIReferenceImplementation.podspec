@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'MyScriptInteractiveInk-UIReferenceImplementation'
   #TODO Change before release
-  s.version          = '1.1.2'
+  s.version          = '1.2.1'
   s.summary          = 'InteractiveInkUIReferenceImplementation : IInkRuntime UI interfaces reference implementation for iOS platforms.'
 
 # This description is used to generate tags and improve search results.
@@ -34,10 +34,11 @@ Visit https://developer.myscript.com/ to create your MyScript Developer account 
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.1'
+  s.swift_version         = '3.2'
 
   s.header_dir = 'IInkUIReferenceImplementation'
 
   s.source_files = 'IInkUIReferenceImplementation/Classes/**/*'
   s.preserve_paths = 'IInkUIReferenceImplementation/Classes/**'
-  s.dependency 'MyScriptInteractiveInk-Runtime', '~> 1.1.2'
+  s.dependency 'MyScriptInteractiveInk-Runtime', '1.2.1'
 end
