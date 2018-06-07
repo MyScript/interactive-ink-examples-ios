@@ -278,9 +278,26 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     int len1 = (int)oldWords.count;
     int len2 = (int)words.count;
 
-    int d[len1 + 1][len2 + 1];
     int i;
     int j;
+
+    int** d = (int**)malloc(sizeof(int*) * (len1+1));
+    if (d == NULL)
+    {
+        NSAssert(false, @"out of memory");
+        return;
+    }
+    d[0] = (int*)malloc(sizeof(int) * (len2+1) * (len1+1));
+    if (d[0] == NULL)
+    {
+        free(d);
+        NSAssert(false, @"out of memory");
+        return;
+    }
+    for (int i = 1; i < len1+1; ++i)
+    {
+        d[i] = d[0] + i * (len2+1);
+    }
 
     // Levenshtein distance algorithm at word level
     d[0][0] = 0;
@@ -333,6 +350,9 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
                 words[j].modified = ![oldWords[i].label isEqualToString:words[j].label];
         }
     }
+
+    free(d[0]);
+    free(d);
 }
 
 - (void)updateWithBlock:(IINKContentBlock *)block cause:(UpdateCause)cause
