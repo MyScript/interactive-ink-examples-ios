@@ -392,8 +392,10 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         else
         {
             // Build new word list from JIIX export
+            IINKParameterSet* conf = [self.editor.engine createParameterSet];
+            [conf setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
             NSError *error = nil;
-            NSString *jiixStr = [self.editor export_:block mimeType:IINKMimeTypeJIIX error:&error];
+            NSString *jiixStr = [self.editor export_:block mimeType:IINKMimeTypeJIIX overrideConfiguration:conf error:&error];
             if (error)
                 return; // when processing is ongoing, export may fail: ignore
             NSData *jiixData = [jiixStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -539,8 +541,10 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             if (!selected)
             {
+                IINKParameterSet* conf = [self.editor.engine createParameterSet];
+                [conf setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
 
-                NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX error:nil];
+                NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX overrideConfiguration:conf error:nil];
                 NSData *jiixData = [jiixStr dataUsingEncoding:NSUTF8StringEncoding];
                 NSDictionary *jiix_ = [NSJSONSerialization JSONObjectWithData:jiixData options:0 error:nil];
                 NSMutableDictionary *jiix = [jiix_ mutableCopy];
