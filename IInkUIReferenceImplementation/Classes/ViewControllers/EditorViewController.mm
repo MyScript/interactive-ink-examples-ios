@@ -33,6 +33,16 @@
 
 @implementation EditorViewController
 
+- (void)setSmartGuideDisabled:(BOOL)value
+{
+    if (value)
+        self.smartGuideViewController.editor = nil;
+    else
+        self.smartGuideViewController.editor = self.editor;
+
+    _smartGuideDisabled = value;
+}
+
 #pragma mark - Life cycle
 
 - (void)loadView

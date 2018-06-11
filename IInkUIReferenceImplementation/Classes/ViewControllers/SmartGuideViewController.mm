@@ -227,16 +227,23 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
 - (void)setEditor:(IINKEditor *)editor
 {
+    [self.editor removeDelegate:self];
+
     _editor = editor;
 
-    [self.editor addDelegate:self];
-    [self.editor.renderer addDelegate:self];
+    if (editor)
+    {
+        [self.editor addDelegate:self];
+        [self.editor.renderer addDelegate:self];
 
-    IINKConfiguration *configuration = editor.engine.configuration;
-    self.fadeOutWriteInDiagramDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write-in-diagram" defaultValue:3.0];
-    self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0];
-    self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0];
-    self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
+        IINKConfiguration *configuration = editor.engine.configuration;
+        self.fadeOutWriteInDiagramDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write-in-diagram" defaultValue:3.0];
+        self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0];
+        self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0];
+        self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
+    }
+
+    self.view.hidden = (_editor == nil);
 }
 
 - (void)setTextBlockStyle:(TextBlockStyle)textBlockStyle
