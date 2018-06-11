@@ -67,7 +67,7 @@
     ImageLoader *imageLoader = [[ImageLoader alloc] init];
 	imageLoader.cacheFolderPath = [[NSFileManager defaultManager] tmpDirectory];
 	imageLoader.editor = self.editor;
-    ImageDrawer *imageDrawer = [[ImageDrawer alloc] initWithExtension:mimeTypeNumber.value];
+    ImageDrawer *imageDrawer = [[ImageDrawer alloc] init];
 	imageDrawer.imageLoader = imageLoader;
 	NSString *part = self.editor.part.identifier;
 	NSString *type = self.editor.part.type;

@@ -18,17 +18,6 @@
 
 @implementation ImageDrawer
 
-- (instancetype)initWithExtension:(IINKMimeType)type
-{
-    NSAssert(type == IINKMimeTypeJPEG || type == IINKMimeTypePNG, @"unsupported image format");
-    self = [super init];
-    if (self)
-    {
-        self.type = type;
-    }
-    return self;
-}
-
 - (void)prepareImage:(CGSize)size
 {
     self.imageSize = size;
@@ -39,10 +28,21 @@
 {
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
+
+    NSString* ext = [path pathExtension];
+    IINKMimeType mime = (IINKMimeType)-1;
+    if ([ext isEqualToString:@"jpeg"])
+        mime = IINKMimeTypeJPEG;
+    else if ([ext isEqualToString:@"jpg"])
+        mime = IINKMimeTypeJPEG;
+    else if ([ext isEqualToString:@"jpe"])
+        mime = IINKMimeTypeJPEG;
+    else if ([ext isEqualToString:@"png"])
+        mime = IINKMimeTypePNG;
+
     NSData* imageData = nil;
 
-    switch (self.type)
+    switch (mime)
     {
         case IINKMimeTypeJPEG:
             imageData = UIImageJPEGRepresentation(image, 1);

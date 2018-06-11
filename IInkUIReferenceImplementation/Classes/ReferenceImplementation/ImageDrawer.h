@@ -13,6 +13,4 @@
 /** The image background color. **/
 @property(nullable, nonatomic,copy) UIColor *backgroundColor;
 
-- (instancetype)initWithExtension:(IINKMimeType)type;
-
 @end
