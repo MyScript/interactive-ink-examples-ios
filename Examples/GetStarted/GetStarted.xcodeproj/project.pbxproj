@@ -165,8 +165,6 @@
 				559D556F1F3B656200971CB1 /* Sources */,
 				559D55701F3B656200971CB1 /* Frameworks */,
 				559D55711F3B656200971CB1 /* Resources */,
-				C8E646E11309C25B70A2A767 /* [CP] Embed Pods Frameworks */,
-				7598D1E7536C5B5AE34CD1D9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -238,36 +236,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./retrieve_recognition-assets.sh GetStarted\n";
-		};
-		7598D1E7536C5B5AE34CD1D9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GetStarted/Pods-GetStarted-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C8E646E11309C25B70A2A767 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GetStarted/Pods-GetStarted-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		DE518F87D606FC0A6545FF25 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

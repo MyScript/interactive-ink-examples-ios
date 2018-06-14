@@ -233,8 +233,6 @@
 				92756D531E8139560070A794 /* Sources */,
 				92756D541E8139560070A794 /* Frameworks */,
 				92756D551E8139560070A794 /* Resources */,
-				CEF6EC10728AF5F8B8100F71 /* [CP] Embed Pods Frameworks */,
-				E2EDED0101F5F46CF5D563E5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -326,36 +324,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./retrieve_recognition-assets.sh Demo";
-		};
-		CEF6EC10728AF5F8B8100F71 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Demo/Pods-Demo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E2EDED0101F5F46CF5D563E5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Demo/Pods-Demo-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
