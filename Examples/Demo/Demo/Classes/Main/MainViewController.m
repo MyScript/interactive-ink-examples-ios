@@ -282,36 +282,43 @@
 - (void)showMoreMenuWithBlock:(IINKContentBlock *)block position:(CGPoint)p sourceView:(UIView *)sourceView sourceRect:(CGRect)sourceRect
 {
     IINKEditor *editor = self.editorViewController.editor;
-    NSArray<NSString *> *supportedAddBlockTypes = editor.supportedAddBlockTypes;
-    NSArray<IINKConversionStateValue *> *supportedConversionStates = [editor getSupportedTargetConversionState:block];
-
-    bool isContainer = [block.type isEqualToString:@"Container"];
+    IINKContentBlock *rootBlock = editor.rootBlock;
+    
+    if ([block.type isEqualToString:@"Container"])
+        block = rootBlock;
+    
+    bool onRawContent = [editor.part.type isEqualToString:@"Raw Content"];
+    bool onTextDocument = [editor.part.type isEqualToString:@"Text Document"];
+    
     bool isRoot = [block.identifier isEqualToString:[editor rootBlock].identifier];
+    bool isEmpty = [editor isEmpty:block];
 
-    bool displayConvert  = supportedConversionStates.count > 0 && !isContainer;
-    bool displayAddBlock = supportedAddBlockTypes.count > 0 && isContainer;
-    bool displayAddImage = NO; // count > 0 && isContainer;
-    bool displayRemove   = !isRoot && !isContainer;
-    bool displayCopy     = !isRoot && !isContainer;
-    bool displayPaste    = supportedAddBlockTypes.count > 0 && isContainer;
-    bool displayImport   = NO;
-    bool displayExport   = NO;
+    NSArray<NSString *> *supportedTypes = editor.supportedAddBlockTypes;
+    //NSArray<IINKMimeTypeValue *> *supportedImports = [editor getSupportedImportMimeTypes:block];
+    //NSArray<IINKMimeTypeValue *> *supportedExports = [editor getSupportedExportMimeTypes:(onRawContent ? rootBlock : block)];
+    NSArray<IINKConversionStateValue *> *supportedStates = [editor getSupportedTargetConversionState:block];
+    
+    bool hasTypes = supportedTypes.count > 0;
+    //bool hasImports = supportedImports.count > 0;
+    //bool hasExports = supportedExports.count > 0;
+    bool hasStates = supportedStates.count > 0;
+
+    bool displayConvert  = hasStates && !isEmpty;
+    bool displayAddBlock = hasTypes && isRoot;
+    bool displayAddImage = NO; // hasTypes && isRoot;
+    bool displayRemove   = !isRoot;
+    bool displayCopy     = onTextDocument ? !isRoot : !onRawContent;
+    bool displayPaste    = hasTypes && isRoot;
+    bool displayImport   = NO; // hasImports;
+    bool displayExport   = NO; // hasExports;
 
     NSMutableArray<UIAlertAction*> *actions = [NSMutableArray array];
 
-    if (displayConvert)
-    {
-        UIAlertAction *convert = [UIAlertAction actionWithTitle:@"Convert" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [editor convert:block targetState:supportedConversionStates[0].value error:nil];
-        }];
-        [actions addObject:convert];
-    }
-
     if (displayAddBlock)
     {
-        for (NSUInteger i = 0, count = [supportedAddBlockTypes count]; i < count; ++i)
+        for (NSUInteger i = 0, count = [supportedTypes count]; i < count; ++i)
         {
-            NSString *type = [supportedAddBlockTypes objectAtIndex:i];
+            NSString *type = [supportedTypes objectAtIndex:i];
             if ([type isEqualToString:@"Text"])
                 continue; // We don't allow adding text here because it needs content
             NSString *addTitle = [NSString stringWithFormat:@"Add %@", type];
@@ -330,14 +337,6 @@
         [actions addObject:addImage];
     }
 
-    if (displayPaste)
-    {
-        UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [editor paste:p error:nil];
-        }];
-        [actions addObject:paste];
-    }
-
     if (displayRemove)
     {
         UIAlertAction *remove = [UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -345,7 +344,15 @@
         }];
         [actions addObject:remove];
     }
-
+    
+    if (displayConvert)
+    {
+        UIAlertAction *convert = [UIAlertAction actionWithTitle:@"Convert" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor convert:block targetState:supportedStates[0].value error:nil];
+        }];
+        [actions addObject:convert];
+    }
+    
     if (displayCopy)
     {
         UIAlertAction *copy = [UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -354,6 +361,14 @@
         [actions addObject:copy];
     }
 
+    if (displayPaste)
+    {
+        UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [editor paste:p error:nil];
+        }];
+        [actions addObject:paste];
+    }
+    
     if (displayImport)
     {
         UIAlertAction *import = [UIAlertAction actionWithTitle:@"Import" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
