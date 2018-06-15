@@ -10,6 +10,7 @@ This repository contains a "get started" (in both Objective-C and Swift), a comp
 
 This getting started section has been tested with Xcode 9 and supports iOS 9+.
 [Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) needs to be installed on your computer.
+We advice using a Cocoapods 1.5.0 or later. It will allow you to get rid of `use_frameworks!`, in order to use our pod together with pure swift pods or other pods that previously required `use_frameworks!`.
 
 ### Installation
 
@@ -17,7 +18,7 @@ This getting started section has been tested with Xcode 9 and supports iOS 9+.
 
 2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript.com/getting-started)
 
-3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate/MyCertificate.c`, and `Examples/iinkSDKIOSExample/iinkSDKIOSExample/MyScriptCertificate/MyCertificate.c`
+3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate/MyCertificate.c`, and `Examples/Demo/Demo/MyScriptCertificate/MyCertificate.c`
 
 ## Building your own integration
 
