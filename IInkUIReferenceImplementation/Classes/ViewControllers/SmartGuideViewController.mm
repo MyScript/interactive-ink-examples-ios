@@ -166,6 +166,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
     self.wordScrollView = [[UIScrollView alloc] init];
     self.wordScrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.wordScrollView.widthAnchor constraintGreaterThanOrEqualToConstant:50].active = YES;
     [self.view addSubview:self.wordScrollView];
 
     self.wordStackView = [[UIStackView alloc] init];
@@ -210,6 +211,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.leftConstraint = [self.view.leftAnchor constraintEqualToAnchor:self.view.superview.leftAnchor constant:0];
         self.topConstraint = [self.view.topAnchor constraintEqualToAnchor:self.view.superview.topAnchor constant:0];
         self.widthConstraint = [self.view.widthAnchor constraintEqualToConstant:100];
+        self.widthConstraint.priority = UILayoutPriorityDefaultHigh - 1;
         self.leftConstraint.active = YES;
         self.topConstraint.active = YES;
         self.widthConstraint.active = YES;
