@@ -10,6 +10,7 @@
 
 #define DPI_PHONE           326
 #define DPI_PHONE_PLUS      401
+#define DPI_PHONE_X         463
 
 #define DPI_PAD             132
 #define DPI_PAD_MINI        163
@@ -64,6 +65,11 @@ static BOOL isPhone()
     return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone);
 }
 
+static BOOL isPhoneX()
+{
+    return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [[UIScreen mainScreen] nativeBounds].size.height == 2436);
+}
+
 static BOOL isPhonePlus()
 {
     return ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone && [UIScreen mainScreen].scale > 2);
@@ -73,7 +79,11 @@ static float dpi()
 {
     if (isPhone())
     {
-        if (isPhonePlus())
+        if (isPhoneX())
+        {
+            return DPI_PHONE_X;
+        }
+        else if (isPhonePlus())
         {
             return DPI_PHONE_PLUS;
         }
