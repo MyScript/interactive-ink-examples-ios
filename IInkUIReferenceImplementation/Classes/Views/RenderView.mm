@@ -44,6 +44,12 @@
     self.canvas.imageLoader = imageLoader;
 }
 
+- (void)layerWillDraw:(CALayer *)layer
+{
+    // 8-bit sRGB (probably fine unless there’s wide color content)
+    self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
+}
+
 - (void)drawRect:(CGRect)rect
 {
     CGContextRef context = UIGraphicsGetCurrentContext();
