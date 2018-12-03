@@ -67,9 +67,8 @@
 
 #pragma mark - ATK
 
-+ (UIFont *)fontFromStyle:(IINKStyle *)style
++ (UIFont *)fontFromStyle:(IINKStyle *)style forString:(NSString*)string
 {
-    NSString *fontFamily = style.fontFamily;
     NSString *iOSStyle = style.fontStyle;
     BOOL isItalic = NO;
     BOOL isBold = NO;
@@ -77,31 +76,46 @@
         isBold = YES;
     if ([iOSStyle isEqualToString:@"italic"])
         isItalic = YES;
-    
+    NSArray<NSString *> *fontFamilies = [[style.fontFamily componentsSeparatedByString:@","] mutableCopy];
+    NSString *mainFontFamily = nil;
+    NSMutableArray<UIFontDescriptor *> *cascadingFontDescriptors = [[NSMutableArray alloc] init];
+    for (NSString *fontFamilyCandidate in fontFamilies) {
+        NSString *fontFamily = [fontFamilyCandidate stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if ([fontFamily containsString:@"STIX"])
+        {
+            if(isItalic)
+            {
+                fontFamily = @"STIXGeneral-Italic";
+            }
+            else
+            {
+                fontFamily = @"STIXGeneral";
+            }
+        }
+        if(!mainFontFamily)
+        {
+            mainFontFamily = fontFamily;
+        }
+        else
+        {
+            CFStringRef name = (__bridge CFStringRef) fontFamily;
+            [cascadingFontDescriptors addObject:(__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(name, style.fontSize)];
+        }
+    }
     NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
-    fontAttributes[(id)kCTFontNameAttribute] = fontFamily;
-    
-    // TODO: Fix font naming problems
-    if ([fontFamily containsString:@"STIX"])
+    fontAttributes[(id)kCTFontNameAttribute] = mainFontFamily;
+    if([cascadingFontDescriptors count] > 0)
     {
-        fontFamily = @"STIXGeneral";
+        fontAttributes[(id)kCTFontCascadeListAttribute] = cascadingFontDescriptors;
     }
-    
-    if ([fontFamily containsString:@"STIX"])
-    {
-        fontAttributes[(id)kCTFontNameAttribute]        = fontFamily;
-        fontAttributes[(id)kCTFontCascadeListAttribute] = @[
-                                                            (__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(CFSTR("STIXGeneral"), style.fontSize),
-                                                            (__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(CFSTR("STIXGeneral-Italic"), style.fontSize),
-                                                            ];
-    }
-    
-    UIFontDescriptor *fontDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:fontAttributes];
-    UIFont *styledFont = [UIFont fontWithDescriptor:fontDescriptor size:style.fontSize];
-    
-    if (!styledFont)
-        styledFont = [UIFont systemFontOfSize:style.fontSize];
-    
+    CTFontDescriptorRef descriptor  = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)(fontAttributes));
+    CTFontRef           cascadeFont = CTFontCreateWithFontDescriptor(descriptor, style.fontSize, NULL);
+
+    CTFontRef           bestFont    = CTFontCreateForString(cascadeFont, (__bridge CFStringRef)(string), CFRangeMake(0, [string length]));
+    NSString           *fontName    = CFBridgingRelease(CTFontCopyName(bestFont, kCTFontPostScriptNameKey));
+
+    UIFont   *styledFont            = [UIFont fontWithName:fontName size:style.fontSize];
+
     if (isItalic)
     {
         styledFont = [styledFont italicFont];
@@ -110,8 +124,16 @@
     {
         styledFont = [styledFont boldFont];
     }
-    
+
+    CFRelease(descriptor);
+    CFRelease(cascadeFont);
+    CFRelease(bestFont);
+
     return styledFont;
 }
 
++ (UIFont *)fontFromStyle:(IINKStyle *)style
+{
+    return [UIFont fontFromStyle:style forString:@"a"];
+}
 @end

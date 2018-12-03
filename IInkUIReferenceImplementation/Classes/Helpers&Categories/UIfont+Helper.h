@@ -8,6 +8,7 @@
 
 + (void)loadCustomFontsFromBundle:(NSBundle *)bundle;
 
++ (UIFont *)fontFromStyle:(IINKStyle *)style forString:(NSString*)string;
 + (UIFont *)fontFromStyle:(IINKStyle *)style;
 
 @end
