@@ -146,6 +146,8 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 @property (strong, nonatomic) NSTimer *removeHighlightTimer;
 @property (nonatomic) NSTimeInterval removeHighlightDelay;
 
+@property (strong, nonatomic) IINKParameterSet* exportParams;
+
 @end
 
 @implementation SmartGuideViewController
@@ -232,6 +234,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self.editor removeDelegate:self];
 
     _editor = editor;
+    self.exportParams = nullptr;
 
     if (editor)
     {
@@ -243,6 +246,13 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0];
         self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0];
         self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
+
+        self.exportParams = [self.editor.engine createParameterSet];
+        [self.exportParams setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
+        [self.exportParams setBoolean:NO forKey:@"export.jiix.bounding-box" error:nil];
+        [self.exportParams setBoolean:NO forKey:@"export.jiix.glyphs" error:nil];
+        [self.exportParams setBoolean:NO forKey:@"export.jiix.primitives" error:nil];
+        [self.exportParams setBoolean:NO forKey:@"export.jiix.chars" error:nil];
     }
 
     self.view.hidden = (_editor == nil);
@@ -403,10 +413,8 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         else
         {
             // Build new word list from JIIX export
-            IINKParameterSet* conf = [self.editor.engine createParameterSet];
-            [conf setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
             NSError *error = nil;
-            NSString *jiixStr = [self.editor export_:block mimeType:IINKMimeTypeJIIX overrideConfiguration:conf error:&error];
+            NSString *jiixStr = [self.editor export_:block mimeType:IINKMimeTypeJIIX overrideConfiguration:self.exportParams error:&error];
             if (error)
                 return; // when processing is ongoing, export may fail: ignore
             NSData *jiixData = [jiixStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -552,10 +560,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             if (!selected)
             {
-                IINKParameterSet* conf = [self.editor.engine createParameterSet];
-                [conf setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
-
-                NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX overrideConfiguration:conf error:nil];
+                NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX overrideConfiguration:self.exportParams error:nil];
                 NSData *jiixData = [jiixStr dataUsingEncoding:NSUTF8StringEncoding];
                 NSDictionary *jiix_ = [NSJSONSerialization JSONObjectWithData:jiixData options:0 error:nil];
                 NSMutableDictionary *jiix = [jiix_ mutableCopy];
