@@ -320,12 +320,31 @@
         {
             NSString *type = [supportedTypes objectAtIndex:i];
             if ([type isEqualToString:@"Text"])
-                continue; // We don't allow adding text here because it needs content
-            NSString *addTitle = [NSString stringWithFormat:@"Add %@", type];
-            UIAlertAction *add = [UIAlertAction actionWithTitle:addTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [editor addBlock:p type:type error:nil];
-            }];
-            [actions addObject:add];
+            {
+                UIAlertAction *add = [UIAlertAction actionWithTitle:@"Add Text" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+                    UIAlertController *input = [UIAlertController alertControllerWithTitle:@"Add Text"
+                                                                                   message:nil
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    [input addTextFieldWithConfigurationHandler:nil];
+
+                    UIAlertAction *add = [UIAlertAction actionWithTitle:@"Add Text" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        [editor addBlock:p type:@"Text" mimeType:IINKMimeTypeText data:input.textFields[0].text error:nil];
+                    }];
+                    [input addAction:add];
+
+                    [self presentViewController:input animated:YES completion:nil];
+                }];
+                [actions addObject:add];
+            }
+            else
+            {
+                NSString *addTitle = [NSString stringWithFormat:@"Add %@", type];
+                UIAlertAction *add = [UIAlertAction actionWithTitle:addTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [editor addBlock:p type:type error:nil];
+                }];
+                [actions addObject:add];
+            }
         }
     }
 
