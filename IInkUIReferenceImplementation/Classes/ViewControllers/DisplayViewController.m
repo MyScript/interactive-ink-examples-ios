@@ -90,6 +90,7 @@
     [self.backgroundRenderView setNeedsDisplay];
     [self.modelRenderView setNeedsDisplay];
     [self.tempRenderView setNeedsDisplay];
+    [self.captureRenderView setNeedsDisplay];
 }
 
 #pragma mark - KVO
