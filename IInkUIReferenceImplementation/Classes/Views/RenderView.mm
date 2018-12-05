@@ -46,8 +46,11 @@
 
 - (void)layerWillDraw:(CALayer *)layer
 {
-    // 8-bit sRGB (probably fine unless there’s wide color content)
-    self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
+    if (@available(iOS 10, *))
+    {
+        // 8-bit sRGB (probably fine unless there’s wide color content)
+        self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
+    }
 }
 
 - (void)drawRect:(CGRect)rect
