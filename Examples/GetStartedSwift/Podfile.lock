@@ -1,7 +1,7 @@
 PODS:
-  - MyScriptInteractiveInk-Runtime (1.3.0)
-  - MyScriptInteractiveInk-UIReferenceImplementation (1.3.0):
-    - MyScriptInteractiveInk-Runtime (= 1.3.0)
+  - MyScriptInteractiveInk-Runtime (1.3.1)
+  - MyScriptInteractiveInk-UIReferenceImplementation (1.3.1):
+    - MyScriptInteractiveInk-Runtime (= 1.3.1)
 
 DEPENDENCIES:
   - MyScriptInteractiveInk-UIReferenceImplementation (from `../..`)
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../.."
 
 SPEC CHECKSUMS:
-  MyScriptInteractiveInk-Runtime: 6681aff5cfbe903d86f59027e914a1be8dc2d8f8
-  MyScriptInteractiveInk-UIReferenceImplementation: e7e24fca850e6eba5b3096fb81c6a7efb5e53289
+  MyScriptInteractiveInk-Runtime: 33f7c6eebb150638ee1a5ac6da986a0e841b8c8c
+  MyScriptInteractiveInk-UIReferenceImplementation: 63d5fa85a24d53d8e97816fe9aa3a68ee67574f2
 
-PODFILE CHECKSUM: 27f95f1d72ada3346d8fa53522f94c241ef76b83
+PODFILE CHECKSUM: b601e332774ad4216753c377e501089be0e327a7
 
 COCOAPODS: 1.5.3
