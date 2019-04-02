@@ -169,12 +169,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = MyScript;
 				TargetAttributes = {
 					554A0B6C1F4745DF00C30FE6 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 7WY4422N73;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -385,7 +386,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.myscript.iink.GetStartedSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "GetStartedSwift/Supporting Files/GetStartedSwift-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				WARNING_LDFLAGS = "-Weverything";
 			};
 			name = Debug;
@@ -402,7 +403,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.myscript.iink.GetStartedSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "GetStartedSwift/Supporting Files/GetStartedSwift-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				WARNING_LDFLAGS = "-Weverything";
 			};
 			name = Release;

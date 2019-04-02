@@ -13,15 +13,15 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        editorViewController = childViewControllers.first as! EditorViewController
+        editorViewController = (children.first as! EditorViewController)
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             if (appDelegate.engine == nil)
             {
                 let alert = UIAlertController(title: "Certificate error",
                                               message: appDelegate.engineErrorMessage,
-                                              preferredStyle: UIAlertControllerStyle.alert)
+                                              preferredStyle: UIAlertController.Style.alert)
                 alert.addAction(UIAlertAction(title: "OK",
-                                              style: UIAlertActionStyle.default,
+                                              style: UIAlertAction.Style.default,
                                               handler: {(action: UIAlertAction) -> Void in
                                                   exit(1)
                                               }))
