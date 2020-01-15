@@ -676,12 +676,14 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         message:(nonnull NSString*)message
 {
     NSLog(@"onError: %@", message);
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unexpected Error"
-                                                                             message:message
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
+    [self runBlockOnMainQueueASync:^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                 message:message
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }];
 }
 
 - (void)viewTransformChanged:(IINKRenderer *)renderer
@@ -689,4 +691,15 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self updateWithBlock:self.block cause:UpdateCauseView];
 }
 
+- (void)runBlockOnMainQueueASync:(void (^)(void))block
+{
+    if ([NSThread isMainThread])
+    {
+        block();
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }
+}
 @end
