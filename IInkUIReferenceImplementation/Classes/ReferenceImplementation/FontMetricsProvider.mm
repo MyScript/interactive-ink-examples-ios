@@ -43,7 +43,7 @@
 
         CFDictionaryRef dict = CTRunGetAttributes(run);
         UIFont* font = (UIFont*)CFDictionaryGetValue(dict, kCTFontAttributeName);
-        CTFontRef ctfont = CTFontCreateWithName((CFStringRef)[font fontName], [font pointSize], NULL);
+        CTFontRef ctfont = (__bridge CTFontRef)font;
 
         CFIndex glyphCount = CTRunGetGlyphCount(run);
 
