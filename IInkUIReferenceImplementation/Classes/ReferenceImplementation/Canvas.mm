@@ -301,11 +301,7 @@
 {
     if ([mimeType containsString:@"image"])
     {
-        id object = [self.imageLoader objectForKey:url];
-        if (!object)
-        {
-            object = [self.imageLoader insertNewObjectForKey:url];
-        }
+        id object = [self.imageLoader imageFromURL:url];
 
         CGContextSaveGState(self.context);
         

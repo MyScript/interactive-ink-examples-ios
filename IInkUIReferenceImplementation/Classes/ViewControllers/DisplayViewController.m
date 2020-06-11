@@ -153,6 +153,7 @@
     Canvas *canvas = [[Canvas alloc] init];
     canvas.context = CGLayerGetContext(buffer);
     canvas.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
+    canvas.imageLoader = _imageLoader;
     CGContextSaveGState(canvas.context);
     canvas.size = size;
     return canvas;

@@ -5,12 +5,8 @@
 
 @interface ImageLoader : NSObject
 
-@property (strong, nonatomic) NSString *cacheFolderPath;
-
 @property (weak, nonatomic) IINKEditor *editor;
 
-- (id)objectForKey:(NSString *)key;
-
-- (id)insertNewObjectForKey:(NSString *)key;
+- (id)imageFromURL:(NSString *)key;
 
 @end

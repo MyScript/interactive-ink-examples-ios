@@ -5,9 +5,11 @@
 #import <iink/IINKContentPart.h>
 #import <iink/IINKContentPackage.h>
 
+#define CACHE_MAX_BYTES (200*1000000) // 200M (in Bytes)
+
 @interface ImageLoader ()
 
-@property (strong, nonatomic) NSMutableDictionary *dictionary;
+@property (strong, nonatomic) NSCache *cache;
 
 @end
 
@@ -18,30 +20,26 @@
     self = [super init];
     if (self)
     {
-        self.dictionary = [NSMutableDictionary dictionary];
+        self.cache = [[NSCache alloc] init];
+        self.cache.name = [[NSString alloc] initWithFormat:@"Image Loader (%p)", self];
+        self.cache.totalCostLimit = CACHE_MAX_BYTES;
     }
     return self;
 }
 
-- (id)objectForKey:(NSString *)key
-{
-    return self.dictionary[key];
-}
 
-- (id)insertNewObjectForKey:(NSString *)key
+- (id)imageFromURL:(NSString *)url
 {
-    NSTimeInterval timeInterval = [[NSDate date] timeIntervalSince1970];
-    NSString *fileName = [NSString stringWithFormat:@"%f.png", timeInterval];
-    NSString *filePath = [_cacheFolderPath stringByAppendingPathComponent:fileName];
-    [self.editor.part.package extractObject:key toFile:filePath.decomposedStringWithCanonicalMapping error:nil];
-    
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
-    if (data)
-    {
-        self.dictionary[key] = data;
+    NSData* obj = nil;
+    @synchronized(self) {
+        obj = [self.cache objectForKey:url];
+        if (obj == nil)
+        {
+            obj = [NSData dataWithContentsOfFile:url];
+            [self.cache setObject:obj forKey:url cost:obj.length];
+        }
     }
-    
-    return data;
+    return obj;
 }
 
 @end

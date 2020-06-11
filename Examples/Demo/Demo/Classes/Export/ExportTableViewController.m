@@ -65,7 +65,6 @@
 	IINKMimeTypeValue *mimeTypeNumber = self.mimeTypes[indexPath.row];
 
     ImageLoader *imageLoader = [[ImageLoader alloc] init];
-	imageLoader.cacheFolderPath = [[NSFileManager defaultManager] tmpDirectory];
 	imageLoader.editor = self.editor;
     ImageDrawer *imageDrawer = [[ImageDrawer alloc] init];
 	imageDrawer.imageLoader = imageLoader;
