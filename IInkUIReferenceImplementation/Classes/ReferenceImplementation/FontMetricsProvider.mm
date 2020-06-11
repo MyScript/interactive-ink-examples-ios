@@ -30,7 +30,7 @@
 {
     NSAttributedString *attributedString = [NSAttributedString attributedStringWithText:text spans:spans];
 
-    NSMutableArray<NSValue *> *glyphMetrics = [[NSMutableArray alloc] initWithCapacity:attributedString.length];
+    NSMutableArray<NSValue *> *glyphMetrics = [[NSMutableArray alloc] initWithCapacity:text.glyphCount];
 
     CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)attributedString);
     CFArrayRef runArray = CTLineGetGlyphRuns(line);
