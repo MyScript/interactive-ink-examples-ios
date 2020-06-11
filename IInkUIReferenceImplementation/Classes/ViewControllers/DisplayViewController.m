@@ -2,6 +2,8 @@
 
 #import "DisplayViewController.h"
 #import "RenderView.h"
+#import "Canvas.h"
+#import "OffscreenRenderSurfaces.h"
 #import <iink/IINKRenderer.h>
 
 @interface DisplayViewController ()
@@ -10,6 +12,8 @@
 @property (strong, nonatomic) RenderView *modelRenderView;
 @property (strong, nonatomic) RenderView *tempRenderView;
 @property (strong, nonatomic) RenderView *captureRenderView;
+
+@property (strong, nonatomic) OffscreenRenderSurfaces *offscreenRenderSurfaces;
 
 @property (nonatomic) BOOL didSetConstraints;
 
@@ -29,29 +33,36 @@
 - (void)loadView {
     self.view = [[UIView alloc] initWithFrame:CGRectZero];
     self.view.backgroundColor = [UIColor clearColor];
+
+    self.offscreenRenderSurfaces = [[OffscreenRenderSurfaces alloc] init];
+    self.offscreenRenderSurfaces.scale = self.view.contentScaleFactor;
   
     self.backgroundRenderView = [[RenderView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.backgroundRenderView];
     self.backgroundRenderView.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundRenderView.backgroundColor = self.view.backgroundColor;
+    self.backgroundRenderView.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
     
     self.modelRenderView = [[RenderView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.modelRenderView];
     self.modelRenderView.translatesAutoresizingMaskIntoConstraints = NO;
     self.modelRenderView.backgroundColor = [UIColor clearColor];
-    self.tempRenderView.opaque = NO;
+    self.modelRenderView.opaque = NO;
+    self.modelRenderView.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
     
     self.tempRenderView = [[RenderView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.tempRenderView];
     self.tempRenderView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tempRenderView.backgroundColor = [UIColor clearColor];
     self.tempRenderView.opaque = NO;
+    self.tempRenderView.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
     
     self.captureRenderView = [[RenderView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.captureRenderView];
     self.captureRenderView.translatesAutoresizingMaskIntoConstraints = NO;
     self.captureRenderView.backgroundColor = [UIColor clearColor];
     self.captureRenderView.opaque = NO;
+    self.captureRenderView.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
 }
 
 - (void)viewDidLoad
@@ -147,6 +158,43 @@
             [self.captureRenderView setNeedsDisplayInRect:rect];
         }
     });
+}
+
+- (uint32_t)createOffscreenRenderSurfaceWithWidth:(int)width height:(int)height alphaMask:(BOOL)alphaMask
+{
+    CGFloat scale = self.offscreenRenderSurfaces.scale;
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(scale * width, scale * height), NO, 1);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGLayerRef buffer = CGLayerCreateWithContext(context, CGSizeMake(scale * width, scale * height), nil);
+    UIGraphicsEndImageContext();
+
+    CGContextScaleCTM(CGLayerGetContext(buffer), scale, scale);
+    return [self.offscreenRenderSurfaces addSurfaceWithBuffer:buffer];
+}
+
+- (void)releaseOffscreenRenderSurface:(uint32_t)surfaceId
+{
+    [self.offscreenRenderSurfaces releaseSurfaceForId:surfaceId];
+}
+
+- (nonnull id<IINKICanvas>)createOffscreenRenderCanvas:(uint32_t)surfaceId
+{
+    CGLayerRef buffer = [self.offscreenRenderSurfaces getSurfaceBufferForId:surfaceId];
+    CGSize pixelSize = CGLayerGetSize(buffer);
+    CGFloat scale = self.offscreenRenderSurfaces.scale;
+    CGSize size = CGSizeMake(pixelSize.width / scale, pixelSize.height / scale);
+
+    Canvas *canvas = [[Canvas alloc] init];
+    canvas.context = CGLayerGetContext(buffer);
+    canvas.offscreenRenderSurfaces = self.offscreenRenderSurfaces;
+    CGContextSaveGState(canvas.context);
+    canvas.size = size;
+    return canvas;
+}
+
+- (void)releaseOffscreenRenderCanvas:(id<IINKICanvas>)canvas
+{
+    CGContextRestoreGState(((Canvas *)canvas).context);
 }
 
 #pragma mark - Constraints

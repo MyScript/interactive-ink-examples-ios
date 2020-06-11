@@ -3,15 +3,15 @@
 #import <iink/graphics/IINKICanvas.h>
 #import <UIKit/UIKit.h>
 
-@class ImageLoader, IINKStyle;
+@class ImageLoader, OffscreenRenderSurfaces;
 
 @interface Canvas : NSObject <IINKICanvas>
 
 @property (nonatomic) CGContextRef context;
 @property (nonatomic) CGSize size;
+@property (nonatomic) BOOL clearAtStartDraw;
 
-@property (strong, nonatomic) UIFont *font;
-@property (strong, nonatomic) ImageLoader *imageLoader;
-@property (strong, nonatomic) IINKStyle *style;
+@property (weak, nonatomic) ImageLoader *imageLoader;
+@property (weak, nonatomic) OffscreenRenderSurfaces *offscreenRenderSurfaces;
 
 @end

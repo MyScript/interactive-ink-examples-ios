@@ -2,6 +2,7 @@
 
 #import "RenderView.h"
 #import "Canvas.h"
+#import "OffscreenRenderSurfaces.h"
 #import <iink/IINKRenderer.h>
 
 @interface RenderView()
@@ -44,6 +45,12 @@
     self.canvas.imageLoader = imageLoader;
 }
 
+- (void)setOffscreenRenderSurfaces:(OffscreenRenderSurfaces *)offscreenRenderSurfaces
+{
+    _offscreenRenderSurfaces = offscreenRenderSurfaces;
+    self.canvas.offscreenRenderSurfaces = offscreenRenderSurfaces;
+}
+
 - (void)layerWillDraw:(CALayer *)layer
 {
     if (@available(iOS 10, *))
@@ -57,6 +64,7 @@
 {
     self.canvas.context = UIGraphicsGetCurrentContext();
     self.canvas.size = self.bounds.size;
+    self.canvas.clearAtStartDraw = NO;
 
     switch (self.layerType)
     {

@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 #import <iink/IINKIRenderTarget.h>
 
-@class ImageLoader, IINKRenderer;
+@class IINKRenderer, ImageLoader, OffscreenRenderSurfaces;
 
 @interface RenderView : UIView
 
@@ -12,5 +12,7 @@
 @property (weak, nonatomic) IINKRenderer *renderer;
 
 @property (weak, nonatomic) ImageLoader *imageLoader;
+
+@property (weak, nonatomic) OffscreenRenderSurfaces *offscreenRenderSurfaces;
 
 @end

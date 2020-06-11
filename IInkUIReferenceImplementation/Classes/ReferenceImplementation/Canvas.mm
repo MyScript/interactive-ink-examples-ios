@@ -9,6 +9,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
 #import "ImageLoader.h"
+#import "OffscreenRenderSurfaces.h"
 #import <iink/graphics/IINKStyle.h>
 #import "IInkUIRefImplUtils.h"
 
@@ -18,6 +19,7 @@
 }
 
 @property (nonatomic) CGAffineTransform aTransform;
+@property (strong, nonatomic) IINKStyle *style;
 @property (nonatomic) NSMutableDictionary *fontAttributeDict;
 @property (nonatomic, strong) NSString *clippedGroupIdentifier;
 
@@ -30,6 +32,7 @@
     self = [super init];
     if (self)
     {
+        self.clearAtStartDraw = YES;
         self.style = [[IINKStyle alloc] init];
         self.aTransform = CGAffineTransformIdentity;
         self.fontAttributeDict = [[NSMutableDictionary alloc] init];
@@ -61,12 +64,15 @@
     CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
     transform = CGAffineTransformTranslate(transform, 0, -self.size.height);
     CGContextSetTextMatrix(self.context, transform);
+
+    CGContextClipToRect(self.context, rect);
+    if (self.clearAtStartDraw)
+        CGContextClearRect(self.context, rect);
 }
 
 - (void)endDraw
 {
     CGContextRestoreGState(self.context);
-    self.context = nil;
 }
 
 #pragma mark - View Properties
@@ -206,12 +212,14 @@
     self.style.fontVariant = variant;
     self.style.fontWeight = weight;
     
-    self.font = [UIFont fontFromStyle:self.style];
-    NSMutableParagraphStyle *s = [[NSMutableParagraphStyle alloc] init];
-    [s setLineSpacing:self.style.fontLineHeight];
-    [self.fontAttributeDict setObject:self.font forKey:NSFontAttributeName];
+    UIFont *font = [UIFont fontFromStyle:self.style];
+    [self.fontAttributeDict setObject:font forKey:NSFontAttributeName];
+
     [self.fontAttributeDict setValue:@(0) forKey:NSLigatureAttributeName];
-    [self.fontAttributeDict setObject:s forKey:NSParagraphStyleAttributeName];
+
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:self.style.fontLineHeight];
+    [self.fontAttributeDict setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
 }
 
 #pragma mark - Group Management
@@ -320,6 +328,30 @@
     CGContextSetTextPosition(self.context, origin.x, origin.y);
     CTLineDraw(line, self.context);
     CFRelease(line);
+}
+
+- (void)blendOffscreen:(uint32_t)surfaceId src:(CGRect)src dest:(CGRect)dest color:(uint32_t)color
+{
+    CGLayerRef buffer = [self.offscreenRenderSurfaces getSurfaceBufferForId:surfaceId];
+    assert(buffer != nullptr);
+    CGSize size = CGLayerGetSize(buffer);
+    CGFloat scale = self.offscreenRenderSurfaces.scale;
+
+    CGContextSaveGState(self.context);
+    CGContextClipToRect(self.context, dest);
+
+    CGFloat alpha = (color & 0xff) / 255.0f;
+    CGContextSetAlpha(self.context, alpha);
+
+    CGRect src_ = CGRectMake(src.origin.x * scale, src.origin.y * scale, src.size.width * scale, src.size.height * scale);
+
+    CGFloat x = dest.origin.x - src_.origin.x / src_.size.width * dest.size.width;
+    CGFloat y = dest.origin.y - src_.origin.y / src_.size.height * dest.size.height;
+    CGFloat width = size.width / src_.size.width * dest.size.width;
+    CGFloat height = size.height / src_.size.height * dest.size.height;
+    CGContextDrawLayerInRect(self.context, CGRectMake(x, y, width, height), buffer);
+
+    CGContextRestoreGState(self.context);
 }
 
 @end
