@@ -291,7 +291,7 @@
     if ([block.type isEqualToString:@"Container"])
         block = rootBlock;
     
-    bool onRawContent = [editor.part.type isEqualToString:@"Raw Content"];
+    //bool onRawContent = [editor.part.type isEqualToString:@"Raw Content"];
     bool onTextDocument = [editor.part.type isEqualToString:@"Text Document"];
     
     bool isRoot = [block.identifier isEqualToString:[editor rootBlock].identifier];
@@ -311,8 +311,8 @@
     bool displayAddBlock = hasTypes && isRoot;
     bool displayAddImage = NO; // hasTypes && isRoot;
     bool displayRemove   = !isRoot;
-    bool displayCopy     = onTextDocument ? !isRoot : !onRawContent;
-    bool displayPaste    = hasTypes && isRoot;
+    bool displayCopy     = !onTextDocument || !isRoot;
+    bool displayPaste    = isRoot;
     bool displayImport   = NO; // hasImports;
     bool displayExport   = NO; // hasExports;
 
@@ -387,7 +387,18 @@
     if (displayPaste)
     {
         UIAlertAction *paste = [UIAlertAction actionWithTitle:@"Paste" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [editor paste:p error:nil];
+
+            NSError* error = nil;
+            [editor paste:p error:&error];
+            if (error)
+            {
+                UIAlertController *errorController = [UIAlertController alertControllerWithTitle:@"Paste Error"
+                                                                                         message:[error localizedFailureReason]
+                                                                                  preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [errorController addAction:okAction];
+                [self presentViewController:errorController animated:YES completion:nil];
+            }
         }];
         [actions addObject:paste];
     }
