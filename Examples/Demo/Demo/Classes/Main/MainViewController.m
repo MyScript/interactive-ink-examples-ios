@@ -500,13 +500,16 @@
     NSArray<File *> *existingIInkFiles = [[FilesController sharedController] iinkFilesFromIInkDirectory];
 
     NSString *newName = nil;
+    NSString *newTempName = nil;
     int num = 0;
     do
     {
-        newName = [NSString stringWithFormat:@"File%d.iink", ++num];
+        ++num;
+        newName = [NSString stringWithFormat:@"File%d.iink", num];
+        newTempName = [NSString stringWithFormat:@"File%d.iink-files", num];
     }
     while ([existingIInkFiles indexOfObjectPassingTest:^BOOL(File * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        return [obj.filename isEqualToString:newName];
+        return [obj.filename isEqualToString:newName] || [obj.filename isEqualToString:newTempName];
     }] != NSNotFound);
 
 	NSString *fullPath = [[NSFileManager defaultManager] pathForFileInIinkDirectory:newName];

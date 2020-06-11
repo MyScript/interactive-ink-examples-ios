@@ -46,6 +46,32 @@
     {
         NSLog(@"Error while retrieving files: %@", error.localizedDescription);
     }
+
+    error = nil;
+    NSArray * tempFiles = [fileManager contentsOfDirectoryAtPath:NSTemporaryDirectory() error:&error];
+    if (!error)
+    {
+        for (NSString *filename in tempFiles)
+        {
+            if ([filename.pathExtension isEqualToString:@"iink-files"])
+            {
+                File *file = [[File alloc] init];
+                file.filename = filename;
+                NSDictionary<NSFileAttributeKey, id> *attributes = [fileManager attributesOfItemAtPath:[documentDirectory stringByAppendingPathComponent:filename] error:nil];
+                if (attributes)
+                {
+                    file.mofificationDate = attributes[NSFileModificationDate];
+                    file.fileSize = [attributes[NSFileSize] floatValue];
+                }
+                [results addObject:file];
+            }
+        }
+    }
+    else
+    {
+        NSLog(@"Error while retrieving temporary files: %@", error.localizedDescription);
+    }
+
     return [NSArray arrayWithArray:results];
 }
 
