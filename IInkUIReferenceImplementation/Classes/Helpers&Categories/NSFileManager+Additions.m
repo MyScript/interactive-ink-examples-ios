@@ -14,7 +14,7 @@
         [self createDirectoryAtPath:iinkFilesDirectory withIntermediateDirectories:NO attributes:nil error:&error];
         if (error)
         {
-            NSLog(@"Can't create dir %@, error %@", iinkFilesDirectory, error.localizedDescription);
+            NSLog(@"Cannot create dir %@, error %@", iinkFilesDirectory, error.localizedDescription);
         }
     }
 }

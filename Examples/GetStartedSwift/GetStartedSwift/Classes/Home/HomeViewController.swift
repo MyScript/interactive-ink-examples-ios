@@ -55,7 +55,7 @@ class HomeViewController: UIViewController {
             resultPackage = try engine.createPackage(fullPath.decomposedStringWithCanonicalMapping)
             
             // Add a blank page type Text Document
-            if let part = try resultPackage?.createPart("Text Document") /* Options are : "Diagram", "Drawing", "Math", "Text Document", "Text" */ {
+            if let part = try resultPackage?.createPart("Text Document") /* Options are : "Diagram", "Drawing", "Math", "Raw Content", "Text Document", "Text" */ {
                 self.title = "Type: " + part.type
             }
         }

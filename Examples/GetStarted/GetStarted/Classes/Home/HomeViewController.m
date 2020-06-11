@@ -41,7 +41,7 @@
     IINKContentPackage *package = [engine createPackage:fullPath.decomposedStringWithCanonicalMapping error:nil];
     
     // Add a blank page type Text Document
-    IINKContentPart *part = [package createPart:@"Text Document" error:nil]; // Options are : "Diagram", "Drawing", "Math", "Text Document", "Text"
+    IINKContentPart *part = [package createPart:@"Text Document" error:nil]; // Options are : "Diagram", "Drawing", "Math", "Raw Content", "Text Document", "Text"
     
     self.title = [NSString stringWithFormat:@"Type: %@", part.type];
     return package;
