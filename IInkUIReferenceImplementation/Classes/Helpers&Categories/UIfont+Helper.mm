@@ -69,71 +69,83 @@
 
 + (UIFont *)fontFromStyle:(IINKStyle *)style forString:(NSString*)string
 {
-    NSString *iOSStyle = style.fontStyle;
+    NSString *fontFamily = style.fontFamily;
+
+    if ([fontFamily containsString:@"STIX"])
+    {
+        if ([style.fontStyle isEqualToString:@"italic"])
+        {
+            fontFamily = @"STIXGeneral-Italic";
+        }
+        else
+        {
+            fontFamily = @"STIXGeneral";
+        }
+    }
+
+    NSString *lowerCaseFontFamily = [fontFamily lowercaseString];
+    BOOL isLight = NO;
     BOOL isItalic = NO;
     BOOL isBold = NO;
     if (style.fontWeight > 600)
         isBold = YES;
-    if ([iOSStyle isEqualToString:@"italic"])
+    if (style.fontWeight < 400 || [lowerCaseFontFamily containsString:@"light"])
+        isLight = YES;
+    if ([style.fontStyle isEqualToString:@"italic"])
         isItalic = YES;
-    NSArray<NSString *> *fontFamilies = [[style.fontFamily componentsSeparatedByString:@","] mutableCopy];
-    NSString *mainFontFamily = nil;
-    NSMutableArray<UIFontDescriptor *> *cascadingFontDescriptors = [[NSMutableArray alloc] init];
-    for (NSString *fontFamilyCandidate in fontFamilies) {
-        NSString *fontFamily = [fontFamilyCandidate stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+    CTFontRef cascadeFont = nullptr;
+    if ([fontFamily isEqualToString:@"sans-serif"])
+    {
+      UIFont *font = nil;
+      NSOperatingSystemVersion minimumVersion;
+      minimumVersion.majorVersion = 13;
+      minimumVersion.minorVersion = 0;
+      minimumVersion.patchVersion = 0;
+      BOOL useSystemFont = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:minimumVersion];
+      if (useSystemFont)
+      {
+          font = [UIFont systemFontOfSize:style.fontSize weight:UIFontWeightRegular];
+
+      }
+      else
+      {
+          font = [UIFont fontWithName:@".SFUIText" size:style.fontSize];
+      }
+      cascadeFont = (CTFontRef)CFBridgingRetain(font);
+    }
+    else
+    {
+        NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
+        fontAttributes[(id)kCTFontNameAttribute] = fontFamily;
         if ([fontFamily containsString:@"STIX"])
         {
-            if(isItalic)
-            {
-                fontFamily = @"STIXGeneral-Italic";
-            }
-            else
-            {
-                fontFamily = @"STIXGeneral";
-            }
+            fontAttributes[(id)kCTFontCascadeListAttribute] = @[
+            (__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(CFSTR("STIXGeneral"), style.fontSize),
+                                                                (__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(CFSTR("STIXGeneral-Italic"), style.fontSize),
+                                                                ];
         }
-        else if ([fontFamily isEqualToString:@"sans-serif"])
-        {
-            fontFamily = @".SF UI Text";
-        }
-        if(!mainFontFamily)
-        {
-            mainFontFamily = fontFamily;
-        }
-        else
-        {
-            CFStringRef name = (__bridge CFStringRef) fontFamily;
-            [cascadingFontDescriptors addObject:(__bridge_transfer id)CTFontDescriptorCreateWithNameAndSize(name, style.fontSize)];
-        }
+        CTFontDescriptorRef descriptor  = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)(fontAttributes));
+        cascadeFont           = CTFontCreateWithFontDescriptor(descriptor, style.fontSize, NULL);
+        CFRelease(descriptor);
     }
-    NSMutableDictionary *fontAttributes = [NSMutableDictionary dictionary];
-    fontAttributes[(id)kCTFontNameAttribute] = mainFontFamily;
-    if([cascadingFontDescriptors count] > 0)
-    {
-        fontAttributes[(id)kCTFontCascadeListAttribute] = cascadingFontDescriptors;
-    }
-    CTFontDescriptorRef descriptor  = CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)(fontAttributes));
-    CTFontRef           cascadeFont = CTFontCreateWithFontDescriptor(descriptor, style.fontSize, NULL);
 
-    CTFontRef           bestFont    = CTFontCreateForString(cascadeFont, (__bridge CFStringRef)(string), CFRangeMake(0, [string length]));
-    NSString           *fontName    = CFBridgingRelease(CTFontCopyName(bestFont, kCTFontPostScriptNameKey));
-
-    UIFont   *styledFont            = [UIFont fontWithName:fontName size:style.fontSize];
+    CTFontRef        bestFont = CTFontCreateForString(cascadeFont, (__bridge CFStringRef)(string), CFRangeMake(0, [string length]));
+    UIFont           *font    = (__bridge UIFont*)bestFont;
 
     if (isItalic)
     {
-        styledFont = [styledFont italicFont];
+        font = [font italicFont];
     }
     else if (isBold)
     {
-        styledFont = [styledFont boldFont];
+        font = [font boldFont];
     }
 
-    CFRelease(descriptor);
     CFRelease(cascadeFont);
     CFRelease(bestFont);
 
-    return styledFont;
+    return font;
 }
 
 + (UIFont *)fontFromStyle:(IINKStyle *)style
