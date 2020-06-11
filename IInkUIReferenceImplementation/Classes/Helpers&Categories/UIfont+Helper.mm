@@ -92,6 +92,10 @@
                 fontFamily = @"STIXGeneral";
             }
         }
+        else if ([fontFamily isEqualToString:@"sans-serif"])
+        {
+            fontFamily = @".SF UI Text";
+        }
         if(!mainFontFamily)
         {
             mainFontFamily = fontFamily;
@@ -136,4 +140,5 @@
 {
     return [UIFont fontFromStyle:style forString:@"a"];
 }
+
 @end
