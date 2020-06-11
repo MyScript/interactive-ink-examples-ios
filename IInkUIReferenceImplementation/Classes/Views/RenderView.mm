@@ -55,15 +55,8 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [self.canvas reset];
-    
-    // Specific transform for text since we use CoreText to draw
-    CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
-    transform = CGAffineTransformTranslate(transform, 0, -self.bounds.size.height);
-  
-    CGContextSaveGState(context);
-    CGContextSetTextMatrix(context, transform);
+    self.canvas.context = UIGraphicsGetCurrentContext();
+    self.canvas.size = self.bounds.size;
 
     switch (self.layerType)
     {
@@ -80,8 +73,6 @@
             [self.renderer drawCaptureStrokes:rect canvas:self.canvas];
             break;
     }
-
-    CGContextRestoreGState(context);
 }
 
 @end

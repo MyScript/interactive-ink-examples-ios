@@ -30,25 +30,46 @@
     self = [super init];
     if (self)
     {
-        [self ownInit];
+        self.style = [[IINKStyle alloc] init];
+        self.aTransform = CGAffineTransformIdentity;
+        self.fontAttributeDict = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (void)ownInit
-{
-    self.style = [[IINKStyle alloc] init];
-    self.aTransform = CGAffineTransformIdentity;
-    self.fontAttributeDict = [[NSMutableDictionary alloc] init];
+#pragma mark - Drawing Session Management
 
-    if (UIGraphicsGetCurrentContext())
+- (void)startDrawInRect:(CGRect)rect
+{
+    if (self.context == nil)
     {
-        // Enforce defaults
-        [self.style setAllChangeFlags];
-        [self.style applyTo:self];
-        [self.style clearChangeFlags];
+        self.context = UIGraphicsGetCurrentContext();
     }
+
+    (void)[self.style init];
+    self.aTransform = CGAffineTransformIdentity;
+    [self.fontAttributeDict removeAllObjects];
+
+    CGContextSaveGState(self.context);
+
+    // Enforce defaults
+    [self.style setAllChangeFlags];
+    [self.style applyTo:self];
+    [self.style clearChangeFlags];
+
+    // Specific transform for text since we use CoreText to draw
+    CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+    transform = CGAffineTransformTranslate(transform, 0, -self.size.height);
+    CGContextSetTextMatrix(self.context, transform);
 }
+
+- (void)endDraw
+{
+    CGContextRestoreGState(self.context);
+    self.context = nil;
+}
+
+#pragma mark - View Properties
 
 - (CGAffineTransform)getTransform
 {
@@ -61,9 +82,8 @@
     CGAffineTransform resultTransform = CGAffineTransformConcat(transform, invertedTransform);
     
     _aTransform = transform;
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextConcatCTM(context, resultTransform);
+
+    CGContextConcatCTM(self.context, resultTransform);
 }
 
 #pragma mark - Stroking Properties
@@ -71,30 +91,27 @@
 - (void)setStrokeColor:(uint32_t)color
 {
     self.style.strokeColor = color;
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetStrokeColorWithColor(context, [IInkUIRefImplUtils uiColor:color].CGColor);
+    CGContextSetStrokeColorWithColor(self.context, [IInkUIRefImplUtils uiColor:color].CGColor);
 }
 
 - (void)setStrokeWidth:(float)width
 {
     self.style.strokeWidth = width;
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetLineWidth(context, width);
+    CGContextSetLineWidth(self.context, width);
 }
 
 - (void)setStrokeLineCap:(IINKLineCap)lineCap
 {
     self.style.strokeLineCap = lineCap;
-    CGContextRef context = UIGraphicsGetCurrentContext();
     switch (lineCap) {
         case IINKLineCapButt:
-            CGContextSetLineCap(context, kCGLineCapButt);
+            CGContextSetLineCap(self.context, kCGLineCapButt);
             break;
         case IINKLineCapRound:
-            CGContextSetLineCap(context, kCGLineCapRound);
+            CGContextSetLineCap(self.context, kCGLineCapRound);
             break;
         case IINKLineCapSquare:
-            CGContextSetLineCap(context, kCGLineCapSquare);
+            CGContextSetLineCap(self.context, kCGLineCapSquare);
             break;
         default:
             break;
@@ -104,16 +121,15 @@
 - (void)setStrokeLineJoin:(IINKLineJoin)lineJoin
 {
     self.style.strokeLineJoin = lineJoin;
-    CGContextRef context = UIGraphicsGetCurrentContext();
     switch (lineJoin) {
         case IINKLineJoinMiter:
-            CGContextSetLineJoin(context, kCGLineJoinMiter);
+            CGContextSetLineJoin(self.context, kCGLineJoinMiter);
             break;
         case IINKLineJoinRound:
-            CGContextSetLineJoin(context, kCGLineJoinRound);
+            CGContextSetLineJoin(self.context, kCGLineJoinRound);
             break;
         case IINKLineJoinBevel:
-            CGContextSetLineJoin(context, kCGLineJoinBevel);
+            CGContextSetLineJoin(self.context, kCGLineJoinBevel);
             break;
         default:
             break;
@@ -123,14 +139,11 @@
 - (void)setStrokeMiterLimit:(float)limit
 {
     self.style.strokeMiterLimit = limit;
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetMiterLimit(context, limit);
+    CGContextSetMiterLimit(self.context, limit);
 }
 
 - (void)setLineDash
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-
     if (self.style.strokeDashArray.count > 0)
     {
         CGFloat dashes[self.style.strokeDashArray.count];
@@ -139,11 +152,11 @@
             NSNumber *dash = self.style.strokeDashArray[i];
             dashes[i] = dash.floatValue;
         }
-        CGContextSetLineDash(context, self.style.strokeDashOffset, dashes, self.style.strokeDashArray.count);
+        CGContextSetLineDash(self.context, self.style.strokeDashOffset, dashes, self.style.strokeDashArray.count);
     }
     else
     {
-        CGContextSetLineDash(context, 0, NULL, 0);
+        CGContextSetLineDash(self.context, 0, NULL, 0);
     }
 }
 
@@ -169,8 +182,7 @@
 - (void)setFillColor:(uint32_t)color
 {
     self.style.fillColor = color;
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, [IInkUIRefImplUtils uiColor:color].CGColor);
+    CGContextSetFillColorWithColor(self.context, [IInkUIRefImplUtils uiColor:color].CGColor);
     [self.fontAttributeDict setObject:[IInkUIRefImplUtils uiColor:color] forKey:NSForegroundColorAttributeName];
 }
 
@@ -210,9 +222,8 @@
     {
         self.clippedGroupIdentifier = identifier;
         [self.style clearChangeFlags];
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSaveGState(context);
-        CGContextClipToRect(context, CGRectMake(region.origin.x, region.origin.y, CGRectGetWidth(region), CGRectGetHeight(region)));
+        CGContextSaveGState(self.context);
+        CGContextClipToRect(self.context, CGRectMake(region.origin.x, region.origin.y, CGRectGetWidth(region), CGRectGetHeight(region)));
     }
 }
 
@@ -220,8 +231,7 @@
 {
     if ([identifier isEqualToString:self.clippedGroupIdentifier])
     {
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextRestoreGState(context);
+        CGContextRestoreGState(self.context);
         [self.style applyTo:self];
         self.clippedGroupIdentifier = nil;
     }
@@ -246,43 +256,37 @@
 
 - (void)drawPath:(id<IINKIPath>)path
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
     Path *aPath = path;
 
     if ([IInkUIRefImplUtils alphaComponentFromColor:self.style.fillColor] > 0.)
     {
-        CGContextAddPath(context, aPath.bezierPath.CGPath);
-        self->fillPath(context);
+        CGContextAddPath(self.context, aPath.bezierPath.CGPath);
+        self->fillPath(self.context);
     }
     if ([IInkUIRefImplUtils alphaComponentFromColor:self.style.strokeColor] > 0.)
     {
-        CGContextAddPath(context, aPath.bezierPath.CGPath);
-        CGContextStrokePath(context);
+        CGContextAddPath(self.context, aPath.bezierPath.CGPath);
+        CGContextStrokePath(self.context);
     }
 }
 
 - (void)drawRectangle:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-
     if ([IInkUIRefImplUtils alphaComponentFromColor:self.style.fillColor] > 0.)
     {
-        CGContextFillRect(context, rect);
+        CGContextFillRect(self.context, rect);
     }
     if ([IInkUIRefImplUtils alphaComponentFromColor:self.style.strokeColor] > 0.)
     {
-        CGContextStrokeRect(context, rect);
+        CGContextStrokeRect(self.context, rect);
     }
 }
 
 - (void)drawLine:(CGPoint)from to:(CGPoint)to
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-
-    CGContextMoveToPoint(context, from.x, from.y);
-    CGContextAddLineToPoint(context, to.x, to.y);
-    CGContextStrokePath(context);
+    CGContextMoveToPoint(self.context, from.x, from.y);
+    CGContextAddLineToPoint(self.context, to.x, to.y);
+    CGContextStrokePath(self.context);
 }
 
 - (void)drawObject:(NSString *)url mimeType:(NSString*)mimeType region:(CGRect)rect
@@ -294,34 +298,28 @@
         {
             object = [self.imageLoader insertNewObjectForKey:url];
         }
+
+        CGContextSaveGState(self.context);
         
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSaveGState(context);
-        
-        CGContextTranslateCTM(context, 0, 2 * rect.origin.y + CGRectGetHeight(rect));
-        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM(self.context, 0, 2 * rect.origin.y + CGRectGetHeight(rect));
+        CGContextScaleCTM(self.context, 1, -1);
         
         UIImage *image = [UIImage imageWithData:object];
         
         CGRect aRect = CGRectMake(rect.origin.x, rect.origin.y, CGRectGetWidth(rect), CGRectGetHeight(rect));
-        CGContextDrawImage(context, aRect, image.CGImage);
-        CGContextRestoreGState(context);
+        CGContextDrawImage(self.context, aRect, image.CGImage);
+        CGContextRestoreGState(self.context);
     }
 }
 
 - (void)drawText:(NSString *)label anchor:(CGPoint)origin region:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
+    [self.fontAttributeDict setObject:[UIFont fontFromStyle:self.style forString:label] forKey:NSFontAttributeName];
     NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:label attributes:self.fontAttributeDict];
     CTLineRef line = CTLineCreateWithAttributedString((CFAttributedStringRef)attrString);
-    CGContextSetTextPosition(context, origin.x, origin.y);
-    CTLineDraw(line, context);
+    CGContextSetTextPosition(self.context, origin.x, origin.y);
+    CTLineDraw(line, self.context);
     CFRelease(line);
-}
-
-- (void)reset
-{
-    [self ownInit];
 }
 
 @end
