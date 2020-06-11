@@ -121,6 +121,11 @@
     });
 }
 
+- (float)pixelDensity
+{
+    return [[UIScreen mainScreen] scale];
+}
+
 - (uint32_t)createOffscreenRenderSurfaceWithWidth:(int)width height:(int)height alphaMask:(BOOL)alphaMask
 {
     CGFloat scale = self.offscreenRenderSurfaces.scale;
