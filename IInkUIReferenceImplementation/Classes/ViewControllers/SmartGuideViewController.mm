@@ -55,7 +55,8 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     self = [super init];
     if (self)
     {
-        self.label = [object objectForKey:@"label"];
+        NSString *reflowLabel = [object objectForKey:@"reflow-label"];
+        self.label = (reflowLabel == nil) ? [object objectForKey:@"label"] : reflowLabel;
         self.candidates = [object objectForKey:@"candidates"];
         self.modified = NO;
     }
@@ -99,7 +100,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     {
         self.word = word;
         self.index = index;
-        self.text = isWhitespace ? @" " : word.label;
+        self.text = word.label;
         self.textColor = word.modified ? [UIColor blackColor] : WORD_GRAY_COLOR;
 
         if (!isWhitespace)
@@ -248,11 +249,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
 
         self.exportParams = [self.editor.engine createParameterSet];
-        [self.exportParams setBoolean:NO forKey:@"export.jiix.strokes" error:nil];
-        [self.exportParams setBoolean:NO forKey:@"export.jiix.bounding-box" error:nil];
-        [self.exportParams setBoolean:NO forKey:@"export.jiix.glyphs" error:nil];
-        [self.exportParams setBoolean:NO forKey:@"export.jiix.primitives" error:nil];
-        [self.exportParams setBoolean:NO forKey:@"export.jiix.chars" error:nil];
+        [self.exportParams setBoolean:YES forKey:@"export.jiix.text.words"   error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.strokes"      error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.bounding-box" error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.glyphs"       error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.primitives"   error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.chars"        error:nil];
     }
 
     self.view.hidden = (_editor == nil);
