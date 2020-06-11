@@ -101,11 +101,15 @@
     // File actions
     
     UIAlertAction *newAction = [UIAlertAction actionWithTitle:@"New" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (self.currentPackage)
+            [self.currentPackage saveWithError:nil];
         [self performSegueWithIdentifier:@"NewPartSegueId" sender:self];
     }];
     [alertController addAction:newAction];
 
     UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Open" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (self.currentPackage)
+            [self.currentPackage saveWithError:nil];
         [self performSegueWithIdentifier:@"OpenDocumentSegueId" sender:self];
     }];
 	[alertController addAction:openAction];
