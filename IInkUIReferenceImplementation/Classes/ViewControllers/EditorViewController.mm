@@ -25,7 +25,6 @@
 @property (nonatomic) float originalScale;
 
 @property (strong, nonatomic) UIPanGestureRecognizer *panGestureRecognizer;
-@property (strong, nonatomic) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
 @property (nonatomic) BOOL didSetConstraints;
 
@@ -72,12 +71,7 @@
     self.panGestureRecognizer.delegate = self;
     self.panGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect)];
     [self.inputView addGestureRecognizer:self.panGestureRecognizer];
-    
-    self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGestureRecognizerAction:)];
-    self.panGestureRecognizer.delegate = self;
-    self.panGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect)];
-    [self.inputView addGestureRecognizer:self.pinchGestureRecognizer];
-    
+
     self.inputMode = InputModeForcePen;
 }
 
@@ -185,37 +179,6 @@
     [self.displayViewController refreshViews];
 }
 
-#pragma mark - Pinch gesture recognizer (zoom/unzoom page)
-
-- (IBAction)pinchGestureRecognizerAction:(UIPinchGestureRecognizer *)pinchGestureRecognizer
-{
-    if (!self.editor) {
-        return;
-    }
-    
-    if (!self.editor.isScrollAllowed) {
-        return;
-    }
-    
-    CGPoint pinchCenter = [pinchGestureRecognizer locationInView:self.view];
-    if (pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
-    {
-        self.originalScale = self.editor.renderer.viewScale;
-    }
-    
-    float previousScale = self.editor.renderer.viewScale;
-    float newScale = (float)(self.originalScale * pinchGestureRecognizer.scale);
-
-    [self.editor.renderer zoom:pinchCenter by:newScale / previousScale error:nil];
-    
-    if (pinchGestureRecognizer.state == UIGestureRecognizerStateEnded)
-    {
-        self.originalScale = self.editor.renderer.viewScale;
-    }
-    
-    [self.displayViewController refreshViews];
-}
-
 #pragma mark - Input mode
 
 - (void)setInputMode:(InputMode)inputMode
@@ -226,19 +189,14 @@
     {
         case InputModeForcePen:
             self.panGestureRecognizer.enabled = NO;
-            self.pinchGestureRecognizer.enabled = NO;
             break;
         case InputModeForceTouch:
             self.panGestureRecognizer.enabled = YES;
             self.panGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect), @(UITouchTypeStylus)];
-            self.pinchGestureRecognizer.enabled = YES;
-            self.pinchGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect), @(UITouchTypeStylus)];
             break;
         case InputModeAuto:
             self.panGestureRecognizer.enabled = YES;
             self.panGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect)];
-            self.pinchGestureRecognizer.enabled = YES;
-            self.pinchGestureRecognizer.allowedTouchTypes = @[@(UITouchTypeDirect)];
             break;
     }
 
