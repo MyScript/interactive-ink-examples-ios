@@ -27,6 +27,11 @@
         self.navigationItem.leftBarButtonItem = nil;
     
 	self.createBarButtonItem.enabled = NO;
+
+    if (@available(iOS 13, *))
+    {
+        self.modalInPresentation = YES;
+    }
 }
     
 #pragma mark - UITableViewDataSource
