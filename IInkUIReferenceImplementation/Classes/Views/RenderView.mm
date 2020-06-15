@@ -69,13 +69,11 @@
     switch (self.layerType)
     {
         case IINKLayerTypeBackground:
-            [self.renderer drawBackground:rect canvas:self.canvas];
             break;
         case IINKLayerTypeModel:
             [self.renderer drawModel:rect canvas:self.canvas];
             break;
         case IINKLayerTypeTemporary:
-            [self.renderer drawTemporaryItems:rect canvas:self.canvas];
             break;
         case IINKLayerTypeCapture:
             [self.renderer drawCaptureStrokes:rect canvas:self.canvas];

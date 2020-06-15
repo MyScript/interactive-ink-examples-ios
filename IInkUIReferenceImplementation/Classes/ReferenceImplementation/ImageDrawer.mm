@@ -89,13 +89,6 @@
         [renderer drawCaptureStrokes:area canvas:canvas];
         CGContextRestoreGState(context);
     }
-    if (layers & IINKLayerTypeTemporary)
-    {
-        CGContextSaveGState(context);
-        CGContextSetTextMatrix(context, transform);
-        [renderer drawTemporaryItems:area canvas:canvas];
-        CGContextRestoreGState(context);
-    }
     if (layers & IINKLayerTypeModel)
     {
         CGContextSaveGState(context);
