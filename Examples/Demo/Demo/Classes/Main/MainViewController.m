@@ -481,7 +481,14 @@
 
     // Bind the part to the editor
     [editor setViewSize:self.containerView.bounds.size error:nil];
-    editor.part = part;
+
+    NSError* error;
+    [editor setPart:part error:&error];
+    if (error)
+    {
+        editor.part = nil;
+        return ;
+    }
 
     self.containerView.userInteractionEnabled = (editor != nil);
 
