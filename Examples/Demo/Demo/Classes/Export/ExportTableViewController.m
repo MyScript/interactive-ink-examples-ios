@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #import <IInkUIReferenceImplementation/IInkUIReferenceImplementation.h>
 #import "ExportTableViewController.h"

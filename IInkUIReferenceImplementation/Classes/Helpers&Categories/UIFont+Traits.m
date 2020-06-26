@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #import "UIFont+Traits.h"
 #import <CoreText/CoreText.h>

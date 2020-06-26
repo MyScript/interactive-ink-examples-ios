@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #import "EditorViewController.h"
 #import "NSFileManager+Additions.h"

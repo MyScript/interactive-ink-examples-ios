@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #ifndef IInkUIRefImpl_h
 #define IInkUIRefImpl_h

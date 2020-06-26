@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #import "NSAttributedString+Helper.h"
 #import <CoreText/CoreText.h>

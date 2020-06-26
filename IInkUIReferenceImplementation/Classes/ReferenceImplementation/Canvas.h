@@ -1,4 +1,4 @@
-// Copyright MyScript. All right reserved.
+// Copyright @ MyScript. All rights reserved.
 
 #import <iink/graphics/IINKICanvas.h>
 #import <UIKit/UIKit.h>
