@@ -181,7 +181,7 @@
 		559D556B1F3B656200971CB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = MyScript;
 				TargetAttributes = {
 					559D55721F3B656200971CB1 = {
@@ -193,7 +193,7 @@
 			};
 			buildConfigurationList = 559D556E1F3B656200971CB1 /* Build configuration list for PBXProject "GetStarted" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
