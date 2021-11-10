@@ -1,9 +1,9 @@
-platform :ios, '10.0'
+platform :ios, '13.0'
 
 target 'Demo' do
 
   # Pods for Demo
 
-  pod 'MyScriptInteractiveInk-UIReferenceImplementation', :path => '../..'
+  pod 'MyScriptInteractiveInk-Runtime', '1.5.1'
 
 end
