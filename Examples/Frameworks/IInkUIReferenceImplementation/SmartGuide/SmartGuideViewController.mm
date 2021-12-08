@@ -679,38 +679,20 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 }
 
 - (void)onError:(nonnull IINKEditor*)editor
-        blockId:(nonnull NSString*)blockId
-        message:(nonnull NSString*)message
+       blockId:(nonnull NSString*)blockId
+          code:(IINKEditorError)code
+       message:(nonnull NSString*)message
 {
-    NSLog(@"onError: %@", message);
-    [self runBlockOnMainQueueASync:^{
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                                 message:message
-                                                                          preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alertController addAction:okAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }];
+   NSLog(@"onError: (%lu) %@", (unsigned long)code, message);
+   [self runBlockOnMainQueueASync:^{
+       UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                message:message
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+       UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+       [alertController addAction:okAction];
+       [self presentViewController:alertController animated:YES completion:nil];
+   }];
 }
-
-// The method under is coommented because it's not available with version 1.4.1 of the IINK Runtime pod.
-// Once the pod will be updated with 1.5 version, the method above will need to be deleted, to be replaced with the commented method
-
-//- (void)onError:(nonnull IINKEditor*)editor
-//        blockId:(nonnull NSString*)blockId
-//           code:(IINKEditorError)code
-//        message:(nonnull NSString*)message
-//{
-//    NSLog(@"onError: (%lu) %@", (unsigned long)code, message);
-//    [self runBlockOnMainQueueASync:^{
-//        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
-//                                                                                 message:message
-//                                                                          preferredStyle:UIAlertControllerStyleAlert];
-//        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-//        [alertController addAction:okAction];
-//        [self presentViewController:alertController animated:YES completion:nil];
-//    }];
-//}
 
 - (void)viewTransformChanged:(IINKRenderer *)renderer
 {

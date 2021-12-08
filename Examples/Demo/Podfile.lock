@@ -1,8 +1,8 @@
 PODS:
-  - MyScriptInteractiveInk-Runtime (1.4.1)
+  - MyScriptInteractiveInk-Runtime (1.5.1)
 
 DEPENDENCIES:
-  - MyScriptInteractiveInk-Runtime (= 1.4.1)
+  - MyScriptInteractiveInk-Runtime (= 1.5.1)
 
 SPEC REPOS:
   trunk:
