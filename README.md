@@ -2,13 +2,13 @@
 
 Interactive Ink SDK is the best way to integrate handwriting recognition capabilities into your iOS application. Interactive Ink extends digital ink to allow users to more intuitively create, interact with, and share content in digital form. Handwritten text, mathematical equations or even diagrams are interpreted in real-time to be editable via simple gestures, responsive and easy to convert to a neat output.
 
-This repository contains a "get started" (in both Objective-C and Swift), a complete example (in Objective-C) and a reference implementation of the iOS integration part (in Objective-C) that developers using Interactive Ink SDK can reuse inside their projects.
+This repository contains a "get started" example, a complete example and a reference implementation of the iOS integration part that developers using Interactive Ink SDK can reuse inside their projects. We are in the process on moving the parts of this code that are in Objective C to Swift.
 
 ## Getting started
 
 ### Prerequisites
 
-This getting started section has been tested with Xcode 9 and supports iOS 9+.
+This getting started section has been tested with Xcode 12 and supports iOS 13+.
 [Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) needs to be installed on your computer.
 We advise using a Cocoapods 1.5.0 or later. It will allow you to get rid of `use_frameworks!`, in order to use our pod together with pure swift pods or other pods that previously required `use_frameworks!`.
 
@@ -18,7 +18,7 @@ We advise using a Cocoapods 1.5.0 or later. It will allow you to get rid of `use
 
 2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript.com/getting-started)
 
-3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c`, `Examples/GetStartedSwift/GetStartedSwift/MyScriptCertificate/MyCertificate.c`, and `Examples/Demo/Demo/MyScriptCertificate/MyCertificate.c`
+3. Copy this certificate to `Examples/GetStarted/GetStarted/MyScriptCertificate/MyCertificate.c` and `Examples/Demo/Demo/MyScriptCertificate/MyCertificate.c`
 
 ## Building your own integration
 
