@@ -5,12 +5,12 @@ DEPENDENCIES:
   - MyScriptInteractiveInk-Runtime (= 1.5.1)
 
 SPEC REPOS:
-  trunk:
+  https://scm.corp.myscript.com/scm/sdk/iink_sdk-cocoapods-specs.git:
     - MyScriptInteractiveInk-Runtime
 
 SPEC CHECKSUMS:
-  MyScriptInteractiveInk-Runtime: d17cf2ec1fc3a0c1383cbfa4f173b07d00573ea3
+  MyScriptInteractiveInk-Runtime: 07ccc31e0f2708a075c65433acda149ec49aa7ea
 
-PODFILE CHECKSUM: 8ab0060bc0a233e9fcaf2fe5822c44dfae84179a
+PODFILE CHECKSUM: 77115be0a7352ea5ed228cc508f13900a4d5b04a
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
