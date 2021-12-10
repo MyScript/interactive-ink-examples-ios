@@ -594,10 +594,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "../Frameworks/IInkUIReferenceImplementation/IInkUIReferenceImplementation-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				WARNING_CFLAGS = (
-					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
-				);
+				WARNING_CFLAGS = "-Wno-objc-missing-property-synthesis";
 			};
 			name = Debug;
 		};
@@ -627,10 +624,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "../Frameworks/IInkUIReferenceImplementation/IInkUIReferenceImplementation-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				WARNING_CFLAGS = (
-					"-Weverything",
-					"-Wno-objc-missing-property-synthesis",
-				);
+				WARNING_CFLAGS = "-Wno-objc-missing-property-synthesis";
 			};
 			name = Release;
 		};
