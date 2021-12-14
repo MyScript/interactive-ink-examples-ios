@@ -9,7 +9,7 @@ This repository contains a "get started" example, a complete example and a refer
 ### Prerequisites
 
 This getting started section has been tested with Xcode 12 and supports iOS 13+.
-[Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) needs to be installed on your computer.
+[Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) version 1.11.2 or later needs to be installed on your computer.
 
 ### Installation
 
@@ -21,11 +21,7 @@ This getting started section has been tested with Xcode 12 and supports iOS 13+.
 
 ## Building your own integration
 
-This repository provides you with a ready-to-use reference implementation of the iOS integration part, covering aspects like ink capture and rendering. It is located in `IInkUIReferenceImplementation` directory and can be simply added to your project by appending the following line to your pod file:
-
-```ruby
-pod "MyScriptInteractiveInk-UIReferenceImplementation"
-```
+This repository provides you with a ready-to-use reference implementation of the iOS integration part, covering aspects like ink capture and rendering. It is located in `IInkUIReferenceImplementation` directory.
 
 ## Documentation
 
