@@ -679,6 +679,13 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 }
 
 - (void)onError:(nonnull IINKEditor*)editor
+        blockId:(nonnull NSString*)blockId
+        message:(nonnull NSString*)message
+{
+    // deprecated
+}
+
+- (void)onError:(nonnull IINKEditor*)editor
        blockId:(nonnull NSString*)blockId
           code:(IINKEditorError)code
        message:(nonnull NSString*)message
