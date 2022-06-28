@@ -6,18 +6,18 @@ import Combine
 
 /// The EditorViewController/ViewModel role is to instanciate all the properties and classes used to display the content of a page. It creates   "key" objects like the editor and renderer, and displays the DIsplayViewController, the InputView and the SmartGuide (if enabled).
 
-class EditorViewController : UIViewController {
+class EditorViewController: UIViewController {
 
     //MARK: - Properties
 
-    private var viewModel:EditorViewModel
-    private var containerView:UIView = UIView(frame:CGRect.zero)
-    private var panGestureRecognizer:UIPanGestureRecognizer?
+    private var panGestureRecognizer: UIPanGestureRecognizer?
+    private var viewModel: EditorViewModel
+    private var containerView: UIView = UIView(frame: CGRect.zero)
     private var cancellables: Set<AnyCancellable> = []
 
     //MARK: - Life cycle
 
-    init(viewModel:EditorViewModel) {
+    init(viewModel: EditorViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -44,13 +44,17 @@ class EditorViewController : UIViewController {
         self.viewModel.setEditorViewSize(size: self.view.bounds.size)
     }
 
-    func updateInputMode(newInputMode:InputMode) {
+    func updateInputMode(newInputMode: InputMode) {
         self.viewModel.updateInputMode(newInputMode: newInputMode)
+    }
+
+    func activateGestureRecognizer(enabled: Bool) {
+        self.panGestureRecognizer?.isEnabled = enabled
     }
 
     //MARK: - UI settings
 
-    private func displayModel(model:EditorModel) {
+    private func displayModel(model: EditorModel) {
         if let inputView = model.neboInputView {
             self.view.addSubview(inputView)
             inputView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +64,7 @@ class EditorViewController : UIViewController {
             self.inject(viewController: displayViewController, in: self.containerView)
         }
         if let smartGuideViewController = model.smartGuideViewController {
-            self.inject(viewController:smartGuideViewController, in: self.view)
+            self.inject(viewController: smartGuideViewController, in: self.view)
         }
     }
 
@@ -71,7 +75,7 @@ class EditorViewController : UIViewController {
         self.containerView.isOpaque = true
     }
 
-    private func inject(viewController:UIViewController, in container:UIView) {
+    private func inject(viewController: UIViewController, in container: UIView) {
         self.addChild(viewController)
         container.addSubview(viewController.view)
         viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -114,11 +118,11 @@ class EditorViewController : UIViewController {
 
 //MARK: - Pan Gesture
 
-extension EditorViewController : UIGestureRecognizerDelegate {
+extension EditorViewController: UIGestureRecognizerDelegate {
 
-    @objc private func panGestureRecognizerAction(panGestureRecognizer:UIPanGestureRecognizer) {
+    @objc private func panGestureRecognizerAction(panGestureRecognizer: UIPanGestureRecognizer) {
         guard let state = self.panGestureRecognizer?.state else { return }
-        let translation:CGPoint = panGestureRecognizer.translation(in: self.view)
+        let translation: CGPoint = panGestureRecognizer.translation(in: self.view)
         self.viewModel.handlePanGestureRecognizerAction(with: translation, state: state)
     }
 

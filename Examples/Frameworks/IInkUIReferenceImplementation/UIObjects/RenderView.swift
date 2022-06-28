@@ -3,7 +3,7 @@
 import Foundation
 import UIKit
 
-/// The RenderView role is to render (hence it's name) the different strokes, using a Canvas and a Renderer. For performance reasons, there are two types of RenderView, layer or capture. One is used to display live capturing stroke, and the other is used to diplay the recorded strokes (the model).
+/// The RenderView role is to render (hence its name) the different strokes, using a Canvas and a Renderer. For performance reasons, there are two types of RenderView, layer or capture. One is used to display live capturing stroke, and the other is used to diplay the recorded strokes (the model).
 
 class RenderView : UIView {
 

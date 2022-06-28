@@ -152,6 +152,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 @property (nonatomic) NSTimeInterval removeHighlightDelay;
 
 @property (strong, nonatomic) IINKParameterSet* exportParams;
+@property (strong, nonatomic) IINKParameterSet* importParams;
 
 @end
 
@@ -165,7 +166,6 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     self.view = [[UIView alloc] init];
     self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:.95f];
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
-    self.view.hidden = YES;
 
     self.styleButton = [[UIButton alloc] init];
     self.styleButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -197,6 +197,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     [self.view addSubview:self.rulerView];
 
     [self.moreButton addTarget:self action:@selector(moreButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.view.hidden = YES;
 }
 
 #pragma mark - Constraints
@@ -240,6 +246,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
     _editor = editor;
     self.exportParams = nullptr;
+    self.importParams = nullptr;
 
     if (editor)
     {
@@ -247,10 +254,10 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         [self.editor.renderer addDelegate:self];
 
         IINKConfiguration *configuration = editor.engine.configuration;
-        self.fadeOutWriteInDiagramDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write-in-diagram" defaultValue:3.0];
-        self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0];
-        self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0];
-        self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0];
+        self.fadeOutWriteInDiagramDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write-in-diagram" defaultValue:3.0 error:nil].value;
+        self.fadeOutWriteDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.write" defaultValue:0.0                     error:nil].value;
+        self.fadeOutOtherDelay = [configuration getNumberForKey:@"smart-guide.fade-out-delay.other" defaultValue:0.0                     error:nil].value;
+        self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0               error:nil].value;
 
         self.exportParams = [self.editor.engine createParameterSet];
         [self.exportParams setBoolean:YES forKey:@"export.jiix.text.words"   error:nil];
@@ -259,6 +266,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         [self.exportParams setBoolean:NO  forKey:@"export.jiix.glyphs"       error:nil];
         [self.exportParams setBoolean:NO  forKey:@"export.jiix.primitives"   error:nil];
         [self.exportParams setBoolean:NO  forKey:@"export.jiix.chars"        error:nil];
+
+        self.importParams = [self.editor.engine createParameterSet];
+        [self.importParams setString:@"update"  forKey:@"diagram.import.jiix.action"        error:nil];
+        [self.importParams setString:@"update"  forKey:@"raw-content.import.jiix.action"    error:nil];
+        [self.importParams setString:@"update"  forKey:@"text-document.import.jiix.action"  error:nil];
+        [self.importParams setString:@"update"  forKey:@"text.import.jiix.action"           error:nil];
     }
 
     self.view.hidden = (_editor == nil);
@@ -384,7 +397,7 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 
 - (void)updateWithBlock:(IINKContentBlock *)block cause:(UpdateCause)cause
 {
-    if (block && [block.type isEqualToString:@"Text"])
+    if (block && block.valid && [block.type isEqualToString:@"Text"])
     {
         // Update size and position
         CGRect rectangle = block.box;
@@ -435,7 +448,12 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
             if (isSameActiveBlock)
                 [self computeModificationOfWords:words againstWords:self.words];
             else if (cause == UpdateCauseEdit)
-                [words enumerateObjectsUsingBlock:^(SmartGuideWord * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) { obj.modified = YES; }];
+            {
+                for (SmartGuideWord * _Nonnull obj in words)
+                {
+                    obj.modified = YES;
+                }
+            }
         }
 
         TextBlockStyle textBlockStyle = TextBlockStyleNormal;
@@ -564,7 +582,8 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     {
         NSString *label = candidates[i];
         BOOL selected = [label isEqualToString:smartGuideWordView.word.label];
-        UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIAlertAction *action = [UIAlertAction actionWithTitle:label style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            #pragma unused (action)
             if (!selected)
             {
                 NSString *jiixStr = [self.editor export_:self.block mimeType:IINKMimeTypeJIIX overrideConfiguration:self.exportParams error:nil];
@@ -573,21 +592,24 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
                 NSMutableDictionary *jiix = [jiix_ mutableCopy];
                 NSArray<NSDictionary *> *jiixWords_ = [jiix objectForKey:@"words"];
                 NSMutableArray<NSDictionary *> *jiixWords = [jiixWords_ mutableCopy];
-                NSDictionary *jiixWord_ = jiixWords[smartGuideWordView.index];
-                NSDictionary *jiixWord = [jiixWord_ mutableCopy];
-                [jiixWord setValue:label forKey:@"label"];
-                jiixWords[smartGuideWordView.index] = jiixWord;
-                [jiix setObject:jiixWords forKey:@"words"];
-                jiixData = [NSJSONSerialization dataWithJSONObject:jiix options:0 error:nil];
-                jiixStr = [[NSString alloc] initWithData:jiixData encoding:NSUTF8StringEncoding];
-
-                NSError *error = nil;
-                [self.editor import_:IINKMimeTypeJIIX data:jiixStr block:self.block error:&error];
-
-                if (!error)
+                if (smartGuideWordView.index < jiixWords.count)
                 {
-                    smartGuideWordView.word.label = label;
-                    smartGuideWordView.text = label;
+                    NSDictionary *jiixWord_ = jiixWords[smartGuideWordView.index];
+                    NSDictionary *jiixWord = [jiixWord_ mutableCopy];
+                    [jiixWord setValue:label forKey:@"label"];
+                    jiixWords[smartGuideWordView.index] = jiixWord;
+                    [jiix setObject:jiixWords forKey:@"words"];
+                    jiixData = [NSJSONSerialization dataWithJSONObject:jiix options:0 error:nil];
+                    jiixStr = [[NSString alloc] initWithData:jiixData encoding:NSUTF8StringEncoding];
+
+                    NSError *error = nil;
+                    [self.editor import_:IINKMimeTypeJIIX data:jiixStr selection:self.block overrideConfiguration:self.importParams error:&error];
+
+                    if (!error)
+                    {
+                        smartGuideWordView.word.label = label;
+                        smartGuideWordView.text = label;
+                    }
                 }
             }
         }];
@@ -655,18 +677,33 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     }
 }
 
-- (void)selectionChanged:(nonnull IINKEditor*)editor blockIds:(nonnull NSArray<NSString *> *)blockIds
+- (void)selectionChanged:(nonnull IINKEditor*)editor
 {
     self.selectedBlock = nil;
-    for (NSString *blockId in blockIds)
+
+    IINKContentSelectionMode mode = [self.editor getSelectionModeWithError:nil].value;
+    if (mode != IINKContentSelectionModeNone && mode != IINKContentSelectionModeLasso)
     {
-        IINKContentBlock *block = [self.editor getBlockById:blockId];
-        if (block && [block.type isEqualToString:@"Text"])
+      NSObject<IINKIContentSelection> *selection = [self.editor selection];
+      NSArray<NSString *> *blockIds = nil;
+
+      if (selection != nil)
+        blockIds = [self.editor getIntersectingBlocks:selection error:nil];
+
+      if (blockIds != nil)
+      {
+        for (NSString *blockId in blockIds)
         {
-            self.selectedBlock = block;
-            break;
+            IINKContentBlock *block = [self.editor getBlockById:blockId];
+            if (block && [block.type isEqualToString:@"Text"])
+            {
+              self.selectedBlock = block;
+              break;
+            }
         }
+      }
     }
+
     [self updateWithBlock:self.selectedBlock cause:UpdateCauseSelection];
 }
 
@@ -686,19 +723,19 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
 }
 
 - (void)onError:(nonnull IINKEditor*)editor
-       blockId:(nonnull NSString*)blockId
-          code:(IINKEditorError)code
-       message:(nonnull NSString*)message
+        blockId:(nonnull NSString*)blockId
+           code:(IINKEditorError)code
+        message:(nonnull NSString*)message
 {
-   NSLog(@"onError: (%lu) %@", (unsigned long)code, message);
-   [self runBlockOnMainQueueASync:^{
-       UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                                message:message
-                                                                         preferredStyle:UIAlertControllerStyleAlert];
-       UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-       [alertController addAction:okAction];
-       [self presentViewController:alertController animated:YES completion:nil];
-   }];
+    NSLog(@"onError: (%lu) %@", (unsigned long)code, message);
+    [self runBlockOnMainQueueASync:^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                                 message:message
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }];
 }
 
 - (void)viewTransformChanged:(IINKRenderer *)renderer

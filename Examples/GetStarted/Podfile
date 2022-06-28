@@ -1,10 +1,9 @@
 platform :ios, '13.0'
 
-
 target 'GetStarted' do
 
   # Pods for GetStarted
 
-  pod 'MyScriptInteractiveInk-Runtime', '1.5.1'
+  pod 'MyScriptInteractiveInk-Runtime', '2.0.1'
 
 end

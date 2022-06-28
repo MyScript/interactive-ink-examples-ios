@@ -2,10 +2,7 @@
 #define MYCERTIFICATE_H 0x01000000
 // Copyright MyScript. All right reserved.
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wauto-import"
 #include <stddef.h>
-#pragma clang diagnostic pop
 
 #ifndef VO_CERTIFICATE_TYPE
 #define VO_CERTIFICATE_TYPE

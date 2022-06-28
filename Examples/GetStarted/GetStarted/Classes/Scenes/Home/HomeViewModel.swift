@@ -29,22 +29,22 @@ enum PackagePartType {
     }
 }
 
-/// This class is the ViewModel of the HomeViewController. It handles all it's business logic.
+/// This class is the ViewModel of the HomeViewController. It handles all its business logic.
 
 class HomeViewModel {
 
     // MARK: Published Properties
 
-    @Published var model:HomeModel?
-    @Published var alert:UIAlertController?
+    @Published var model: HomeModel?
+    @Published var alert: UIAlertController?
 
     // MARK: Properties
 
-    var defaultPackageName:String = "New"
-    var defaultpackageType:String = PackagePartType.textDocument.getName() /* Options are : "Diagram", "Drawing", "Math", "Raw Content", "Text Document", "Text" */
-    weak var editor:IINKEditor?
+    var defaultPackageName: String = "New"
+    var defaultpackageType: String = PackagePartType.textDocument.getName() /* Options are : "Diagram", "Drawing", "Math", "Raw Content", "Text Document", "Text" */
+    weak var editor: IINKEditor?
 
-    func setupModel(engineProvider:EngineProvider) {
+    func setupModel(engineProvider: EngineProvider) {
         let model = HomeModel()
         // We want the Pen mode for this GetStarted sample code. It lets the user use either its mouse or fingers to draw.
         // If you have got an iPad Pro with an Apple Pencil, please set this value to InputModeAuto for a better experience.
@@ -58,7 +58,7 @@ class HomeViewModel {
 
     // MARK: UI Logic
 
-    private func createAlert(title:String, message: String) {
+    private func createAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
             exit(1)
@@ -72,7 +72,7 @@ class HomeViewModel {
 
     // MARK: Editor Business Logic
 
-    private func createDefaultPackage(packageName: String, packageType:String, engineProvider:EngineProvider) {
+    private func createDefaultPackage(packageName: String, packageType: String, engineProvider: EngineProvider) {
         guard let engine = engineProvider.engine else {
             createAlert(title: "Certificate error", message: engineProvider.engineErrorMessage)
             return
@@ -82,9 +82,9 @@ class HomeViewModel {
             let fullPath = FileManager.default.pathForFileInDocumentDirectory(fileName: packageName) + ".iink"
             resultPackage = try engine.createPackage(fullPath.decomposedStringWithCanonicalMapping)
             // Add a blank page type Text Document
-            try resultPackage?.createPart(packageType)
+            try resultPackage?.createPart(with: packageType)
             if let package = resultPackage {
-                try self.editor?.part = package.getPartAt(0)
+                try self.editor?.part = package.part(at: 0)
             }
         } catch {
             createAlert(title: "Error", message: "An error occured during the page creation")
@@ -108,8 +108,8 @@ class HomeViewModel {
 
     func convert() {
         do {
-            if let supportedTargetStates = self.editor?.getSupportedTargetConversionState(nil) {
-                try self.editor?.convert(nil, targetState: supportedTargetStates[0].value)
+            if let supportedTargetStates = self.editor?.supportedTargetConversionState(forSelection: nil) {
+                try self.editor?.convert(selection: nil, targetState: supportedTargetStates[0].value)
             }
         } catch {
             createAlert(title: "Error", message: "An error occured during the convertion")
@@ -123,7 +123,7 @@ class HomeViewModel {
 
 }
 
-extension HomeViewModel : EditorDelegate {
+extension HomeViewModel: EditorDelegate {
 
     func didCreateEditor(editor: IINKEditor?) {
         self.editor = editor

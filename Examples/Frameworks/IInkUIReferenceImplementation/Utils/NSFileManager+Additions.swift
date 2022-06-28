@@ -67,7 +67,7 @@ extension FileManager {
     }
 
     func pathForFileInTmpDirectory(fileName:String) -> String {
-        let fullPath:String = String(format: "%@/%@", tmpDirectory(), fileName)
+        let fullPath:String = String(format: "%@%@", tmpDirectory(), fileName)
         return fullPath
     }
 }

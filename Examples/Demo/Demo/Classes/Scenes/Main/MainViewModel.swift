@@ -3,368 +3,436 @@
 import Foundation
 import Combine
 
-/// This class is the ViewModel of the MainViewController. It handles all it's business logic.
+protocol MainViewModelEditorLogic: AnyObject {
+    func didCreatePackage(fileName: String)
+    func didLoadPart(title: String, index: Int, partCount: Int)
+    func didUnloadPart()
+    func didOpenFile()
+}
 
-class MainViewModel : NSObject {
+/// This class is the ViewModel of the MainViewController. It handles all its business logic.
 
-    // MARK: Published Properties
+class MainViewModel: NSObject {
 
-    @Published var editorViewController:EditorViewController?
-    @Published var title:String?
-    @Published var inputMode:InputMode = .forcePen
+    // MARK: - Published Properties
+
+    @Published var title: String?
     // Alerts
-    @Published var errorAlertController:UIAlertController?
-    @Published var menuAlertController:UIAlertController?
-    @Published var moreActionsAlertController:UIAlertController?
-    @Published var inputAlertController:UIAlertController?
-    // Enable/Disable buttons
-    @Published var addPartItemEnabled:Bool = false
-    @Published var editionButtonsEnabled:Bool = false
-    @Published var previousButtonEnabled:Bool = false
-    @Published var nextButtonEnabled:Bool = false
+    @Published var errorAlertModel: AlertModel?
+    @Published var menuAlertModel: AlertModel?
+    @Published var moreActionsAlertModel: AlertModel?
+    @Published var inputAlertModel: AlertModel?
+    // Enable/Disable buttons and gestures
+    @Published var addPartItemEnabled: Bool = false
+    @Published var editingEnabled: Bool = false
+    @Published var previousButtonEnabled: Bool = false
+    @Published var nextButtonEnabled: Bool = false
+    @Published var longPressGestureEnabled: Bool = true
 
-    // MARK: Properties
+    // MARK: - Properties
 
-    weak var editor:IINKEditor?
-    var currentPackage:IINKContentPackage?
-    private weak var delegate:MainViewControllerDisplayLogic?
-    private var currentFileName:String = ""
+    weak var editor: IINKEditor?
+    var addTextBlockValue = ""
+    private weak var delegate: MainViewControllerDisplayLogic?
+    private var activePenModeEnabled: Bool = true
+    private var selectedPosition: CGPoint?
+    private var engineProvider: EngineProvider
+    private var toolingWorker: ToolingWorkerLogic
+    private (set) var editorWorker: EditorWorkerLogic
 
-    init(delegate:MainViewControllerDisplayLogic?) {
+    init(delegate: MainViewControllerDisplayLogic?,
+         engineProvider: EngineProvider,
+         toolingWorker: ToolingWorkerLogic,
+         editorWorker: EditorWorkerLogic) {
+        self.engineProvider = engineProvider
         self.delegate = delegate
+        self.toolingWorker = toolingWorker
+        self.editorWorker = editorWorker
+        super.init()
+        self.editorWorker.delegate = self
     }
 
-    func setupEditorController(engineProvider:EngineProvider) {
-        let editorViewModel:EditorViewModel = EditorViewModel(engine: engineProvider.engine, inputMode: .forcePen, editorDelegate: self, smartGuideDelegate: self)
-        self.editorViewController = EditorViewController(viewModel: editorViewModel)
-        if engineProvider.engine == nil {
-            createAlert(title: "Certificate Error", message: engineProvider.engineErrorMessage, exitAppWhenClosed: true)
+    func checkEngineProviderValidity() {
+        if self.engineProvider.engine == nil {
+            self.errorAlertModel = AlertModelHelper.createAlert(title: "Certificate Error",
+                                                                message: self.engineProvider.engineErrorMessage,
+                                                                exitAppWhenClosed: true)
         }
     }
 
-    // MARK: Editor Business Logic
-
-    func createNewPart(partType:SelectedPartTypeModel, engineProvider:EngineProvider) {
-        // Create a new pacakage if requested
-        if partType.onNewPackage {
-            unloadPart()
-            createPackage(engineProvider:engineProvider)
+    func openLastModifiedFileIfAny() -> Bool {
+        guard let lastOpenedFile = FilesProvider.retrieveLastModifiedFile() else {
+            self.delegate?.displayNewDocumentOptions(cancelEnabled: false)
+            return false
         }
-        // Create a new part to the package
+        self.openFile(file: lastOpenedFile, engineProvider: self.engineProvider)
+        return true
+    }
+
+    // MARK: - Editor Tooling
+
+    func selectTool(tool: IINKPointerTool) {
         do {
-            if let part:IINKContentPart = try self.currentPackage?.createPart(partType.partType) {
-                // Then load it
-                self.loadPart(part: part)
-            }
+            try self.toolingWorker.selectTool(tool: tool, activePenModeEnabled: self.activePenModeEnabled)
+            self.longPressGestureEnabled = self.longPressGestureActivationConditon()
         } catch {
-            self.handlePartCreationError(error: error)
+            self.handleToolingError(error: error)
         }
     }
 
-    func undo() {
-        self.editor?.undo()
+    func didChangeActivePenMode(activated: Bool) {
+        self.activePenModeEnabled = activated
+        self.longPressGestureEnabled = self.longPressGestureActivationConditon()
+        do {
+            try self.toolingWorker.didChangeActivePenMode(activated: self.activePenModeEnabled)
+        } catch {
+            self.handleToolingError(error: error)
+        }
     }
 
-    func redo() {
-        self.editor?.redo()
+    func didSelectStyle(style: ToolStyleModel) {
+        do {
+            try self.toolingWorker.didSelectStyle(style: style)
+        } catch {
+            self.handleToolingError(error: error)
+        }
     }
 
-    func clear() {
-        self.editor?.clear()
+    private func handleToolingError(error: Error) {
+        guard let toolingError = error as? ToolingWorker.ToolingError else {
+            return
+        }
+        self.errorAlertModel = AlertModelHelper.createAlertModel(with: toolingError)
     }
 
-    func updateInputMode(newInputModeIndex:Int) {
-        guard let inputMode = InputMode(rawValue: newInputModeIndex) else { return }
-        self.inputMode = inputMode
-        self.editorViewController?.updateInputMode(newInputMode: inputMode)
+    private func longPressGestureActivationConditon() -> Bool {
+        // Don't activate longpress gesture if ActivePen mode is off and tool is not hand or selector
+        if  self.activePenModeEnabled == false,
+           let currentTool = try? self.editor?.toolController.tool(forType: .pen),
+           currentTool.value != .hand,
+           currentTool.value != .toolSelector {
+            return false
+        }
+        return true
+    }
+
+    // MARK: - Editor Business Logic
+
+    func createNewPart(partType: SelectedPartTypeModel, engineProvider: EngineProvider) {
+        do {
+            try self.editorWorker.createNewPart(partType: partType, engineProvider: engineProvider)
+        } catch {
+            self.handleEditorError(error: error)
+        }
     }
 
     func loadNextPart() {
-        if let editor = self.editor,
-           let part = editor.part,
-           let currentPackage = self.currentPackage {
-            let partCount:Int = currentPackage.partCount()
-            let currentIndex:Int = currentPackage.index(of: part)
-            if currentIndex < partCount - 1,
-               let nextPart = try? currentPackage.getPartAt(currentIndex + 1) {
-                self.loadPart(part: nextPart)
-            }
-        }
+        self.editorWorker.loadNextPart()
     }
 
     func loadPreviousPart() {
-        if let editor = self.editor,
-           let part = editor.part,
-           let currentPackage = self.currentPackage {
-            let currentIndex:Int = currentPackage.index(of: part)
-            if currentIndex > 0,
-               let nextPart = try? currentPackage.getPartAt(currentIndex - 1) {
-                self.loadPart(part: nextPart)
-            }
-        }
+        self.editorWorker.loadPreviousPart()
     }
 
-    func convert() {
+    func undo() {
+        self.editorWorker.undo()
+    }
+
+    func redo() {
+        self.editorWorker.redo()
+    }
+
+    func clear() {
+        self.editorWorker.clear()
+    }
+
+    func convert(selection: (NSObjectProtocol & IINKIContentSelection)? = nil) {
         do {
-            if let supportedTargetStates = self.editor?.getSupportedTargetConversionState(nil) {
-                try self.editor?.convert(nil, targetState: supportedTargetStates[0].value)
-            }
+            try self.editorWorker.convert(selection: selection)
         } catch {
-            createAlert(title: "Error", message: "An error occured during the convertion")
-            print("Error while converting : " + error.localizedDescription)
+            self.handleEditorError(error: error)
         }
     }
 
-    func openFile(file:File, engineProvider: EngineProvider) {
-        if let engine:IINKEngine = engineProvider.engine {
-            let filePath:NSString = FileManager.default.pathForFileInIinkDirectory(fileName: file.fileName) as NSString
-            self.unloadPart()
-            self.currentFileName = filePath.lastPathComponent
-            self.addPartItemEnabled = true
-            self.currentPackage = try? engine.openPackage(filePath.decomposedStringWithCanonicalMapping)
-            if let currentPackage = self.currentPackage,
-               let part:IINKContentPart = try? currentPackage.getPartAt(0) {
-                self.loadPart(part:part)
-            }
-            self.previousButtonEnabled = false
+    func zoomIn() {
+        do {
+            try self.editorWorker.zoomIn()
+        } catch {
+            self.handleDefaultError(errorMessage: error.localizedDescription)
         }
     }
 
-    func handleExportResult(result:ExportResultModel) {
-        self.createAlert(title: result.title, message: result.message, exitAppWhenClosed: false)
+    func zoomOut() {
+        do {
+            try self.editorWorker.zoomOut()
+        } catch {
+            self.handleDefaultError(errorMessage: error.localizedDescription)
+        }
     }
 
-    func moreActions(barButtonIdem:UIBarButtonItem) {
-        let moreAlertController:UIAlertController = UIAlertController(title: "More actions", message: nil, preferredStyle: .actionSheet)
-        let exportAction:UIAlertAction = UIAlertAction(title: "Export", style: .default) { action in
-            self.delegate?.displayExportOptions()
+    func openFile(file: File, engineProvider: EngineProvider) {
+        self.editorWorker.openFile(file: file, engineProvider: engineProvider)
+    }
+
+    func moreActions(barButtonIdem: UIBarButtonItem) {
+        var actions: [ActionModel] = []
+        let exportAction = ActionModel(actionText: "Export") { [weak self] action in
+            self?.delegate?.displayExportOptions()
         }
-        moreAlertController.addAction(exportAction)
-        let zoomInAction:UIAlertAction = UIAlertAction(title: "Zoom in", style: .default) { [weak self] action in
-            _ = try? self?.editor?.renderer.zoom(110/100)
-            // Ask DisplayViewController to refresh it's view
+        actions.append(exportAction)
+        let resetViewAction = ActionModel(actionText: "Reset View") { [weak self] action in
+            self?.editorWorker.resetView()
+            // Ask DisplayViewController to refresh its view
             NotificationCenter.default.post(name: DisplayViewController.refreshNotification, object: nil)
         }
-        moreAlertController.addAction(zoomInAction)
-        let zoomOutAction:UIAlertAction = UIAlertAction(title: "Zoom out", style: .default) { [weak self] action in
-            _ = try? self?.editor?.renderer.zoom(100/110)
-            // Ask DisplayViewController to refresh it's view
-            NotificationCenter.default.post(name: DisplayViewController.refreshNotification, object: nil)
+        actions.append(resetViewAction)
+        let newAction = ActionModel(actionText: "New") { [weak self] action in
+            try? self?.editorWorker.save()
+            self?.delegate?.displayNewDocumentOptions(cancelEnabled: true)
         }
-        moreAlertController.addAction(zoomOutAction)
-        let resetViewAction:UIAlertAction = UIAlertAction(title: "Reset View", style: .default) { [weak self] action in
-            self?.editor?.renderer.viewScale = 1
-            self?.editor?.renderer.viewOffset = CGPoint.zero
-            // Ask DisplayViewController to refresh it's view
-            NotificationCenter.default.post(name: DisplayViewController.refreshNotification, object: nil)
-        }
-        moreAlertController.addAction(resetViewAction)
-        let newAction:UIAlertAction = UIAlertAction(title: "New", style: .default) { [weak self] action in
-            if let currentPackage = self?.currentPackage {
-                _ = try? currentPackage.save()
-            }
-            self?.delegate?.displayNewDocumentOptions()
-        }
-        moreAlertController.addAction(newAction)
-        let openAction:UIAlertAction = UIAlertAction(title: "Open", style: .default) { [weak self] action in
-            if let currentPackage = self?.currentPackage {
-                _ = try? currentPackage.save()
-            }
+        actions.append(newAction)
+        let openAction = ActionModel(actionText: "Open") { [weak self] action in
+            try? self?.editorWorker.save()
             self?.delegate?.displayOpenDocumentOptions()
         }
-        moreAlertController.addAction(openAction)
-        let saveAction:UIAlertAction = UIAlertAction(title: "Save", style: .default) { [weak self] action in
-            if let currentPackage = self?.currentPackage {
-                _ = try? currentPackage.save()
+        actions.append(openAction)
+        let saveAction = ActionModel(actionText: "Save") { [weak self] action in
+            do {
+                try self?.editorWorker.save()
+            } catch {
+                self?.handleDefaultError(errorMessage: error.localizedDescription)
             }
         }
-        moreAlertController.addAction(saveAction)
-        if let popover:UIPopoverPresentationController = moreAlertController.popoverPresentationController {
-            popover.permittedArrowDirections = .up
-            popover.barButtonItem = barButtonIdem
-            self.moreActionsAlertController = moreAlertController
-        } else {
-            let cancelAction:UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            moreAlertController.addAction(cancelAction)
-            self.moreActionsAlertController = moreAlertController
-        }
+        actions.append(saveAction)
+        self.moreActionsAlertModel = AlertModel(title: "More actions", alertStyle: .actionSheet, actionModels: actions)
     }
 
-    func handleLongPressGesture(state:UIGestureRecognizer.State, position:CGPoint, sourceView:UIView) {
-        if state == .began,
-           let editor = self.editor {
-            let block:IINKContentBlock? = editor.hitBlock(position) ?? editor.rootBlock
+    func handleLongPressGesture(state: UIGestureRecognizer.State,
+                                position: CGPoint,
+                                sourceView: UIView) {
+        if state == .began, let editor = self.editor {
+            var block: (NSObjectProtocol & IINKIContentSelection)? = editor.rootBlock
+            if let selectionBlock = editor.hitSelection(position) {
+                block = selectionBlock
+            } else if let hitBlock = editor.hitBlock(position) {
+                block = hitBlock
+            }
             if let block = block {
-                let sourceRect:CGRect = CGRect(x: position.x, y: position.y, width: 1, height: 1)
-                self.createMoreMenuWith(block: block, position: position, sourceView: sourceView, sourceRect: sourceRect)
+                let sourceRect: CGRect = CGRect(x: position.x, y: position.y, width: 1, height: 1)
+                self.createMoreMenu(with: block,
+                                    position: position,
+                                    sourceView: sourceView,
+                                    sourceRect: sourceRect)
             }
         }
     }
 
-    private func createMoreMenuWith(block:IINKContentBlock, position:CGPoint, sourceView:UIView, sourceRect:CGRect) {
-        guard let editor = self.editor,
-              let rootBlock = editor.rootBlock else { return }
-        let block:IINKContentBlock = block.type == "Container" ? rootBlock : block
-        let supportedStates = editor.getSupportedTargetConversionState(block)
-        let hasTypes:Bool = editor.supportedAddBlockTypes.count > 0
-        let hasStates:Bool = supportedStates.count > 0
-        let isRoot:Bool = block.identifier == rootBlock.identifier
-        let isEmpty:Bool = editor.isEmpty(block)
-        let onTextDocument:Bool = editor.part?.type == "Text Document"
-        // determine which actions to diplay
-        let displayConvert:Bool = hasStates && !isEmpty
-        let displayAddBlock:Bool = hasTypes && isRoot
-        let displayRemove:Bool = !isRoot
-        let displayCopy:Bool = !onTextDocument || !isRoot
-        let displayPaste:Bool = isRoot
-        let menu:UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        // Only on root block of a Text Document
-        if displayAddBlock {
+    func addImageBlock(with image: UIImage) {
+        guard let data = image.jpegData(compressionQuality: 1),
+              let position = self.selectedPosition else {
+            return
+        }
+        do {
+            try self.editorWorker.addImageBlock(data: data, position: position)
+        } catch {
+            self.handleEditorError(error: error)
+        }
+    }
+
+    func enableRawContentConversion() {
+        self.editorWorker.enableRawContentConversion()
+    }
+
+    private func handleEditorError(error: Error) {
+        guard let editorError = error as? EditorWorker.EditorError else {
+            return
+        }
+        self.errorAlertModel = AlertModelHelper.createAlertModel(with: editorError)
+    }
+
+    private func createMoreMenu(with content: NSObjectProtocol & IINKIContentSelection,
+                                position: CGPoint,
+                                sourceView: UIView?,
+                                sourceRect: CGRect) {
+        guard let editor = self.editor else {
+            return
+        }
+        self.selectedPosition = position
+        var actionModels: [ActionModel] = []
+        let actions = ContextualActionsHelper.availableActions(forContent: content, editor: editor)
+        // Fill actionModels
+        if actions.contains(.addBlock) {
             for type in editor.supportedAddBlockTypes {
                 if type == "Text" {
-                    let action:UIAlertAction = UIAlertAction(title: "Add Text", style: .default) { [weak self] action in
-                        let input:UIAlertController = UIAlertController(title: "Add Text", message: nil, preferredStyle: .alert)
-                        input.addTextField(configurationHandler: nil)
-                        let add:UIAlertAction = UIAlertAction(title: "Add Text", style: .default) { action in
-                            _ = try? editor.addBlock(position, type: "Text", mimeType: .text, data: input.textFields?[0].text ?? "")
+                    let actionTitle = "Add Text"
+                    let action = ActionModel(actionText: actionTitle) { [weak self] action in
+                        let inputAction = ActionModel(actionText: actionTitle) { [weak self] action in
+                            do {
+                                try self?.editorWorker.addTextBlock(position: position, data: self?.addTextBlockValue ?? "")
+                            } catch {
+                                self?.handleDefaultError(errorMessage: error.localizedDescription)
+                            }
                         }
-                        input.addAction(add)
-                        self?.inputAlertController = input
+                        self?.inputAlertModel = AlertModel(title: actionTitle,
+                                                           actionModels: [inputAction])
                     }
-                    menu.addAction(action)
+                    actionModels.append(action)
+                } else if type == "Image" {
+                    let action = ActionModel(actionText: "Add Image") { [weak self] action in
+                        self?.delegate?.displayImagePicker()
+                    }
+                    actionModels.append(action)
                 } else {
-                    let addTitle:String = String(format: "Add %@", type)
-                    let action:UIAlertAction = UIAlertAction(title: addTitle, style: .default) { action in
-                        _ = try? editor.addBlock(position, type: type)
+                    let addTitle = String(format: "Add %@", type)
+                    let action = ActionModel(actionText: addTitle) { [weak self] action in
+                        do {
+                            try self?.editorWorker.addBlock(position: position, type: type)
+                        } catch {
+                            self?.handleDefaultError(errorMessage: error.localizedDescription)
+                        }
                     }
-                    menu.addAction(action)
+                    actionModels.append(action)
                 }
             }
         }
-        // Only if not on root block
-        if displayRemove {
-            let action:UIAlertAction = UIAlertAction(title: "Remove", style: .default) { action in
-                _ = try? editor.remove(block)
+        if actions.contains(.remove) {
+            let action = ActionModel(actionText: "Remove") { [weak self] action in
+                do {
+                    try self?.editorWorker.erase(selection: content)
+                } catch {
+                    self?.handleDefaultError(errorMessage: error.localizedDescription)
+                }
             }
-            menu.addAction(action)
+            actionModels.append(action)
         }
-        // Only on a Text Document if not empty
-        if displayConvert {
-            let action:UIAlertAction = UIAlertAction(title: "Convert", style: .default) { action in
-                _ = try? editor.convert(block, targetState: supportedStates[0].value)
+        if actions.contains(.copy) {
+            let action = ActionModel(actionText: "Copy") { [weak self] action in
+                do {
+                    try self?.editorWorker.copy(selection: content)
+                } catch {
+                    self?.handleDefaultError(errorMessage: error.localizedDescription)
+                }
             }
-            menu.addAction(action)
+            actionModels.append(action)
         }
-        // Only if not a Text Document or if not on root block
-        if displayCopy {
-            let action:UIAlertAction = UIAlertAction(title: "Copy", style: .default) { action in
-                _ = try? editor.copy(block)
+        if actions.contains(.paste) {
+            let action = ActionModel(actionText: "Paste") { [weak self] action in
+                do {
+                    try self?.editorWorker.paste(at: position)
+                } catch {
+                    self?.handleDefaultError(errorMessage: error.localizedDescription)
+                }
             }
-            menu.addAction(action)
+            actionModels.append(action)
         }
-        // Only if on root block
-        if displayPaste {
-            let action:UIAlertAction = UIAlertAction(title: "Paste", style: .default) { action in
-                _ = try? editor.paste(position)
+        if actions.contains(.exportData) {
+            let action = ActionModel(actionText: "Export") { [weak self] action in
+                self?.delegate?.displayExportOptions()
             }
-            menu.addAction(action)
+            actionModels.append(action)
         }
-        if menu.actions.count > 0 {
-            if let popover:UIPopoverPresentationController = menu.popoverPresentationController {
-                popover.sourceView = sourceView
-                popover.sourceRect = sourceRect
-            } else {
-                let cancel:UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel,handler: nil)
-                menu.addAction(cancel)
+        if actions.contains(.convert) {
+            let action = ActionModel(actionText: "Convert") { [weak self] action in
+                self?.convert(selection: content)
             }
-            self.menuAlertController = menu
+            actionModels.append(action)
+        }
+        if actions.contains(.formatText) {
+            let action = ActionModel(actionText: "Format Text") { [weak self] action in
+                self?.createFormatTextMenu(selection: content,
+                                           sourceView: sourceView,
+                                           sourceRect: sourceRect)
+            }
+            actionModels.append(action)
+        }
+
+        if actionModels.count > 0 {
+            self.menuAlertModel = AlertModel(alertStyle: .actionSheet,
+                                             actionModels: actionModels,
+                                             sourceView: sourceView,
+                                             sourceRect: sourceRect)
         }
     }
 
-    private func unloadPart() {
-        self.currentPackage = nil
-        self.editor?.part = nil
-        self.title = ""
-    }
-
-    /**
-     * Creates a new package, using name "File%zd.iink" where "%@" is the smallest
-     * number for which the resulting file does not exist.
-     */
-    private func createPackage(engineProvider:EngineProvider) {
-        guard let engine = engineProvider.engine else {
-            createAlert(title: "Certificate error", message: engineProvider.engineErrorMessage)
-            return
-        }
-        let existingIInkFiles = FilesProvider.iinkFilesFromIInkDirectory()
-        let fileNames:[String] = existingIInkFiles.map({ $0.fileName })
-        var index:Int = 0
-        var newName:String = ""
-        var newTempName:String = ""
-        repeat {
-            index+=1
-            newName = String(format: "File%d.iink", index)
-            newTempName = String(format: "File%d.iink-files", index)
-        } while fileNames.contains(newName) || fileNames.contains(newTempName)
-        do {
-            let fullPath = FileManager.default.pathForFileInIinkDirectory(fileName: newName)
-            self.currentPackage = try engine.createPackage(fullPath.decomposedStringWithCanonicalMapping)
-            self.currentFileName = newName
-            self.addPartItemEnabled = true
-        } catch {
-            print(error)
-            self.handlePartCreationError(error: error)
-        }
-    }
-
-    private func loadPart(part:IINKContentPart) {
-        // Reset viewing parameters
-        self.editor?.renderer.viewScale = 1
-        self.editor?.renderer.viewOffset = CGPoint.zero
-        // Set part
-        self.editor?.part = part
-        // Enable buttons
-        self.editionButtonsEnabled = true
-        let partCount = self.currentPackage?.partCount() ?? 0
-        let index:Int = self.currentPackage?.index(of:part) ?? 0
-        self.previousButtonEnabled = index > 0
-        self.nextButtonEnabled = index < partCount - 1
-        // Set title
-        self.title = String(format: "%@ - %@", self.currentFileName, part.type)
-    }
-
-    // MARK: UI Logic
-
-    private func createAlert(title:String, message: String, exitAppWhenClosed:Bool = true) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-            if exitAppWhenClosed {
-                exit(1)
+    private func createFormatTextMenu(selection: NSObjectProtocol & IINKIContentSelection,
+                                      sourceView: UIView?,
+                                      sourceRect: CGRect) {
+        DispatchQueue.main.async {
+            guard let editor = self.editor else {
+                return
             }
-        }))
-        self.errorAlertController = alert
+            let formats = editor.supportedTextFormats(forSelection: selection)
+            var actionModels: [ActionModel] = []
+            for format in formats {
+                let action = ActionModel(actionText: TextFormatHelper.name(for: format.value)) { [weak self] action in
+                    do {
+                        try self?.editorWorker.set(textFormat: format.value, selection: selection)
+                    } catch {
+                        self?.handleDefaultError(errorMessage: error.localizedDescription)
+                    }
+                }
+                actionModels.append(action)
+            }
+            if actionModels.count > 0 {
+                self.menuAlertModel = AlertModel(alertStyle: .actionSheet,
+                                             actionModels: actionModels,
+                                             sourceView: sourceView,
+                                             sourceRect: sourceRect)
+            }
+        }
     }
 
-    private func handlePartCreationError(error:Error) {
-        createAlert(title: "Error", message: "An error occured during the page creation")
-        print("Error while creating package : " + error.localizedDescription)
-    }
-
-    func setEditorViewSize(bounds:CGRect) {
-        self.editorViewController?.view.frame = bounds
+    private func handleDefaultError(errorMessage: String) {
+        self.errorAlertModel = AlertModelHelper.createDefaultErrorAlert(message: errorMessage,
+                                                                        exitAppWhenClosed: false)
     }
 }
 
-extension MainViewModel : EditorDelegate {
+// MARK: - Delegates
+
+extension MainViewModel: EditorDelegate {
 
     func didCreateEditor(editor: IINKEditor?) {
         self.editor = editor
+        self.toolingWorker.editor = editor
+        self.editorWorker.editor = editor
     }
 }
 
-extension MainViewModel : SmartGuideViewControllerDelegate {
+extension MainViewModel: SmartGuideViewControllerDelegate {
 
-    func smartGuideViewController(_ smartGuideViewController: SmartGuideViewController!, didTapOnMoreButton moreButton: UIButton!, for block: IINKContentBlock!) {
-        self.createMoreMenuWith(block: block, position: CGPoint.zero, sourceView: moreButton, sourceRect:moreButton.bounds)
+    func smartGuideViewController(_ smartGuideViewController: SmartGuideViewController!,
+                                  didTapOnMoreButton moreButton: UIButton!,
+                                  for block: IINKContentBlock!) {
+        self.createMoreMenu(with: block,
+                            position: CGPoint.zero,
+                            sourceView: moreButton,
+                            sourceRect: moreButton.bounds)
+    }
+}
+
+extension MainViewModel: MainViewModelEditorLogic {
+
+    func didCreatePackage(fileName: String) {
+        self.addPartItemEnabled = true
+    }
+
+    func didLoadPart(title: String, index: Int, partCount: Int) {
+        // Enable buttons
+        self.editingEnabled = true
+        self.previousButtonEnabled = index > 0
+        self.nextButtonEnabled = index < partCount - 1
+        // Set title
+        self.title = title
+    }
+
+    func didUnloadPart() {
+        self.title = ""
+        self.editingEnabled = false
+    }
+
+    func didOpenFile() {
+        self.addPartItemEnabled = true
+        self.previousButtonEnabled = false
     }
 }

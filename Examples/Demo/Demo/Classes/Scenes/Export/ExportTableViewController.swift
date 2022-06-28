@@ -7,7 +7,7 @@ import Combine
 
 protocol ExportTableViewControllerDisplayLogic : AnyObject {
     func cancel()
-    func exportFinishedWithResult(result:ExportResultModel)
+    func exportFinishedWithResult(result: AlertModel)
 }
 
 /// The ExportTableViewController role is to present to possible export formats modally, depending on the selected Block type (Text, Image...). Once the user has chosen one, the modal is dissmissed and the Block is exported in the application data container.
@@ -79,7 +79,8 @@ extension ExportTableViewController : ExportTableViewControllerDisplayLogic {
         self.coordinator?.dissmissModal()
     }
 
-    func exportFinishedWithResult(result: ExportResultModel) {
-        self.coordinator?.exportFinishedWithResult(result: result)
+    func exportFinishedWithResult(result: AlertModel) {
+        self.coordinator?.dissmissModal()
+        self.coordinator?.presentAlert(with: result)
     }
 }

@@ -1,7 +1,6 @@
 #ifndef MYCERTIFICATE_H
 #define MYCERTIFICATE_H 0x01000000
 // Copyright MyScript. All right reserved.
-
 #include <stddef.h>
 
 #ifndef VO_CERTIFICATE_TYPE

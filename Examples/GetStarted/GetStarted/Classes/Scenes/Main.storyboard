@@ -29,7 +29,7 @@
         <!--File - Type-->
         <scene sceneID="sbu-zy-xhI">
             <objects>
-                <viewController id="qiq-bc-tqE" customClass="HomeViewController" customModule="GetStartedSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="qiq-bc-tqE" customClass="HomeViewController" customModule="GetStarted" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="sdI-h1-4iX"/>
                         <viewControllerLayoutGuide type="bottom" id="KrO-Y4-55R"/>

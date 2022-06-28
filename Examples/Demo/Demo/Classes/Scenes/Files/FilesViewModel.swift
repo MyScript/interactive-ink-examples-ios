@@ -3,7 +3,7 @@
 import Foundation
 import Combine
 
-/// This class is the ViewModel of the FilesTableViewController. It handles all it's business logic.
+/// This class is the ViewModel of the FilesTableViewController. It handles all its business logic.
 
 class FilesViewModel {
 

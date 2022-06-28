@@ -1,0 +1,16 @@
+/*
+ * see https://developer.myscript.com/docs/interactive-ink/latest/reference/styling for styling reference
+ */
+
+glyph {
+  font-family: MyScriptInter;
+}
+
+.math {
+  font-family: STIXGeneral;
+}
+
+.math-variable {
+  font-style: italic;
+  font-family: STIXGeneral-Italic;
+}

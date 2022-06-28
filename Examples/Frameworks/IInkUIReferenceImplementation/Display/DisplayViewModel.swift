@@ -4,7 +4,7 @@ import Foundation
 import UIKit
 import Combine
 
-/// This class is the ViewModel of the DisplayViewController. It handles all it's business logic.
+/// This class is the ViewModel of the DisplayViewController. It handles all its business logic.
 
 class DisplayViewModel : NSObject {
 
@@ -80,7 +80,7 @@ extension DisplayViewModel : IINKIRenderTarget {
         }
     }
 
-    func createOffscreenRenderSurface(withWidth width: Int32, height: Int32, alphaMask: Bool) -> UInt32 {
+    func createOffscreenRenderSurface(width: Int32, height: Int32, alphaMask: Bool) -> UInt32 {
         defer {
             UIGraphicsEndImageContext()
         }

@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // create the main navigation controller to be used for our app
         let navController = UINavigationController()
         // send that into our coordinator so that it can display view controllers
-        coordinator = MainCoordinator(navigationController: navController)
+        coordinator = MainCoordinator(navigationController: navController, engine: EngineProvider.sharedInstance.engine)
         // tell the coordinator to take over control
         coordinator?.start()
         // create a basic UIWindow and activate it

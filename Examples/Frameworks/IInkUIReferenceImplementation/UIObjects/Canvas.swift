@@ -150,6 +150,19 @@ extension Canvas : IINKICanvas {
         self.cgRule = rule == .evenOdd ? CGPathFillRule.evenOdd : CGPathFillRule.winding
     }
 
+    // MARK: - Drop Shadow Properties
+
+    func setDropShadow(_ xOffset: Float, yOffset: Float, radius: Float, color: UInt32) {
+        if color != 0 {
+            self.style.dropShadowXOffset = xOffset
+            self.style.dropShadowYOffset = yOffset
+            self.style.dropShadowRadius = radius
+            self.style.dropShadowColor = color
+            let size = CGSize(width: CGFloat(xOffset), height: CGFloat(yOffset))
+            self.context?.setShadow(offset: size, blur: CGFloat(radius), color: IInkUIRefImplUtils.uiColor(rgba: color).cgColor)
+        }
+    }
+
     // MARK: - Font Properties
 
     func setFontProperties(_ family: String, height lineHeight: Float, size: Float, style: String, variant: String, weight: Int32) {
@@ -158,7 +171,7 @@ extension Canvas : IINKICanvas {
         self.style.fontSize = size
         self.style.fontVariant = variant
         self.style.fontWeight = Int(weight)
-        let font:UIFont = UIFont(from: self.style)
+        let font:UIFont? = UIFont.fontFromStyle(style: self.style)
         self.fontAttributeDict[NSAttributedString.Key.font] = font
         self.fontAttributeDict[NSAttributedString.Key.ligature] = NSNumber(0)
         let paragraphStyle:NSMutableParagraphStyle = NSMutableParagraphStyle()
@@ -227,21 +240,25 @@ extension Canvas : IINKICanvas {
     }
 
     func drawObject(_ url: String, mimeType: String, region rect: CGRect) {
-        guard let imageData:Data = self.imageLoader?.image(fromURL: url as NSString) as Data?,
-              let image:UIImage = UIImage(data: imageData),
+        guard let imageData: Data = self.imageLoader?.imageData(from: url) as Data?,
+              let image: UIImage = UIImage(data: imageData),
               let cgImage = image.cgImage,
-              mimeType.contains("image")
-        else { return }
+              mimeType.contains("image") else {
+            return
+        }
         self.context?.saveGState()
-        self.context?.translateBy(x: 0, y: 2*rect.origin.y + rect.height)
+        self.context?.translateBy(x: 0, y: rect.origin.y + rect.height)
         self.context?.scaleBy(x: 1, y: -1)
         self.context?.draw(cgImage, in: rect)
         self.context?.restoreGState()
     }
 
     func drawText(_ label: String, anchor origin: CGPoint, region rect: CGRect) {
-        guard let context = self.context else { return }
-        self.fontAttributeDict[NSAttributedString.Key.font] = UIFont(from: self.style, for: label)
+        guard let context = self.context,
+              let font = UIFont.fontFromStyle(style: self.style,string: label) else {
+                  return
+        }
+        self.fontAttributeDict[NSAttributedString.Key.font] = font
         let attrString:NSAttributedString = NSAttributedString(string: label, attributes: self.fontAttributeDict)
         let line:CTLine = CTLineCreateWithAttributedString(attrString)
         self.context?.textPosition = origin
@@ -251,9 +268,10 @@ extension Canvas : IINKICanvas {
     func blendOffscreen(_ offscreenId: UInt32, src: CGRect, dest: CGRect, color: UInt32) {
         guard let buffer:CGLayer = self.offscreenRenderSurfaces?.getSurfaceBuffer(forId: offscreenId), let scale = self.offscreenRenderSurfaces?.scale else { return }
         let size = buffer.size
+
         self.context?.saveGState()
         self.context?.clip(to: dest)
-        let alpha:CGFloat = CGFloat((color & 0xff) / 255)
+        let alpha:CGFloat = CGFloat(color & 0xff) / 255.0
         self.context?.setAlpha(alpha)
         let src_ = CGRect(x: src.origin.x * scale, y: src.origin.y * scale, width: src.width * scale, height: src.height * scale)
         let x:CGFloat = dest.origin.x - src_.origin.x / src_.size.width * dest.size.width

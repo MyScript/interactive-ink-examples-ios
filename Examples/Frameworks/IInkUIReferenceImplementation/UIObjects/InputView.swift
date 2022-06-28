@@ -89,7 +89,7 @@ class InputView : UIView {
             self.touchesBegan = true
         }
         let point = CGPoint(x: CGFloat(e.x), y: CGFloat(e.y))
-        self.editor?.pointerDown(point, at: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId), error: nil)
+        let _ = try? self.editor?.pointerDown(point: point, timestamp: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId))
         self.cancelled = false
     }
 
@@ -111,7 +111,7 @@ class InputView : UIView {
         } else {
             let e:IINKPointerEvent = self.pointerMoveEvent(from: touch)
             do {
-                try self.editor?.pointerMove(CGPoint(x: CGFloat(e.x), y: CGFloat(e.y)), at: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId))
+                try self.editor?.pointerMove(point: CGPoint(x: CGFloat(e.x), y: CGFloat(e.y)), timestamp: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId))
             } catch { // Error not catched for now
                 print(error)
             }
@@ -123,7 +123,7 @@ class InputView : UIView {
         guard let touch:UITouch = touches.randomElement() else { return }
         let e:IINKPointerEvent = self.pointerUpEvent(from: touch)
         do {
-            try self.editor?.pointerUp(CGPoint(x: CGFloat(e.x), y: CGFloat(e.y)), at: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId))
+            try self.editor?.pointerUp(point: CGPoint(x: CGFloat(e.x), y: CGFloat(e.y)), timestamp: e.t, force: e.f, type: e.pointerType, pointerId: Int(e.pointerId))
         } catch { // Error not catched for now
             print(error)
         }
