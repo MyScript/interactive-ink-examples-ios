@@ -661,12 +661,11 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     // the old instance is invalid but can be restored by remapping the identifier
     if (self.activeBlock && !self.activeBlock.valid)
     {
-        self.activeBlock = [self.editor getBlockById:self.activeBlock.identifier];
-        if (!self.activeBlock)
-        {
-            [self updateWithBlock:nil cause:UpdateCauseEdit];
+        IINKContentBlock* newActiveBlock = [self.editor getBlockById:self.activeBlock.identifier];
+        if (newActiveBlock)
+            self.activeBlock = newActiveBlock;
+        else
             return;
-        }
     }
 
     if (self.activeBlock && [blockIds containsObject:self.activeBlock.identifier])
