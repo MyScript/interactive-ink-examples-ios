@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -81,7 +81,6 @@
 		A8710C481F756E680034BEC7 /* IInkUIReferenceImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IInkUIReferenceImplementation.h; sourceTree = "<group>"; };
 		A8710C871F756FD30034BEC7 /* MyCertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCertificate.h; sourceTree = "<group>"; };
 		A8710C881F756FD30034BEC7 /* MyCertificate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MyCertificate.c; sourceTree = "<group>"; };
-		B0266B9820974F1700E2223C /* IINK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IINK.swift; path = ../../../../../api/swift/IINK.swift; sourceTree = "<group>"; };
 		B0AA59182006101600D408A5 /* SmartGuideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartGuideViewController.h; sourceTree = "<group>"; };
 		B0AA59192006101600D408A5 /* SmartGuideViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartGuideViewController.mm; sourceTree = "<group>"; };
 		B22EB11FCE844DF1F4472FCD /* Pods-GetStarted.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStarted.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GetStarted/Pods-GetStarted.debug.xcconfig"; sourceTree = "<group>"; };
@@ -238,7 +237,6 @@
 		55BCF0F91F4746A80065868A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				B0266B9820974F1700E2223C /* IINK.swift */,
 				55BCF0FA1F4746A80065868A /* Info.plist */,
 			);
 			path = "Supporting Files";
@@ -315,11 +313,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = MyScript;
 			};
 			buildConfigurationList = 554A0B681F4745DF00C30FE6 /* Build configuration list for PBXProject "GetStarted" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -353,6 +351,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		55F97D7E1F41A60A000D5DB7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -476,6 +475,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -536,9 +536,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "../Frameworks/IInkUIReferenceImplementation/IInkUIReferenceImplementation-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -569,7 +570,7 @@
 					../Frameworks,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/GetStarted/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.myscript.iink.GetStarted;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -602,7 +603,7 @@
 					../Frameworks,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/GetStarted/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.myscript.iink.GetStarted;
 				PRODUCT_NAME = "$(TARGET_NAME)";
