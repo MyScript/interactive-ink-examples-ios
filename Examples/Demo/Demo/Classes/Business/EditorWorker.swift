@@ -209,24 +209,35 @@ class EditorWorker: EditorWorkerLogic {
         guard let engine = EngineProvider.sharedInstance.engine else {
             return
         }
-        // Activate handwriting recognition for text and shapes
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.recognition.text")
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.recognition.shape")
-        // Allow conversion of text, nodes and edges
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.node")
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.text")
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.edge")
+
+        // Display grid background
+        try? engine.configuration.set(string: "grid", forKey: "raw-content.line-pattern");
+
+        // Activate handwriting recognition for text only
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.recognition.text");
+        try? engine.configuration.set(boolean: false, forKey: "raw-content.recognition.shape");
+
+        // Allow conversion of text
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.text");
+        try? engine.configuration.set(boolean: false, forKey: "raw-content.convert.node");
+        try? engine.configuration.set(boolean: false, forKey: "raw-content.convert.edge");
+
         // Allow converting shapes by holding the pen in position
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.shape-on-hold")
-        // Allow interacting with content with the HAND tool
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.tap-interactions")
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.shape-on-hold");
+
+        // Configure interactions
+        try? engine.configuration.set(string: "converted-or-mixed", forKey: "raw-content.interactive-items");
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.tap-interactions");
+        try? engine.configuration.set(boolean: false, forKey: "raw-content.eraser.erase-precisely");
+        try? engine.configuration.set(boolean: true,  forKey: "raw-content.eraser.dynamic-radius");
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.auto-connection");
+
         // Show alignment guides and snap to them
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.enable")
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.snap")
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.enable");
+        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.snap");
+
         // Allow gesture detection
-        try? engine.configuration.set(stringArray: ["underline", "double-underline", "scratch-out", "join", "insert", "strike-through"], forKey: "raw-content.pen.gestures")
-        // Disable erase-precisely behaviour on Eraser tool
-        try? engine.configuration.set(boolean: false, forKey: "raw-content.eraser.erase-precisely")
+        try? engine.configuration.set(stringArray: [ "underline", "scratch-out", "strike-through" ], forKey: "raw-content.pen.gestures");
     }
 
     func copy(selection: NSObjectProtocol & IINKIContentSelection) throws {
