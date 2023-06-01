@@ -40,7 +40,7 @@ struct ContextualActionsHelper {
         let onTextDocument: Bool = editor.part?.type == "Text Document"
         let blockIsEmpty: Bool = editor.isEmpty(block)
 
-        let displayAddBlock: Bool = editor.supportedAddBlockTypes.count > 0 && isRootBlock
+        let displayAddBlock: Bool = editor.supportedAddBlockTypes.count > 0 && (!onTextDocument || isRootBlock)
         let displayRemove: Bool = !isRootBlock
         let displayCopy: Bool = !isRootBlock || !onTextDocument
         let displayPaste: Bool = isRootBlock
