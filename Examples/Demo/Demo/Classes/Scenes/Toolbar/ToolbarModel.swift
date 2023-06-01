@@ -39,12 +39,12 @@ enum ToolWidth: Float {
 enum ToolColor: String {
     case penBlack = "#000000"
     case penRed = "#EA4335FF"
-    case penGreen = "#34A853"
-    case penBlue = "#4285F4"
-    case highlighterYellow = "#FBBC0566"
-    case highlighterRed = "#EA433566"
-    case highlighterGreen = "#34A85366"
-    case highlighterBlue = "#4285F466"
+    case penGreen = "#34A853FF"
+    case penBlue = "#4285F4FF"
+    case highlighterYellow = "#FBBC05"
+    case highlighterRed = "#EA4335"
+    case highlighterGreen = "#34A853"
+    case highlighterBlue = "#4285F4"
 }
 
 struct ColorButtonModel: Equatable {
