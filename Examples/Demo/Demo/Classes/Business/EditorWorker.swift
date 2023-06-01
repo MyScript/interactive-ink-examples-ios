@@ -113,7 +113,9 @@ class EditorWorker: EditorWorkerLogic {
     func convert(selection: (NSObjectProtocol & IINKIContentSelection)? = nil) throws {
         do {
             if let supportedTargetStates = self.editor?.supportedTargetConversionState(forSelection: selection) {
-                try self.editor?.convert(selection: selection, targetState: supportedTargetStates[0].value)
+                if !supportedTargetStates.isEmpty {
+                    try self.editor?.convert(selection: selection, targetState: supportedTargetStates[0].value)
+                }
             }
         } catch {
             print("Error while converting : " + error.localizedDescription)
