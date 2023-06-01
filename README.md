@@ -8,8 +8,8 @@ This repository contains a "get started" example, a complete example and a refer
 
 ### Prerequisites
 
-This getting started section has been tested with Xcode 12 and supports iOS 13+.
-[Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) version 1.11.2 or later needs to be installed on your computer.
+This getting started section has been tested with Xcode 14.3 and supports iOS 15+.
+[Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) version 1.12.1 or later needs to be installed on your computer.
 
 ### Installation
 
