@@ -12,6 +12,12 @@ struct TextFormatHelper {
             return "H2"
         case .paragraph:
             return "Paragraph"
+        case .listBullet:
+            return "Bullet List"
+        case .listCheckbox:
+            return "Checkbox List"
+        case .listNumbered:
+            return "Numbered List"
         @unknown default:
             return "Unknown Format"
         }
