@@ -109,7 +109,9 @@ class HomeViewModel {
     func convert() {
         do {
             if let supportedTargetStates = self.editor?.supportedTargetConversionState(forSelection: nil) {
-                try self.editor?.convert(selection: nil, targetState: supportedTargetStates[0].value)
+                if !supportedTargetStates.isEmpty {
+                    try self.editor?.convert(selection: nil, targetState: supportedTargetStates[0].value)
+                }
             }
         } catch {
             createAlert(title: "Error", message: "An error occured during the convertion")
