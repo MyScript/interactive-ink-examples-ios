@@ -9,8 +9,8 @@ SPEC REPOS:
     - MyScriptInteractiveInk-Runtime
 
 SPEC CHECKSUMS:
-  MyScriptInteractiveInk-Runtime: 699ae01ee5b077b23d040231f546b06f6c9ba0ce
+  MyScriptInteractiveInk-Runtime: d3e4aab20e5946ccf8c9f6a2b96fa18230ed7716
 
-PODFILE CHECKSUM: 97aa454a30caefbf49d3ebfddd1032031f09e11a
+PODFILE CHECKSUM: 318cda64d3815d8fa5efdba5bf548cc7249f1236
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.12.1
