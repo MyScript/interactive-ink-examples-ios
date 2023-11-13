@@ -30,6 +30,9 @@ struct AlertModelHelper {
         case .addImageFailed:
             return self.createDefaultErrorAlert(message: "An error occurred while adding the image",
                                                 exitAppWhenClosed: false)
+        case .clearFailed:
+            return self.createDefaultErrorAlert(message: "An error occurred while clearing the page",
+                                                exitAppWhenClosed: false)
         }
     }
 

@@ -142,8 +142,12 @@ class MainViewModel: NSObject {
         self.editorWorker.redo()
     }
 
-    func clear() {
-        self.editorWorker.clear()
+    func clear() throws {
+        do {
+            try self.editorWorker.clear()
+        } catch {
+            self.handleEditorError(error: error)
+        }
     }
 
     func convert(selection: (NSObjectProtocol & IINKIContentSelection)? = nil) {

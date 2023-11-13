@@ -15,7 +15,7 @@ protocol EditorWorkerLogic {
     func redo()
     func zoomIn() throws
     func zoomOut() throws
-    func clear()
+    func clear() throws
     func convert(selection: (NSObjectProtocol & IINKIContentSelection)?) throws
     mutating func openFile(file: File, engineProvider: EngineProvider)
     func resetView()
@@ -45,6 +45,7 @@ class EditorWorker: EditorWorkerLogic {
         case partCreationFailed
         case convertFailed
         case addImageFailed
+        case clearFailed
     }
 
     weak var delegate: MainViewModelEditorLogic?
@@ -107,8 +108,13 @@ class EditorWorker: EditorWorkerLogic {
         self.editor?.redo()
     }
 
-    func clear() {
-        self.editor?.clear()
+    func clear() throws {
+        do {
+            try self.editor?.clear()
+        } catch {
+            print("Error while clearing page : " + error.localizedDescription)
+            throw EditorError.clearFailed
+        }
     }
 
     func convert(selection: (NSObjectProtocol & IINKIContentSelection)? = nil) throws {

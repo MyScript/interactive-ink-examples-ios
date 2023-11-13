@@ -95,7 +95,12 @@ class HomeViewModel {
     // MARK: Actions
 
     func clear() {
-        self.editor?.clear()
+        do {
+            try self.editor?.clear()
+        } catch {
+            createAlert(title: "Error", message: "An error occurred while clearing the page")
+            print("Error while clearing : " + error.localizedDescription)
+        }
     }
 
     func undo() {

@@ -243,7 +243,7 @@ extension MainViewController: ToolbarProtocol {
     }
 
     func clear() {
-        self.viewModel?.clear()
+        try? self.viewModel?.clear()
     }
 
     func didSelectTool(tool: IINKPointerTool) {
