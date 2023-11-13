@@ -87,7 +87,7 @@ class HomeViewModel {
                 try self.editor?.part = package.part(at: 0)
             }
         } catch {
-            createAlert(title: "Error", message: "An error occured during the page creation")
+            createAlert(title: "Error", message: "An error occurred during the page creation")
             print("Error while creating package : " + error.localizedDescription)
         }
     }
@@ -114,7 +114,7 @@ class HomeViewModel {
                 }
             }
         } catch {
-            createAlert(title: "Error", message: "An error occured during the convertion")
+            createAlert(title: "Error", message: "An error occurred during the convertion")
             print("Error while converting : " + error.localizedDescription)
         }
     }

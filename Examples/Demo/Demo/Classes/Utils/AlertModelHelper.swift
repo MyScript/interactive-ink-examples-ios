@@ -23,12 +23,12 @@ struct AlertModelHelper {
     static func createAlertModel(with error: EditorWorker.EditorError) -> AlertModel {
         switch error {
         case .partCreationFailed:
-            return self.createDefaultErrorAlert(message: "An error occured during the page creation")
+            return self.createDefaultErrorAlert(message: "An error occurred during the page creation")
         case .convertFailed:
-            return self.createDefaultErrorAlert(message: "An error occured during the convertion",
+            return self.createDefaultErrorAlert(message: "An error occurred during the convertion",
                                                 exitAppWhenClosed: false)
         case .addImageFailed:
-            return self.createDefaultErrorAlert(message: "An error occured while adding the image",
+            return self.createDefaultErrorAlert(message: "An error occurred while adding the image",
                                                 exitAppWhenClosed: false)
         }
     }
