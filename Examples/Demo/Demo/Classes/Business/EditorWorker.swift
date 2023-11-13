@@ -239,6 +239,12 @@ class EditorWorker: EditorWorkerLogic {
 
         // Allow gesture detection
         try? engine.configuration.set(stringArray: [ "underline", "scratch-out", "strike-through" ], forKey: "raw-content.pen.gestures");
+
+        // Allow shape & image rotation in Raw Content parts
+        try? engine.configuration.set(stringArray: [ "shape", "image" ], forKey: "raw-content.rotation");
+
+        // Allow shape rotation in Diagram parts
+        try? engine.configuration.set(stringArray: [ "shape" ], forKey: "diagram.rotation");
     }
 
     func enableCaptureStrokePrediction() {
