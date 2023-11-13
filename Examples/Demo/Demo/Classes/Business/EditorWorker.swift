@@ -22,6 +22,7 @@ protocol EditorWorkerLogic {
     func save() throws
     func addImageBlock(data: Data, position: CGPoint) throws
     func enableRawContentConversion()
+    func enableCaptureStrokePrediction()
     func erase(selection: NSObjectProtocol & IINKIContentSelection) throws
     func copy(selection: NSObjectProtocol & IINKIContentSelection) throws
     func paste(at position: CGPoint) throws
@@ -238,6 +239,19 @@ class EditorWorker: EditorWorkerLogic {
 
         // Allow gesture detection
         try? engine.configuration.set(stringArray: [ "underline", "scratch-out", "strike-through" ], forKey: "raw-content.pen.gestures");
+    }
+
+    func enableCaptureStrokePrediction() {
+        guard let engine = EngineProvider.sharedInstance.engine else {
+            return
+        }
+
+        let MinPredictionDurationMs: Int = 16 // 1 frame @60Hz, 2 frames @120Hz
+        var frameTimeMs = Int(round(1000.0 / Double(UIScreen.main.maximumFramesPerSecond)))
+        frameTimeMs = max(frameTimeMs, MinPredictionDurationMs)
+
+        try? engine.configuration.set(number: Double(frameTimeMs), forKey: "renderer.prediction.duration");
+        try? engine.configuration.set(boolean: true, forKey: "renderer.prediction.enable");
     }
 
     func copy(selection: NSObjectProtocol & IINKIContentSelection) throws {

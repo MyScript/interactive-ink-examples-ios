@@ -243,6 +243,10 @@ class MainViewModel: NSObject {
         self.editorWorker.enableRawContentConversion()
     }
 
+    func enableCaptureStrokePrediction() {
+        self.editorWorker.enableCaptureStrokePrediction()
+    }
+
     private func handleEditorError(error: Error) {
         guard let editorError = error as? EditorWorker.EditorError else {
             return
