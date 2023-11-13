@@ -9,7 +9,6 @@ class RenderView : UIView {
 
     // MARK: - Properties
 
-    var layerType:IINKLayerType?
     weak var renderer:IINKRenderer?
     weak var imageLoader:ImageLoader? {
         didSet {
@@ -50,17 +49,7 @@ class RenderView : UIView {
         self.canvas.context = UIGraphicsGetCurrentContext()
         self.canvas.size = self.bounds.size
         self.canvas.clearAtStartDraw = false
-        if let layerType = self.layerType {
-            switch layerType {
-            case .model:
-                self.renderer?.drawModel(rect, canvas: self.canvas)
-                break
-            case .capture:
-                self.renderer?.drawCaptureStrokes(rect, canvas: self.canvas)
-                break
-            default:
-                break
-            }
-        }
+        self.renderer?.drawModel(rect, canvas: self.canvas)
+        self.renderer?.drawCaptureStrokes(rect, canvas: self.canvas)
     }
 }

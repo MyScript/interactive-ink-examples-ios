@@ -14,24 +14,19 @@ class DisplayViewModel : NSObject {
 
     //MARK: - Properties
 
-    var renderer:IINKRenderer?
-    var imageLoader:ImageLoader?
-    private(set) var offscreenRenderSurfaces:OffscreenRenderSurfaces = OffscreenRenderSurfaces()
-    private var didSetConstraints:Bool = false
+    var renderer: IINKRenderer?
+    var imageLoader: ImageLoader?
+    private(set) var offscreenRenderSurfaces: OffscreenRenderSurfaces = OffscreenRenderSurfaces()
+    private var didSetConstraints: Bool = false
 
     func setupModel() {
-        let model:DisplayModel = DisplayModel()
-        model.modelRenderView.layerType = IINKLayerType.model
-        model.modelRenderView.offscreenRenderSurfaces = offscreenRenderSurfaces
-        model.captureRenderView.layerType = IINKLayerType.capture
-        model.captureRenderView.offscreenRenderSurfaces = offscreenRenderSurfaces
-        if let renderer = self.renderer {
-            model.modelRenderView.renderer = renderer
-            model.captureRenderView.renderer = renderer
+        let model: DisplayModel = DisplayModel()
+        model.renderView.offscreenRenderSurfaces = offscreenRenderSurfaces
+        if let renderer {
+            model.renderView.renderer = renderer
         }
-        if let imageLoader = self.imageLoader {
-            model.modelRenderView.imageLoader = imageLoader
-            model.captureRenderView.imageLoader = imageLoader
+        if let imageLoader {
+            model.renderView.imageLoader = imageLoader
         }
         self.model = model
     }
@@ -43,16 +38,13 @@ class DisplayViewModel : NSObject {
     func initModelViewConstraints(view:UIView) {
         guard self.didSetConstraints == false, let model = self.model else { return }
         self.didSetConstraints = true
-        let views:[String:RenderView] = ["modelRenderView" : model.modelRenderView, "captureRenderView" : model.captureRenderView]
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[modelRenderView]|", options: .alignAllLeft, metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[modelRenderView]|", options: .alignAllLeft, metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[captureRenderView]|", options: .alignAllLeft, metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[captureRenderView]|", options: .alignAllLeft, metrics: nil, views: views))
+        let views: [String: RenderView] = ["renderView" : model.renderView]
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[renderView]|", options: .alignAllLeft, metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[renderView]|", options: .alignAllLeft, metrics: nil, views: views))
     }
 
     func refreshDisplay() {
-        self.model?.modelRenderView.setNeedsDisplay()
-        self.model?.captureRenderView.setNeedsDisplay()
+        self.model?.renderView.setNeedsDisplay()
     }
 }
 
@@ -60,23 +52,13 @@ extension DisplayViewModel : IINKIRenderTarget {
 
     func invalidate(_ renderer: IINKRenderer, layers: IINKLayerType) {
         DispatchQueue.main.async { [weak self] in
-            if !layers.isDisjoint(with: .model) {
-                self?.model?.modelRenderView.setNeedsDisplay()
-            }
-            if !layers.isDisjoint(with: .capture) {
-                self?.model?.captureRenderView.setNeedsDisplay()
-            }
+            self?.model?.renderView.setNeedsDisplay()
         }
     }
 
     func invalidate(_ renderer: IINKRenderer, area: CGRect, layers: IINKLayerType) {
         DispatchQueue.main.async { [weak self] in
-            if !layers.isDisjoint(with: .model) {
-                self?.model?.modelRenderView.setNeedsDisplay(area)
-            }
-            if !layers.isDisjoint(with: .capture) {
-                self?.model?.captureRenderView.setNeedsDisplay(area)
-            }
+            self?.model?.renderView.setNeedsDisplay(area)
         }
     }
 

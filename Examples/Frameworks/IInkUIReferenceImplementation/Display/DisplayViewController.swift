@@ -44,8 +44,7 @@ class DisplayViewController:UIViewController {
     //MARK: - UI settings
 
     private func displayModel(model:DisplayModel) {
-        self.configureRenderView(renderView: model.modelRenderView)
-        self.configureRenderView(renderView: model.captureRenderView)
+        self.configureRenderView(renderView: model.renderView)
         self.viewModel.refreshDisplay()
     }
 
