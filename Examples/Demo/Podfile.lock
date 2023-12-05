@@ -1,16 +1,16 @@
 PODS:
-  - MyScriptInteractiveInk-Runtime (2.1.1)
+  - MyScriptInteractiveInk-Runtime (2.3.1)
 
 DEPENDENCIES:
-  - MyScriptInteractiveInk-Runtime (= 2.1.1)
+  - MyScriptInteractiveInk-Runtime (= 2.3.1)
 
 SPEC REPOS:
   trunk:
     - MyScriptInteractiveInk-Runtime
 
 SPEC CHECKSUMS:
-  MyScriptInteractiveInk-Runtime: d3e4aab20e5946ccf8c9f6a2b96fa18230ed7716
+  MyScriptInteractiveInk-Runtime: 131ba28485a8a3da3215eedad65e12179f25db88
 
-PODFILE CHECKSUM: 318cda64d3815d8fa5efdba5bf548cc7249f1236
+PODFILE CHECKSUM: 1bb1a3899e01b704f036d9b8b33c7cd5d18ba8e0
 
 COCOAPODS: 1.12.1
