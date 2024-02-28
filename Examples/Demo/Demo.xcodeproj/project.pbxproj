@@ -10,8 +10,6 @@
 		0408B5AC2850D4C70033FE0E /* theme.css in Resources */ = {isa = PBXBuildFile; fileRef = 0408B5AB2850D4C70033FE0E /* theme.css */; };
 		0408B5EC285236750033FE0E /* MyScriptInter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0408B5EA285236750033FE0E /* MyScriptInter-Bold.otf */; };
 		0408B5ED285236750033FE0E /* MyScriptInter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0408B5EB285236750033FE0E /* MyScriptInter-Regular.otf */; };
-		0408B5F2285246E10033FE0E /* STIXGeneral.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0408B5F0285246E10033FE0E /* STIXGeneral.ttf */; };
-		0408B5F3285246E10033FE0E /* STIX-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0408B5F1285246E10033FE0E /* STIX-Italic.otf */; };
 		040B510526BBD9A700CA10AD /* OffscreenRenderSurfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040B510126BBD9A700CA10AD /* OffscreenRenderSurfaces.swift */; };
 		040B510626BBD9A700CA10AD /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040B510226BBD9A700CA10AD /* Canvas.swift */; };
 		040B510726BBD9A700CA10AD /* RenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040B510326BBD9A700CA10AD /* RenderView.swift */; };
@@ -70,6 +68,8 @@
 		118A0D0F227DAAA84E7EF644 /* libPods-Demo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94A4DC738E9AD693CC21CBF2 /* libPods-Demo.a */; };
 		55BCB8A91F4F308500550A18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCB8881F4F308500550A18 /* Assets.xcassets */; };
 		55D8477B1F4F31C400274C93 /* recognition-assets in Resources */ = {isa = PBXBuildFile; fileRef = 55D8477A1F4F31C400274C93 /* recognition-assets */; };
+		71F07A232B92062700A22D50 /* STIXTwoMath-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 71F07A212B92062700A22D50 /* STIXTwoMath-Regular.otf */; };
+		71F07A242B92062700A22D50 /* STIXTwoText-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 71F07A222B92062700A22D50 /* STIXTwoText-Italic.otf */; };
 		A8710C381F756BE90034BEC7 /* MyCertificate.c in Sources */ = {isa = PBXBuildFile; fileRef = A8710C371F756BE90034BEC7 /* MyCertificate.c */; };
 /* End PBXBuildFile section */
 
@@ -77,8 +77,6 @@
 		0408B5AB2850D4C70033FE0E /* theme.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = theme.css; sourceTree = "<group>"; };
 		0408B5EA285236750033FE0E /* MyScriptInter-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyScriptInter-Bold.otf"; sourceTree = "<group>"; };
 		0408B5EB285236750033FE0E /* MyScriptInter-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyScriptInter-Regular.otf"; sourceTree = "<group>"; };
-		0408B5F0285246E10033FE0E /* STIXGeneral.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = STIXGeneral.ttf; sourceTree = "<group>"; };
-		0408B5F1285246E10033FE0E /* STIX-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "STIX-Italic.otf"; sourceTree = "<group>"; };
 		040B510126BBD9A700CA10AD /* OffscreenRenderSurfaces.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffscreenRenderSurfaces.swift; sourceTree = "<group>"; };
 		040B510226BBD9A700CA10AD /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		040B510326BBD9A700CA10AD /* RenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderView.swift; sourceTree = "<group>"; };
@@ -141,6 +139,8 @@
 		55BCB8881F4F308500550A18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55BCB8A01F4F308500550A18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55D8477A1F4F31C400274C93 /* recognition-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "recognition-assets"; sourceTree = "<group>"; };
+		71F07A212B92062700A22D50 /* STIXTwoMath-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "STIXTwoMath-Regular.otf"; sourceTree = "<group>"; };
+		71F07A222B92062700A22D50 /* STIXTwoText-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "STIXTwoText-Italic.otf"; sourceTree = "<group>"; };
 		92756D571E8139560070A794 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A4DC738E9AD693CC21CBF2 /* libPods-Demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8710C361F756BE90034BEC7 /* MyCertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCertificate.h; sourceTree = "<group>"; };
@@ -163,8 +163,8 @@
 		0408B5E92852366B0033FE0E /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				0408B5F1285246E10033FE0E /* STIX-Italic.otf */,
-				0408B5F0285246E10033FE0E /* STIXGeneral.ttf */,
+				71F07A212B92062700A22D50 /* STIXTwoMath-Regular.otf */,
+				71F07A222B92062700A22D50 /* STIXTwoText-Italic.otf */,
 				0408B5EA285236750033FE0E /* MyScriptInter-Bold.otf */,
 				0408B5EB285236750033FE0E /* MyScriptInter-Regular.otf */,
 			);
@@ -490,14 +490,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71F07A232B92062700A22D50 /* STIXTwoMath-Regular.otf in Resources */,
+				71F07A242B92062700A22D50 /* STIXTwoText-Italic.otf in Resources */,
 				0408B5EC285236750033FE0E /* MyScriptInter-Bold.otf in Resources */,
 				55BCB8A91F4F308500550A18 /* Assets.xcassets in Resources */,
 				0489C68826D3995F0005091C /* Main.storyboard in Resources */,
-				0408B5F2285246E10033FE0E /* STIXGeneral.ttf in Resources */,
 				55D8477B1F4F31C400274C93 /* recognition-assets in Resources */,
 				0408B5ED285236750033FE0E /* MyScriptInter-Regular.otf in Resources */,
 				04A93C4B27BCD63100E9C675 /* Toolbar.storyboard in Resources */,
-				0408B5F3285246E10033FE0E /* STIX-Italic.otf in Resources */,
 				0489C68726D3995F0005091C /* LaunchScreen.storyboard in Resources */,
 				0408B5AC2850D4C70033FE0E /* theme.css in Resources */,
 			);

@@ -30,8 +30,8 @@
 	<array>
 		<string>MyScriptInter-Bold.otf</string>
 		<string>MyScriptInter-Regular.otf</string>
-		<string>STIX-Italic.otf</string>
-		<string>STIXGeneral.ttf</string>
+		<string>STIXTwoText-Italic.otf</string>
+		<string>STIXTwoMath-Regular.otf</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>

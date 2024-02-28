@@ -7,10 +7,10 @@ glyph {
 }
 
 .math {
-  font-family: STIXGeneral;
+  font-family: STIX Two Math;
 }
 
 .math-variable {
   font-style: italic;
-  font-family: STIXGeneral-Italic;
+  font-family: STIX Two Text;
 }

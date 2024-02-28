@@ -171,6 +171,7 @@ extension Canvas : IINKICanvas {
         self.style.fontSize = size
         self.style.fontVariant = variant
         self.style.fontWeight = Int(weight)
+        self.style.fontStyle = style
         let font:UIFont? = UIFont.fontFromStyle(style: self.style)
         self.fontAttributeDict[NSAttributedString.Key.font] = font
         self.fontAttributeDict[NSAttributedString.Key.ligature] = NSNumber(0)
