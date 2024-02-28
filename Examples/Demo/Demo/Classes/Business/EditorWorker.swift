@@ -248,6 +248,7 @@ class EditorWorker: EditorWorkerLogic {
         try? engine.configuration.set(boolean: false, forKey: "raw-content.eraser.erase-precisely");
         try? engine.configuration.set(boolean: true,  forKey: "raw-content.eraser.dynamic-radius");
         try? engine.configuration.set(boolean: true, forKey: "raw-content.auto-connection");
+        try? engine.configuration.set(stringArray: [ "default-with-drag" ], forKey: "raw-content.edge.policy");
 
         // Show alignment guides and snap to them
         try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.enable");
