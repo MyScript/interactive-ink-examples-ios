@@ -16,7 +16,7 @@ import UIKit
     weak var offscreenRenderSurfaces:OffscreenRenderSurfaces?
     private var aTransform:CGAffineTransform = .identity
     private var style:IINKStyle = IINKStyle()
-    private var clippedGroupIdentifier:String = ""
+    private var clippedGroupIdentifier:[String] = []
     private var fontAttributeDict:[NSAttributedString.Key : Any] = [NSAttributedString.Key : Any]()
     private var cgRule:CGPathFillRule = .evenOdd
 }
@@ -184,7 +184,7 @@ extension Canvas : IINKICanvas {
 
     func startGroup(_ identifier: String, region: CGRect, clip clipContent: Bool) {
         if clipContent {
-            self.clippedGroupIdentifier = identifier
+            self.clippedGroupIdentifier.append(identifier)
             self.style.clearChangeFlags()
             self.context?.saveGState()
             self.context?.clip(to: CGRect(x: region.origin.x, y: region.origin.y, width: region.width, height: region.height))
@@ -192,10 +192,10 @@ extension Canvas : IINKICanvas {
     }
 
     func endGroup(_ identifier: String) {
-        if identifier == self.clippedGroupIdentifier {
+        if let i = self.clippedGroupIdentifier.lastIndex(of: identifier) {
             self.context?.restoreGState()
             self.style.apply(to: self)
-            self.clippedGroupIdentifier = ""
+            self.clippedGroupIdentifier.remove(at: i)
         }
     }
 
