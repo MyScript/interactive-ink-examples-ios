@@ -60,7 +60,7 @@ class MainViewController: UIViewController, Storyboarded {
                                        editorWorker: EditorWorker())
         self.bindViewModel()
         self.viewModel?.checkEngineProviderValidity()
-        self.viewModel?.configureEditor()
+        self.viewModel?.enableRawContentConversion()
         self.viewModel?.enableCaptureStrokePrediction()
         self.coordinator?.displayEditor(editorDelegate: self.viewModel, smartGuideDelegate: self.viewModel)
     }

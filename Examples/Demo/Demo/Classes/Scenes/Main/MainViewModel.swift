@@ -243,8 +243,8 @@ class MainViewModel: NSObject {
         }
     }
 
-    func configureEditor() {
-        self.editorWorker.configureEditor()
+    func enableRawContentConversion() {
+        self.editorWorker.enableRawContentConversion()
     }
 
     func enableCaptureStrokePrediction() {
