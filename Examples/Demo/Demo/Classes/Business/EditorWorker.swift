@@ -21,7 +21,7 @@ protocol EditorWorkerLogic {
     func resetView()
     func save() throws
     func addImageBlock(data: Data, position: CGPoint) throws
-    func enableRawContentConversion()
+    func configureEditor()
     func enableCaptureStrokePrediction()
     func erase(selection: NSObjectProtocol & IINKIContentSelection) throws
     func copy(selection: NSObjectProtocol & IINKIContentSelection) throws
@@ -212,11 +212,21 @@ class EditorWorker: EditorWorkerLogic {
         }
     }
 
-    func enableRawContentConversion() {
+    func configureEditor() {
         guard let engine = EngineProvider.sharedInstance.engine else {
             return
         }
 
+        // Configure multithreading for text recognition
+        try? engine.configuration.set(number: 1, forKey: "max-recognition-thread-count");
+
+        self.enableRawContentInteractivity(engine: engine)
+
+        // Allow shape rotation in Diagram parts
+        try? engine.configuration.set(stringArray: [ "shape" ], forKey: "diagram.rotation");
+    }
+
+    private func enableRawContentInteractivity(engine: IINKEngine) {
         // Display grid background
         try? engine.configuration.set(string: "grid", forKey: "raw-content.line-pattern");
 
@@ -248,9 +258,6 @@ class EditorWorker: EditorWorkerLogic {
 
         // Allow shape & image rotation in Raw Content parts
         try? engine.configuration.set(stringArray: [ "shape", "image" ], forKey: "raw-content.rotation");
-
-        // Allow shape rotation in Diagram parts
-        try? engine.configuration.set(stringArray: [ "shape" ], forKey: "diagram.rotation");
     }
 
     func enableCaptureStrokePrediction() {
