@@ -242,6 +242,9 @@ class EditorWorker: EditorWorkerLogic {
         // Allow converting shapes by holding the pen in position
         try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.shape-on-hold");
 
+        // Configure shapes axis snapping
+        try? engine.configuration.set(stringArray: [ "triangle", "rectangle", "rhombus", "parallelogram", "ellipse" ], forKey: "raw-content.shape.snap-axis");
+
         // Configure interactions
         try? engine.configuration.set(string: "converted-or-mixed", forKey: "raw-content.interactive-items");
         try? engine.configuration.set(boolean: true, forKey: "raw-content.tap-interactions");
