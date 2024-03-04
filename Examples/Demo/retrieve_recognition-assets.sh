@@ -16,16 +16,16 @@ if [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/diagram.conf" ] 
 
 echo MyScript en-US recognition assets retriever
 
-curl -O https://download.myscript.com/iink/recognitionAssets_iink_2.3/myscript-iink-recognition-diagram.zip
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.0/myscript-iink-recognition-diagram.zip
 unzip -o myscript-iink-recognition-diagram.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://download.myscript.com/iink/recognitionAssets_iink_2.3/myscript-iink-recognition-raw-content.zip
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.0/myscript-iink-recognition-raw-content.zip
 unzip -o myscript-iink-recognition-raw-content.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://download.myscript.com/iink/recognitionAssets_iink_2.3/myscript-iink-recognition-math.zip
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.0/myscript-iink-recognition-math.zip
 unzip -o myscript-iink-recognition-math.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://download.myscript.com/iink/recognitionAssets_iink_2.3/myscript-iink-recognition-text-en_US.zip
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.0/myscript-iink-recognition-text-en_US.zip
 unzip -o myscript-iink-recognition-text-en_US.zip -d $ProjectRootFolder/Resources/
 
 rm myscript-iink-recognition-diagram.zip
