@@ -4,6 +4,6 @@ target 'Demo' do
 
   # Pods for Demo
 
-  pod 'MyScriptInteractiveInk-Runtime', '3.0.0'
+  pod 'MyScriptInteractiveInk-Runtime', '3.0.1'
 
 end
