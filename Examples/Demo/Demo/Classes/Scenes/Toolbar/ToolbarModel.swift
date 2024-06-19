@@ -28,20 +28,20 @@ struct ActivePenModel: Equatable {
 // MARK: ToolStyle
 
 enum ToolWidth: Float {
-    case penThin = 0.208 // 0.625 / 3
-    case penMedium = 0.625
-    case penLarge = 1.875 // 0.625 * 3
-    case hightlighterThin = 1.666  // 5 / 3
-    case hightlighterMedium = 5
-    case hightlighterLarge = 15 // 5 * 3
+    case penThin = 0.25
+    case penMedium = 0.65 // default (in mm)
+    case penLarge = 1.65
+    case hightlighterThin = 1.67
+    case hightlighterMedium = 5.0 // default (in mm)
+    case hightlighterLarge = 15.0
 }
 
 enum ToolColor: String {
-    case penBlack = "#000000"
+    case penBlack = "#000000" // default
     case penRed = "#EA4335FF"
     case penGreen = "#34A853FF"
     case penBlue = "#4285F4FF"
-    case highlighterYellow = "#FBBC05"
+    case highlighterYellow = "#FBBC05"  // default
     case highlighterRed = "#EA4335"
     case highlighterGreen = "#34A853"
     case highlighterBlue = "#4285F4"
