@@ -231,13 +231,7 @@ class EditorWorker: EditorWorkerLogic {
         try? engine.configuration.set(string: "grid", forKey: "raw-content.line-pattern");
 
         // Activate handwriting recognition for text only
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.recognition.text");
-        try? engine.configuration.set(boolean: false, forKey: "raw-content.recognition.shape");
-
-        // Allow conversion of text
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.text");
-        try? engine.configuration.set(boolean: false, forKey: "raw-content.convert.node");
-        try? engine.configuration.set(boolean: false, forKey: "raw-content.convert.edge");
+        try? engine.configuration.set(stringArray: [ "text" ], forKey: "raw-content.recognition.types");
 
         // Allow converting shapes by holding the pen in position
         try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.shape-on-hold");
@@ -246,16 +240,15 @@ class EditorWorker: EditorWorkerLogic {
         try? engine.configuration.set(stringArray: [ "triangle", "rectangle", "rhombus", "parallelogram", "ellipse" ], forKey: "raw-content.shape.snap-axis");
 
         // Configure interactions
-        try? engine.configuration.set(string: "converted-or-mixed", forKey: "raw-content.interactive-items");
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.tap-interactions");
+        try? engine.configuration.set(stringArray: [ ], forKey: "raw-content.interactive-blocks.auto-classified");
         try? engine.configuration.set(boolean: false, forKey: "raw-content.eraser.erase-precisely");
         try? engine.configuration.set(boolean: true,  forKey: "raw-content.eraser.dynamic-radius");
         try? engine.configuration.set(boolean: true, forKey: "raw-content.auto-connection");
         try? engine.configuration.set(stringArray: [ "default-with-drag" ], forKey: "raw-content.edge.policy");
 
         // Show alignment guides and snap to them
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.enable");
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.guides.snap");
+        try? engine.configuration.set(stringArray: [ "alignment", "text", "square", "square-inside", "image-aspect-ratio", "rotation" ], forKey: "raw-content.guides.show");
+        try? engine.configuration.set(stringArray: [ "alignment", "text", "square", "square-inside", "image-aspect-ratio", "rotation" ], forKey: "raw-content.guides.snap");
 
         // Allow gesture detection
         try? engine.configuration.set(stringArray: [ "underline", "scratch-out", "strike-through" ], forKey: "raw-content.pen.gestures");
