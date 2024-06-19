@@ -248,8 +248,13 @@ extension Canvas : IINKICanvas {
             return
         }
         self.context?.saveGState()
-        self.context?.translateBy(x: 0, y: rect.origin.y + rect.height)
+        // flip the image around the y axis, as images must be drawn updside down on iOS
+        // 1. translate the context so that image is split in 2 equal parts by the X axis
+        // 2. scale the context by y = -1 to put the image upside down
+        // 3. translate the context so that image is back to its original position
+        self.context?.translateBy(x: 0, y: rect.origin.y + rect.height / 2)
         self.context?.scaleBy(x: 1, y: -1)
+        self.context?.translateBy(x: 0, y: -1 * (rect.origin.y + rect.height / 2))
         self.context?.draw(cgImage, in: rect)
         self.context?.restoreGState()
     }
