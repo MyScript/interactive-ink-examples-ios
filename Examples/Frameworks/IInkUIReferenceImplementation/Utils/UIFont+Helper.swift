@@ -18,6 +18,13 @@ extension UIFont {
         let isItalic = style.fontStyle.lowercased() == "italic"
         if fontFamily != "sans-serif" {
             font = UIFont(name: fontFamily, size: CGFloat(style.fontSize))
+            // fallback on STIX One font when STIX Two is not available
+            if (font == nil && fontFamily == "STIX Two Math") {
+                font = UIFont(name: "STIXGeneral", size: CGFloat(style.fontSize))
+            }
+            else if (font == nil && fontFamily == "STIX Two Text") {
+                font = UIFont(name: "STIXGeneral-Italic", size: CGFloat(style.fontSize))
+            }
         } else {
             font = UIFont.systemFont(ofSize: CGFloat(style.fontSize), weight: .regular)
         }
