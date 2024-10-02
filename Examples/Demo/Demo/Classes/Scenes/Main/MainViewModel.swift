@@ -290,6 +290,8 @@ class MainViewModel: NSObject {
                         self?.delegate?.displayImagePicker()
                     }
                     actionModels.append(action)
+                } else if type == "Placeholder" {
+                    // not supported
                 } else {
                     let addTitle = String(format: "Add %@", type)
                     let action = ActionModel(actionText: addTitle) { [weak self] action in
