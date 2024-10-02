@@ -6,14 +6,9 @@ This repository contains a "get started" example, a complete example and a refer
 
 ## Getting started
 
-### Prerequisites
-
-This getting started section has been tested with Xcode 14.3 and supports iOS 15+.
-[Cocoapods](https://guides.cocoapods.org/using/getting-started.html#toc_3) version 1.12.1 or later needs to be installed on your computer.
-
 ### Installation
 
-1. Clone the examples repository  `git clone https://github.com/MyScript/interactive-ink-examples-ios.git`
+1. Clone the examples repository `git clone https://github.com/MyScript/interactive-ink-examples-ios.git`
 
 2. Claim a certificate to receive the free license to start develop your application by following the first steps of [Getting Started](https://developer.myscript.com/getting-started)
 
