@@ -38,7 +38,7 @@ class MainViewModel: NSObject {
     private var selectedPosition: CGPoint?
     private var engineProvider: EngineProvider
     private var toolingWorker: ToolingWorkerLogic
-    private (set) var editorWorker: EditorWorkerLogic
+    private(set) var editorWorker: EditorWorkerLogic
 
     init(delegate: MainViewControllerDisplayLogic?,
          engineProvider: EngineProvider,
@@ -118,9 +118,9 @@ class MainViewModel: NSObject {
 
     // MARK: - Editor Business Logic
 
-    func createNewPart(partType: SelectedPartTypeModel, engineProvider: EngineProvider) {
+    func createNewPart(partTypeCreationModel: PartTypeCreationModel, engineProvider: EngineProvider) {
         do {
-            try self.editorWorker.createNewPart(partType: partType, engineProvider: engineProvider)
+            try self.editorWorker.createNewPart(partTypeCreationModel: partTypeCreationModel, engineProvider: engineProvider)
         } catch {
             self.handleEditorError(error: error)
         }

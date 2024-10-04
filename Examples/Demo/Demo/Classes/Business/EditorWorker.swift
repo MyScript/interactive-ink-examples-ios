@@ -8,7 +8,7 @@ import Foundation
 
 protocol EditorWorkerLogic {
 
-    mutating func createNewPart(partType: SelectedPartTypeModel, engineProvider: EngineProvider) throws
+    mutating func createNewPart(partTypeCreationModel: PartTypeCreationModel, engineProvider: EngineProvider) throws
     func loadNextPart()
     func loadPreviousPart()
     func undo()
@@ -53,9 +53,9 @@ class EditorWorker: EditorWorkerLogic {
     var currentPackage: IINKContentPackage?
     private var currentFileName: String = ""
 
-    func createNewPart(partType: SelectedPartTypeModel, engineProvider: EngineProvider) throws {
+    func createNewPart(partTypeCreationModel: PartTypeCreationModel, engineProvider: EngineProvider) throws {
         // Create a new pacakage if requested
-        if partType.onNewPackage {
+        if partTypeCreationModel.onNewPackage {
             do {
                 self.unloadPart()
                 try self.createPackage(engineProvider: engineProvider)
@@ -65,7 +65,9 @@ class EditorWorker: EditorWorkerLogic {
         }
         // Create a new part to the package
         do {
-            if let part: IINKContentPart = try self.currentPackage?.createPart(with: partType.partType) {
+            if var part: IINKContentPart = try self.currentPackage?.createPart(with: partTypeCreationModel.partType.partType) {
+                // Set its configuration profile
+                self.setPartConfigurationProfile(part: &part, configuration: partTypeCreationModel.partType.configuration)
                 // Then load it
                 self.loadPart(part: part)
             }
@@ -216,45 +218,8 @@ class EditorWorker: EditorWorkerLogic {
         guard let engine = EngineProvider.sharedInstance.engine else {
             return
         }
-
         // Configure multithreading for text recognition
         try? engine.configuration.set(number: 1, forKey: "max-recognition-thread-count");
-
-        self.enableRawContentInteractivity(engine: engine)
-
-        // Allow shape rotation in Diagram parts
-        try? engine.configuration.set(stringArray: [ "shape" ], forKey: "diagram.rotation");
-    }
-
-    private func enableRawContentInteractivity(engine: IINKEngine) {
-        // Display grid background
-        try? engine.configuration.set(string: "grid", forKey: "raw-content.line-pattern");
-
-        // Activate handwriting recognition for text only
-        try? engine.configuration.set(stringArray: [ "text" ], forKey: "raw-content.recognition.types");
-
-        // Allow converting shapes by holding the pen in position
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.convert.shape-on-hold");
-
-        // Configure shapes axis snapping
-        try? engine.configuration.set(stringArray: [ "triangle", "rectangle", "rhombus", "parallelogram", "ellipse" ], forKey: "raw-content.shape.snap-axis");
-
-        // Configure interactions
-        try? engine.configuration.set(stringArray: [ ], forKey: "raw-content.interactive-blocks.auto-classified");
-        try? engine.configuration.set(boolean: false, forKey: "raw-content.eraser.erase-precisely");
-        try? engine.configuration.set(boolean: true,  forKey: "raw-content.eraser.dynamic-radius");
-        try? engine.configuration.set(boolean: true, forKey: "raw-content.auto-connection");
-        try? engine.configuration.set(stringArray: [ "default-with-drag" ], forKey: "raw-content.edge.policy");
-
-        // Show alignment guides and snap to them
-        try? engine.configuration.set(stringArray: [ "alignment", "text", "square", "square-inside", "image-aspect-ratio", "rotation" ], forKey: "raw-content.guides.show");
-        try? engine.configuration.set(stringArray: [ "alignment", "text", "square", "square-inside", "image-aspect-ratio", "rotation" ], forKey: "raw-content.guides.snap");
-
-        // Allow gesture detection
-        try? engine.configuration.set(stringArray: [ "underline", "scratch-out", "strike-through" ], forKey: "raw-content.pen.gestures");
-
-        // Allow shape & image rotation in Raw Content parts
-        try? engine.configuration.set(stringArray: [ "shape", "image" ], forKey: "raw-content.rotation");
     }
 
     func enableCaptureStrokePrediction() {
@@ -337,10 +302,23 @@ class EditorWorker: EditorWorkerLogic {
         }
     }
 
+    private func setPartConfigurationProfile( part: inout IINKContentPart, configuration: String) {
+        guard let partMetaData = part.metadata else {
+            return
+        }
+        try? partMetaData.set(string: configuration, forKey: ConfigurationsProvider.configProfileMetadataKey)
+        part.metadata = partMetaData
+    }
+
     private func loadPart(part: IINKContentPart) {
         // Reset viewing parameters
         self.editor?.renderer.viewScale = 1
         self.editor?.renderer.viewOffset = CGPoint.zero
+        self.editor?.configuration.reset()
+        // Retrieve the configuration profile and inject it to the editor
+        if let configurationJson = ConfigurationsProvider.configurationJson(from: part) {
+            try? self.editor?.configuration.inject(configurationJson)
+        }
         // Set part
         self.editor?.part = part
         // Inform delegate

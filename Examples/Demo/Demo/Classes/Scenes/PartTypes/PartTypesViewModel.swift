@@ -9,21 +9,21 @@ class PartTypesViewModel {
 
     // MARK: Published Properties
 
-    @Published var model:PartTypesModel?
-    @Published var createBarButtonItemEnabled:Bool = false
-    @Published var selectedPartType:SelectedPartTypeModel?
+    @Published var model: PartTypesModel?
+    @Published var createBarButtonItemEnabled: Bool = false
+    @Published var selectedPartType: PartTypeCreationModel?
 
     // MARK: Properties
 
-    var engine:IINKEngine?
-    var selectedIndexPath:IndexPath?
-    private var cancelBarButtonItemEnabled:Bool = true
-    private var onNewPackage:Bool = false
-    weak var delegate:PartTypesViewControllerDisplayLogic?
+    var engine: IINKEngine?
+    var selectedIndexPath: IndexPath?
+    private var cancelBarButtonItemEnabled: Bool = true
+    private var onNewPackage: Bool = false
+    weak var delegate: PartTypesViewControllerDisplayLogic?
 
     // MARK: Init
 
-    init(engine:IINKEngine?, cancelEnabled:Bool, onNewPackage:Bool) {
+    init(engine:IINKEngine?, cancelEnabled: Bool, onNewPackage: Bool) {
         self.engine = engine
         self.onNewPackage = onNewPackage
         self.cancelBarButtonItemEnabled = cancelEnabled
@@ -32,22 +32,47 @@ class PartTypesViewModel {
     // MARK: Business Logic
 
     func loadData() {
-        if let engine = engine {
-            let createBarButtonItem:UIBarButtonItem = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(create))
-            createBarButtonItem.isEnabled = false
-            var cancelBarButtonItem:UIBarButtonItem? = nil
-            if cancelBarButtonItemEnabled {
-                cancelBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancel))
-            }
-            var partTypeModels:[PartTypeModel] = [PartTypeModel]()
-            for partType in engine.supportedPartTypes {
-                partTypeModels.append(PartTypeModel(partType: partType, selected: false))
-            }
-            self.model = PartTypesModel(partTypes: partTypeModels, createBarButtonItem: createBarButtonItem, cancelBarButtonItem: cancelBarButtonItem)
+        let createBarButtonItem = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(create))
+        createBarButtonItem.isEnabled = false
+        var cancelBarButtonItem: UIBarButtonItem? = nil
+        if cancelBarButtonItemEnabled {
+            cancelBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancel))
         }
+        let partTypeModels: [PartTypeModel] = self.supportedPartTypesAndProfiles()
+        self.model = PartTypesModel(partTypes: partTypeModels,
+                                    createBarButtonItem: createBarButtonItem,
+                                    cancelBarButtonItem: cancelBarButtonItem)
     }
 
-    func selectElement(indexPath:IndexPath) {
+    private func supportedPartTypesAndProfiles() -> [PartTypeModel] {
+        var result = [PartTypeModel]()
+        if let supportedPartTypes = engine?.supportedPartTypes {
+            let configurationsPath = Bundle.main.bundlePath.appending("/configurations/")
+            for partType in supportedPartTypes {
+                // Append PartType with default config profile
+                result.append(PartTypeModel(partType: partType,
+                                            configuration: "",
+                                            displayName: partType))
+                // Then try to find custom config profiles for this PartType and append them
+                // Configs for PartTypes are json files, and they are always located in "/configurations/{PartType}/{configName}.json"
+                let partTypePath = configurationsPath.appending(partType)
+                if FileManager.default.fileExists(atPath: partTypePath),
+                   let configFiles = try? FileManager.default.contentsOfDirectory(atPath: partTypePath) {
+                    for configFile in configFiles {
+                        if configFile.hasSuffix(".json"),
+                           let profileName = configFile.split(separator: ".").first {
+                            result.append(PartTypeModel(partType: partType,
+                                                        configuration: String(profileName),
+                                                        displayName: "\(partType) (\(profileName))"))
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    func selectElement(indexPath: IndexPath) {
         if self.model?.partTypes.count ?? 0 > indexPath.row {
             if let selectedIndexPath = self.selectedIndexPath {
                 // deselect old partType
@@ -62,8 +87,8 @@ class PartTypesViewModel {
 
     @objc private func create() {
         if let selectedIndexPath = self.selectedIndexPath,
-           let partType = self.model?.partTypes[selectedIndexPath.row].partType {
-            self.selectedPartType = SelectedPartTypeModel(partType: partType, onNewPackage: self.onNewPackage)
+           let partType = self.model?.partTypes[selectedIndexPath.row] {
+            self.selectedPartType = PartTypeCreationModel(partType: partType, onNewPackage: self.onNewPackage)
         }
     }
 

@@ -69,7 +69,7 @@ final class MainCoordinator {
         self.navigationController.present(vc, animated: true, completion: nil)
     }
 
-    func didSelectPartTypeToCreate(partType:SelectedPartTypeModel) {
+    func didSelectPartTypeToCreate(partType: PartTypeCreationModel) {
         self.navigationController.dismiss(animated: true, completion: nil)
         self.mainViewController?.partTypeToCreate = partType
     }

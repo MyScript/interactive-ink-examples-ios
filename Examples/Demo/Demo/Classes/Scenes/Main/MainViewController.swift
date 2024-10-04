@@ -32,10 +32,10 @@ class MainViewController: UIViewController, Storyboarded {
     // MARK: Properties
 
     weak var coordinator: MainCoordinator?
-    var partTypeToCreate: SelectedPartTypeModel? {
+    var partTypeToCreate: PartTypeCreationModel? {
         didSet {
             if let partTypeToCreate = self.partTypeToCreate {
-                self.viewModel?.createNewPart(partType: partTypeToCreate, engineProvider: EngineProvider.sharedInstance)
+                self.viewModel?.createNewPart(partTypeCreationModel: partTypeToCreate, engineProvider: EngineProvider.sharedInstance)
             }
         }
     }

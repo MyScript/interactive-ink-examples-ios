@@ -11,12 +11,12 @@ protocol PartTypesViewControllerDisplayLogic : AnyObject {
 
 /// The PartTypesTableViewController role is to present a list of Part Types modally. Once the user has chosen one, the modal is dissmissed and the value is given to the MainViewController (via the coordinator) in order to create a new page of the selected type (Ex:Text Document)
 
-class PartTypesTableViewController : UITableViewController, Storyboarded {
+class PartTypesTableViewController: UITableViewController, Storyboarded {
 
     // MARK: Properties
 
     weak var coordinator: MainCoordinator?
-    var viewModel:PartTypesViewModel?
+    var viewModel: PartTypesViewModel?
     private var cancellables: Set<AnyCancellable> = []
     private let cellId = "PartTypeCellReuseIdentifier"
 
@@ -64,7 +64,7 @@ class PartTypesTableViewController : UITableViewController, Storyboarded {
         let partType:PartTypeModel? = viewModel?.model?.partTypes[indexPath.row]
         let cell:UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         if let partType = partType {
-            cell.textLabel?.text = partType.partType
+            cell.textLabel?.text = partType.displayName
             cell.accessoryType = partType.selected ? .checkmark : .none
             cell.isSelected = partType.selected
         }
@@ -84,7 +84,7 @@ class PartTypesTableViewController : UITableViewController, Storyboarded {
     }
 }
 
-extension PartTypesTableViewController : PartTypesViewControllerDisplayLogic {
+extension PartTypesTableViewController: PartTypesViewControllerDisplayLogic {
 
     func cancel() {
         self.coordinator?.dissmissModal()

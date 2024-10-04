@@ -68,6 +68,8 @@
 		118A0D0F227DAAA84E7EF644 /* libPods-Demo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94A4DC738E9AD693CC21CBF2 /* libPods-Demo.a */; };
 		55BCB8A91F4F308500550A18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCB8881F4F308500550A18 /* Assets.xcassets */; };
 		55D8477B1F4F31C400274C93 /* recognition-assets in Resources */ = {isa = PBXBuildFile; fileRef = 55D8477A1F4F31C400274C93 /* recognition-assets */; };
+		71728ED82CB0463000829CD7 /* ConfigurationsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71728ED72CB0463000829CD7 /* ConfigurationsProvider.swift */; };
+		71728EE02CB0478A00829CD7 /* configurations in Resources */ = {isa = PBXBuildFile; fileRef = 71728EDF2CB0478A00829CD7 /* configurations */; };
 		71F07A232B92062700A22D50 /* STIXTwoMath-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 71F07A212B92062700A22D50 /* STIXTwoMath-Regular.otf */; };
 		71F07A242B92062700A22D50 /* STIXTwoText-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 71F07A222B92062700A22D50 /* STIXTwoText-Italic.otf */; };
 		A8710C381F756BE90034BEC7 /* MyCertificate.c in Sources */ = {isa = PBXBuildFile; fileRef = A8710C371F756BE90034BEC7 /* MyCertificate.c */; };
@@ -139,6 +141,8 @@
 		55BCB8881F4F308500550A18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55BCB8A01F4F308500550A18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55D8477A1F4F31C400274C93 /* recognition-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "recognition-assets"; sourceTree = "<group>"; };
+		71728ED72CB0463000829CD7 /* ConfigurationsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationsProvider.swift; sourceTree = "<group>"; };
+		71728EDF2CB0478A00829CD7 /* configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = configurations; path = ../../configurations; sourceTree = "<group>"; };
 		71F07A212B92062700A22D50 /* STIXTwoMath-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "STIXTwoMath-Regular.otf"; sourceTree = "<group>"; };
 		71F07A222B92062700A22D50 /* STIXTwoText-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "STIXTwoText-Italic.otf"; sourceTree = "<group>"; };
 		92756D571E8139560070A794 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -235,6 +239,7 @@
 		040B515126BC442200CA10AD /* Business */ = {
 			isa = PBXGroup;
 			children = (
+				71728ED72CB0463000829CD7 /* ConfigurationsProvider.swift */,
 				04729C1D26C273B90087148F /* FilesProvider.swift */,
 				040B515226BC443F00CA10AD /* EngineProvider.swift */,
 				043B31632807163B007D8885 /* ToolingWorker.swift */,
@@ -384,6 +389,7 @@
 		92756D4E1E8139560070A794 = {
 			isa = PBXGroup;
 			children = (
+				71728EDF2CB0478A00829CD7 /* configurations */,
 				A8710BEC1F75684C0034BEC7 /* Frameworks */,
 				55BCB8721F4F308500550A18 /* Demo */,
 				92756D581E8139560070A794 /* Products */,
@@ -490,6 +496,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71728EE02CB0478A00829CD7 /* configurations in Resources */,
 				71F07A232B92062700A22D50 /* STIXTwoMath-Regular.otf in Resources */,
 				71F07A242B92062700A22D50 /* STIXTwoText-Italic.otf in Resources */,
 				0408B5EC285236750033FE0E /* MyScriptInter-Bold.otf in Resources */,
@@ -592,6 +599,7 @@
 				043B31622807068E007D8885 /* TextFormatHelper.swift in Sources */,
 				041EEE4C27FC83140056A5CD /* ContextualActionsHelper.swift in Sources */,
 				0454F93627BFF7910088188A /* ToolStyleViewController.swift in Sources */,
+				71728ED82CB0463000829CD7 /* ConfigurationsProvider.swift in Sources */,
 				0489C67726D38DF80005091C /* FilesModel.swift in Sources */,
 				040B515326BC443F00CA10AD /* EngineProvider.swift in Sources */,
 				040B512F26BBD9BB00CA10AD /* EditorModel.swift in Sources */,
