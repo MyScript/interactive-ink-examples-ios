@@ -46,9 +46,3 @@ You can get some support or give feedback from the dedicated section on [MyScrip
 
 Made a cool app with Interactive Ink? Ready to cross join our marketing efforts? We would love to hear about you!
 We’re planning to showcase apps powered by MyScript technology so let us know by sending a quick mail to [myapp@myscript.com](mailto://myapp@myscript.com).
-
-## Contributing
-
-We welcome your contributions:
-If you would like to extend those examples for your needs, feel free to fork it!
-Please sign our [Contributor License Agreement](CONTRIBUTING.md) before submitting your pull request.
