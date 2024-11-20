@@ -22,15 +22,23 @@ unzip -o myscript-iink-recognition-diagram.zip -d $ProjectRootFolder/Resources/
 curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.2/myscript-iink-recognition-raw-content.zip
 unzip -o myscript-iink-recognition-raw-content.zip -d $ProjectRootFolder/Resources/
 
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.2/myscript-iink-recognition-raw-content2.zip
+unzip -o myscript-iink-recognition-raw-content2.zip -d $ProjectRootFolder/Resources/
+
 curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.2/myscript-iink-recognition-math.zip
 unzip -o myscript-iink-recognition-math.zip -d $ProjectRootFolder/Resources/
+
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.2/myscript-iink-recognition-math2.zip
+unzip -o myscript-iink-recognition-math2.zip -d $ProjectRootFolder/Resources/
 
 curl -O https://download.myscript.com/iink/recognitionAssets_iink_3.2/myscript-iink-recognition-text-en_US.zip
 unzip -o myscript-iink-recognition-text-en_US.zip -d $ProjectRootFolder/Resources/
 
 rm myscript-iink-recognition-diagram.zip
 rm myscript-iink-recognition-raw-content.zip
+rm myscript-iink-recognition-raw-content2.zip
 rm myscript-iink-recognition-math.zip
+rm myscript-iink-recognition-math2.zip
 rm myscript-iink-recognition-text-en_US.zip
 
 fi
