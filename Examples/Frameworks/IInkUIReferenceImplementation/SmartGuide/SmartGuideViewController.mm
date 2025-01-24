@@ -260,12 +260,15 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
         self.removeHighlightDelay = [configuration getNumberForKey:@"smart-guide.highlight-removal-delay" defaultValue:2.0               error:nil].value;
 
         self.exportParams = [self.editor.engine createParameterSet];
-        [self.exportParams setBoolean:YES forKey:@"export.jiix.text.words"   error:nil];
-        [self.exportParams setBoolean:NO  forKey:@"export.jiix.strokes"      error:nil];
-        [self.exportParams setBoolean:NO  forKey:@"export.jiix.bounding-box" error:nil];
-        [self.exportParams setBoolean:NO  forKey:@"export.jiix.glyphs"       error:nil];
-        [self.exportParams setBoolean:NO  forKey:@"export.jiix.primitives"   error:nil];
-        [self.exportParams setBoolean:NO  forKey:@"export.jiix.chars"        error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.bounding-box"    error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.glyphs"          error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.primitives"      error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.strokes"         error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.text.chars"      error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.text.lines"      error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.text.spans"      error:nil];
+        [self.exportParams setBoolean:NO  forKey:@"export.jiix.text.structure"  error:nil];
+        [self.exportParams setBoolean:YES forKey:@"export.jiix.text.words"      error:nil];
 
         self.importParams = [self.editor.engine createParameterSet];
         [self.importParams setString:@"update"  forKey:@"diagram.import.jiix.action"        error:nil];
