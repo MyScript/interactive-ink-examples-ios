@@ -663,9 +663,14 @@ typedef NS_ENUM(NSUInteger, TextBlockStyle)
     {
         IINKContentBlock* newActiveBlock = [self.editor getBlockById:self.activeBlock.identifier];
         if (newActiveBlock)
+        {
             self.activeBlock = newActiveBlock;
+        }
         else
+        {
+            [self updateWithBlock:nil cause:UpdateCauseEdit];
             return;
+        }
     }
 
     if (self.activeBlock && [blockIds containsObject:self.activeBlock.identifier])
