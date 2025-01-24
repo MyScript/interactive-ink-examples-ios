@@ -4,7 +4,32 @@ import Combine
 import UIKit
 
 protocol EditorDelegate: AnyObject {
-    func didCreateEditor(editor: IINKEditor?)
+    func didCreateEditor(editor: IINKEditor)
+    func partChanged(editor: IINKEditor)
+    func contentChanged(editor: IINKEditor, blockIds: [String])
+    func onError(editor: IINKEditor, blockId: String, message: String)
+}
+
+private class EditorDelegateTrampoline: NSObject, IINKEditorDelegate {
+
+    private weak var editorDelegate: EditorDelegate?
+
+    init(editorDelegate: EditorDelegate?)
+    {
+        self.editorDelegate = editorDelegate;
+    }
+
+    func partChanged(_ editor: IINKEditor) {
+        self.editorDelegate?.partChanged(editor: editor)
+    }
+
+    func contentChanged(_ editor: IINKEditor, blockIds: [String]) {
+        self.editorDelegate?.contentChanged(editor: editor, blockIds: blockIds)
+    }
+
+    func onError(_ editor: IINKEditor, blockId: String, message: String) {
+        self.editorDelegate?.onError(editor: editor, blockId: blockId, message: message)
+    }
 }
 
 /// This class is the ViewModel of the EditorViewController. It handles all its business logic.
@@ -22,6 +47,7 @@ class EditorViewModel {
     private weak var engine: IINKEngine?
     private(set) var originalViewOffset: CGPoint = CGPoint.zero
     private weak var editorDelegate: EditorDelegate?
+    private var editorDelegateTrampoline: EditorDelegateTrampoline
     private weak var smartGuideDelegate: SmartGuideViewControllerDelegate?
     private var smartGuideDisabled: Bool = false
     private var didSetConstraints: Bool = false
@@ -34,6 +60,7 @@ class EditorViewModel {
         self.engine = engine
         self.inputMode = inputMode
         self.editorDelegate = editorDelegate
+        self.editorDelegateTrampoline = EditorDelegateTrampoline(editorDelegate: editorDelegate)
         self.smartGuideDelegate = smartGuideDelegate
     }
 
@@ -135,8 +162,12 @@ class EditorViewModel {
         }
 
         self.editor?.set(fontMetricsProvider: FontMetricsProvider())
-        self.editorDelegate?.didCreateEditor(editor: self.editor)
+        if self.editor != nil {
+            self.editorDelegate?.didCreateEditor(editor: self.editor!)
+        }
         target.renderer = renderer
         target.imageLoader = ImageLoader()
+
+        self.editor?.addDelegate(self.editorDelegateTrampoline)
     }
 }

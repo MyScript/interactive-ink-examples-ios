@@ -402,10 +402,22 @@ class MainViewModel: NSObject {
 
 extension MainViewModel: EditorDelegate {
 
-    func didCreateEditor(editor: IINKEditor?) {
+    func didCreateEditor(editor: IINKEditor) {
         self.editor = editor
         self.toolingWorker.editor = editor
         self.editorWorker.editor = editor
+    }
+
+    func partChanged(editor: IINKEditor) {
+
+    }
+
+    func contentChanged(editor: IINKEditor, blockIds: [String]) {
+
+    }
+
+    func onError(editor: IINKEditor, blockId: String, message: String) {
+        self.handleDefaultError(errorMessage: message)
     }
 }
 

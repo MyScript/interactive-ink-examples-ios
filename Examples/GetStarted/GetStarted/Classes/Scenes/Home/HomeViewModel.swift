@@ -132,7 +132,19 @@ class HomeViewModel {
 
 extension HomeViewModel: EditorDelegate {
 
-    func didCreateEditor(editor: IINKEditor?) {
+    func didCreateEditor(editor: IINKEditor) {
         self.editor = editor
+    }
+
+    func partChanged(editor: IINKEditor) {
+
+    }
+
+    func contentChanged(editor: IINKEditor, blockIds: [String]) {
+
+    }
+
+    func onError(editor: IINKEditor, blockId: String, message: String) {
+        createAlert(title: "Error", message: message)
     }
 }
