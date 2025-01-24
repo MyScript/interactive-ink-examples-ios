@@ -66,7 +66,7 @@ class InputView : UIView {
             point = touch.location(in: self)
         }
         let t:Int64 = Int64(1000*(touch.timestamp + self.eventTimeOffset))
-        return IINKPointerEvent(eventType: eventType, x: Float(point.x), y: Float(point.y), t: t, f: f, pointerType: pointerType, pointerId: 0)
+        return IINKPointerEventMake(eventType, point, t, f, pointerType, 0)
     }
 
     func pointerDownEvent(from touch:UITouch) -> IINKPointerEvent {
