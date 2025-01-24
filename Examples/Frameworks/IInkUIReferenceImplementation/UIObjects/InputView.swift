@@ -44,24 +44,41 @@ class InputView : UIView {
 
     // MARK: - Touches
 
+    private func normalizeForce(from touch:UITouch) -> Float {
+        var force:CGFloat = 1.0
+        if (touch.type == .stylus) {
+            if (touch.maximumPossibleForce > 1.0) {
+                if (touch.force <= 1.0) {
+                    force = touch.force / 2.0 // average touch force = 0.5
+                } else {
+                    force = ((touch.force - 1.0) / (touch.maximumPossibleForce - 1.0)) / 2.0 + 0.5 // max touch force = 1.0
+                }
+            }
+            else if (touch.maximumPossibleForce > 0.0) {
+                force = touch.force / touch.maximumPossibleForce
+            }
+        }
+        return Float(force)
+    }
+
     private func pointerEvent(from touch:UITouch, eventType:IINKPointerEventType) -> IINKPointerEvent {
         var pointerType:IINKPointerType = .pen
         switch self.inputMode {
-        case .forcePen:
-            pointerType = .pen
-            break
-        case .forceTouch:
-            pointerType = .touch
-            break
-        default:
-            pointerType = touch.type == .stylus ? .pen : .touch
-            break
+            case .forcePen:
+                pointerType = .pen
+                break
+            case .forceTouch:
+                pointerType = .touch
+                break
+            default:
+                pointerType = touch.type == .stylus ? .pen : .touch
+                break
         }
         var point:CGPoint = CGPoint.zero
-        var f:Float = 0
+        var f:Float = 1.0
         if touch.type == .stylus {
             point = touch.preciseLocation(in: self)
-            f = Float(touch.force / touch.maximumPossibleForce)
+            f = self.normalizeForce(from: touch)
         } else {
             point = touch.location(in: self)
         }
