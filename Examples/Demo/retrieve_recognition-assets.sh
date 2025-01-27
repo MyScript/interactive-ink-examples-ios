@@ -28,7 +28,7 @@ unzip -o myscript-iink-recognition-raw-content2.zip -d $ProjectRootFolder/Resour
 curl -O https://download.myscript.com/iink/recognitionAssets_iink_4.0/myscript-iink-recognition-math.zip
 unzip -o myscript-iink-recognition-math.zip -d $ProjectRootFolder/Resources/
 
-curl -O https://download.myscript.com/iink/recognitionAssets_iink_0.0/myscript-iink-recognition-math2.zip
+curl -O https://download.myscript.com/iink/recognitionAssets_iink_4.0/myscript-iink-recognition-math2.zip
 unzip -o myscript-iink-recognition-math2.zip -d $ProjectRootFolder/Resources/
 
 curl -O https://download.myscript.com/iink/recognitionAssets_iink_4.0/myscript-iink-recognition-text-en_US.zip
