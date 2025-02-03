@@ -12,7 +12,7 @@ fi
 
 ProjectRootFolder=$1
 
-if [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/diagram.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/raw-content.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/math.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/en_US.conf" ]; then
+if [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/diagram.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/raw-content.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/math.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/en_US.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/math2.conf" ] || [ ! -f "$ProjectRootFolder/Resources/recognition-assets/conf/raw-content2.conf" ]; then
 
 echo MyScript en-US recognition assets retriever
 
