@@ -4,6 +4,6 @@ target 'GetStarted' do
 
   # Pods for GetStarted
 
-  pod 'MyScriptInteractiveInk-Runtime', '4.0.0'
+  pod 'MyScriptInteractiveInk-Runtime', '4.0.1'
 
 end
