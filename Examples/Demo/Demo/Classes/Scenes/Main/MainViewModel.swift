@@ -413,21 +413,18 @@ extension MainViewModel: EditorDelegate {
     }
 
     func contentChanged(editor: IINKEditor, blockIds: [String]) {
-        // automatically apply numerical computation when available on math expressions with (almost) equal sign
+        // Auto-solve isolated Math blocks
         guard let mathSolver = editor.mathSolverController else {
             return
         }
         for blockId in blockIds {
             let block = editor.getBlockById(blockId)
-            if block?.type == "Math" && editor.part?.type == "Raw Content" {
+            if block?.type == "Math" && editor.part?.type == "Raw Content" && block?.parent?.type != "Text" {
                 do {
                     let actions = try mathSolver.availableActions(forBlock: blockId, overrideConfiguration: nil)
                     let conversionState = try editor.conversionState(forSelection: block)
                     if actions.firstIndex(of: "numerical-computation") != nil && (conversionState.value.rawValue & IINKConversionState.handwriting.rawValue) != 0 {
-                        let latexExport = try editor.export(selection: block, mimeType: IINKMimeType.laTeX)
-                        if latexExport.contains("=") || latexExport.contains("\\approx") || latexExport.contains("\\simeq") {
-                            try mathSolver.apply(forBlock: blockId, action: "numerical-computation", overrideConfiguration: nil)
-                        }
+                        try mathSolver.apply(forBlock: blockId, action: "numerical-computation", overrideConfiguration: nil)
                     }
                 }
                 catch {
