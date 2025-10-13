@@ -421,10 +421,19 @@ extension MainViewModel: EditorDelegate {
             let block = editor.getBlockById(blockId)
             if block?.type == "Math" && editor.part?.type == "Raw Content" && block?.parent?.type != "Text" {
                 do {
-                    let actions = try mathSolver.availableActions(forBlock: blockId, overrideConfiguration: nil)
-                    let conversionState = try editor.conversionState(forSelection: block)
-                    if actions.firstIndex(of: "numerical-computation") != nil && (conversionState.value.rawValue & IINKConversionState.handwriting.rawValue) != 0 {
-                        try mathSolver.apply(forBlock: blockId, action: "numerical-computation", overrideConfiguration: nil)
+                    let configStrokes = editor.engine.createParameterSet()
+                    try configStrokes?.set(string: "strokes", forKey: "math.solver.rendered-ink-type")
+                    let configGlyphs = editor.engine.createParameterSet()
+                    try configGlyphs?.set(string: "glyphs", forKey: "math.solver.rendered-ink-type")
+
+                    let solveAsStrokes = try mathSolver.diagnostic(forBlock: blockId, task: "numerical-computation", overrideConfiguration: configStrokes)
+                    let solveAsGlyphs  = try mathSolver.diagnostic(forBlock: blockId, task: "numerical-computation", overrideConfiguration: configGlyphs)
+
+                    if solveAsStrokes.value.rawValue == IINKMathDiagnostic.allowed.rawValue && solveAsGlyphs.value.rawValue == IINKMathDiagnostic.allowed.rawValue { // not already solved as strokes or glyphs
+                        let conversionState = try editor.conversionState(forSelection: block)
+                        let config = ((conversionState.value.rawValue & IINKConversionState.handwriting.rawValue) != 0) ? configStrokes : configGlyphs
+
+                        try mathSolver.apply(forBlock: blockId, action: "numerical-computation", overrideConfiguration: config)
                     }
                 }
                 catch {
