@@ -311,6 +311,7 @@ class EditorWorker: EditorWorkerLogic {
     }
 
     private func loadPart(part: IINKContentPart) {
+        self.editor?.part = nil
         // Reset viewing parameters
         self.editor?.renderer.viewScale = 1
         self.editor?.renderer.viewOffset = CGPoint.zero
