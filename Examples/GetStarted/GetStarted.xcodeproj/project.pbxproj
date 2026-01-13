@@ -39,7 +39,6 @@
 		55BCF1021F4746A80065868A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCF0E81F4746A80065868A /* Assets.xcassets */; };
 		A8710C891F756FD30034BEC7 /* MyCertificate.c in Sources */ = {isa = PBXBuildFile; fileRef = A8710C881F756FD30034BEC7 /* MyCertificate.c */; };
 		B0AA591A2006101700D408A5 /* SmartGuideViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B0AA59192006101600D408A5 /* SmartGuideViewController.mm */; };
-		B2974109573D2BDA71D6F235 /* libPods-GetStarted.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2739E09CB26852F0B467A35F /* libPods-GetStarted.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,19 +70,16 @@
 		04A95BE726B048280080688E /* DisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayModel.swift; sourceTree = "<group>"; };
 		04A95BEE26B1498F0080688E /* EditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorModel.swift; sourceTree = "<group>"; };
 		04A95BF026B19E6D0080688E /* HomeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeModel.swift; sourceTree = "<group>"; };
-		2739E09CB26852F0B467A35F /* libPods-GetStarted.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GetStarted.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		554547BA1F4B0367002C309C /* recognition-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "recognition-assets"; sourceTree = "<group>"; };
 		554A0B6D1F4745DF00C30FE6 /* GetStarted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GetStarted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55BCF0E21F4746A80065868A /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BCF0E81F4746A80065868A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55BCF0FA1F4746A80065868A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		65D200C6994E10F1DB8BEBE2 /* Pods-GetStarted.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStarted.release.xcconfig"; path = "Pods/Target Support Files/Pods-GetStarted/Pods-GetStarted.release.xcconfig"; sourceTree = "<group>"; };
 		A8710C481F756E680034BEC7 /* IInkUIReferenceImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IInkUIReferenceImplementation.h; sourceTree = "<group>"; };
 		A8710C871F756FD30034BEC7 /* MyCertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCertificate.h; sourceTree = "<group>"; };
 		A8710C881F756FD30034BEC7 /* MyCertificate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MyCertificate.c; sourceTree = "<group>"; };
 		B0AA59182006101600D408A5 /* SmartGuideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartGuideViewController.h; sourceTree = "<group>"; };
 		B0AA59192006101600D408A5 /* SmartGuideViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartGuideViewController.mm; sourceTree = "<group>"; };
-		B22EB11FCE844DF1F4472FCD /* Pods-GetStarted.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStarted.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GetStarted/Pods-GetStarted.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +87,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B2974109573D2BDA71D6F235 /* libPods-GetStarted.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +185,6 @@
 				A8710C391F756E680034BEC7 /* Frameworks */,
 				554A0B6F1F4745DF00C30FE6 /* GetStarted */,
 				554A0B6E1F4745DF00C30FE6 /* Products */,
-				F8AB3A53E0C5631A2AB98E54 /* Pods */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -255,7 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				A8710C3A1F756E680034BEC7 /* IInkUIReferenceImplementation */,
-				2739E09CB26852F0B467A35F /* libPods-GetStarted.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -275,15 +268,6 @@
 			path = ../Frameworks/IInkUIReferenceImplementation;
 			sourceTree = "<group>";
 		};
-		F8AB3A53E0C5631A2AB98E54 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B22EB11FCE844DF1F4472FCD /* Pods-GetStarted.debug.xcconfig */,
-				65D200C6994E10F1DB8BEBE2 /* Pods-GetStarted.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -291,7 +275,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 554A0B7F1F4745DF00C30FE6 /* Build configuration list for PBXNativeTarget "GetStarted" */;
 			buildPhases = (
-				DE518F87D606FC0A6545FF25 /* [CP] Check Pods Manifest.lock */,
 				55F97D7E1F41A60A000D5DB7 /* ShellScript */,
 				554A0B691F4745DF00C30FE6 /* Sources */,
 				554A0B6A1F4745DF00C30FE6 /* Frameworks */,
@@ -363,24 +346,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./retrieve_recognition-assets.sh GetStarted\n";
-		};
-		DE518F87D606FC0A6545FF25 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GetStarted-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -556,21 +521,13 @@
 		};
 		554A0B801F4745DF00C30FE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B22EB11FCE844DF1F4472FCD /* Pods-GetStarted.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CURRENT_PROJECT_VERSION = 4.4.2;
 				DEVELOPMENT_TEAM = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"COCOAPODS=1",
-					"GET_STARTED=1",
-				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/MyScriptInteractiveInk-Runtime\"",
 					../Frameworks,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/GetStarted/Supporting Files/Info.plist";
@@ -591,21 +548,13 @@
 		};
 		554A0B811F4745DF00C30FE6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 65D200C6994E10F1DB8BEBE2 /* Pods-GetStarted.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CURRENT_PROJECT_VERSION = 4.4.2;
 				DEVELOPMENT_TEAM = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"COCOAPODS=1",
-					"GET_STARTED=1",
-				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/MyScriptInteractiveInk-Runtime\"",
 					../Frameworks,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/GetStarted/Supporting Files/Info.plist";
