@@ -65,6 +65,7 @@
 		04A93C5227BD350C00E9C675 /* ToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A93C5127BD350C00E9C675 /* ToolbarModel.swift */; };
 		04AA5D9927D9FC28007F89FD /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AA5D9827D9FC28007F89FD /* AlertModel.swift */; };
 		04AA5D9B27DA01B5007F89FD /* AlertBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AA5D9A27DA01B5007F89FD /* AlertBuilder.swift */; };
+		17CEE5362EE1C88200496FE5 /* libiink in Frameworks */ = {isa = PBXBuildFile; productRef = 17CEE5352EE1C88200496FE5 /* libiink */; };
 		55BCB8A91F4F308500550A18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCB8881F4F308500550A18 /* Assets.xcassets */; };
 		55D8477B1F4F31C400274C93 /* recognition-assets in Resources */ = {isa = PBXBuildFile; fileRef = 55D8477A1F4F31C400274C93 /* recognition-assets */; };
 		71728ED82CB0463000829CD7 /* ConfigurationsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71728ED72CB0463000829CD7 /* ConfigurationsProvider.swift */; };
@@ -153,6 +154,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17CEE5362EE1C88200496FE5 /* libiink in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +467,9 @@
 				Base,
 			);
 			mainGroup = 92756D4E1E8139560070A794;
+			packageReferences = (
+				17CEE5342EE1C88200496FE5 /* XCRemoteSwiftPackageReference "interactive-ink-packages-ios" */,
+			);
 			productRefGroup = 92756D581E8139560070A794 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -784,6 +789,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		17CEE5342EE1C88200496FE5 /* XCRemoteSwiftPackageReference "interactive-ink-packages-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MyScript/interactive-ink-packages-ios";
+			requirement = {
+				kind = exactVersion;
+				version = 4.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		17CEE5352EE1C88200496FE5 /* libiink */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17CEE5342EE1C88200496FE5 /* XCRemoteSwiftPackageReference "interactive-ink-packages-ios" */;
+			productName = libiink;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 92756D4F1E8139560070A794 /* Project object */;
 }
