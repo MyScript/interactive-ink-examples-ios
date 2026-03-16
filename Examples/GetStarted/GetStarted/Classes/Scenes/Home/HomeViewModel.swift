@@ -31,7 +31,7 @@ enum PackagePartType {
 
 /// This class is the ViewModel of the HomeViewController. It handles all its business logic.
 
-class HomeViewModel {
+class HomeViewModel: NSObject {
 
     // MARK: Published Properties
 
@@ -146,5 +146,14 @@ extension HomeViewModel: EditorDelegate {
 
     func onError(editor: IINKEditor, blockId: String, message: String) {
         createAlert(title: "Error", message: message)
+    }
+}
+
+extension HomeViewModel: SmartGuideViewControllerDelegate {
+
+    func smartGuideViewController(_ smartGuideViewController: SmartGuideViewController,
+                                  didTapOnMoreButton moreButton: UIButton,
+                                  for block: IINKContentBlock) {
+        // Not used in GetStarted, but required for Swift Packages compatibility
     }
 }
