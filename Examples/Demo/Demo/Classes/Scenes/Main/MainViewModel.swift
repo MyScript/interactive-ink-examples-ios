@@ -419,7 +419,7 @@ extension MainViewModel: EditorDelegate {
         }
         for blockId in blockIds {
             let block = editor.getBlockById(blockId)
-            if block?.type == "Math" && editor.part?.type == "Raw Content" && block?.parent?.type != "Text" {
+            if block?.type == "Math" && editor.part?.type == "Raw Content" {
                 do {
                     let configStrokes = editor.engine.createParameterSet()
                     try configStrokes?.set(string: "strokes", forKey: "math.solver.rendered-ink-type")
