@@ -33,6 +33,9 @@ struct AlertModelHelper {
         case .clearFailed:
             return self.createDefaultErrorAlert(message: "An error occurred while clearing the page",
                                                 exitAppWhenClosed: false)
+        case .partLoadingFailed:
+            return self.createDefaultErrorAlert(message: "The page could not be opened: unknown configuration profile",
+                                                exitAppWhenClosed: false)
         }
     }
 

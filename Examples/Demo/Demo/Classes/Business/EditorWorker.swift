@@ -43,6 +43,7 @@ class EditorWorker: EditorWorkerLogic {
 
     enum EditorError: Error {
         case partCreationFailed
+        case partLoadingFailed
         case convertFailed
         case addImageFailed
         case clearFailed
@@ -69,7 +70,7 @@ class EditorWorker: EditorWorkerLogic {
                 // Set its configuration profile
                 self.setPartConfigurationProfile(part: &part, configuration: partTypeCreationModel.partType.configuration)
                 // Then load it
-                self.loadPart(part: part)
+                try self.loadPart(part: part)
             }
         } catch {
             print("Error while creating part : " + error.localizedDescription)
@@ -85,7 +86,7 @@ class EditorWorker: EditorWorkerLogic {
             let currentIndex: Int = currentPackage.index(of: part)
             if currentIndex < partCount - 1,
                let nextPart = try? currentPackage.part(at: currentIndex + 1) {
-                self.loadPart(part: nextPart)
+                try? self.loadPart(part: nextPart)
             }
         }
     }
@@ -97,7 +98,7 @@ class EditorWorker: EditorWorkerLogic {
             let currentIndex: Int = currentPackage.index(of: part)
             if currentIndex > 0,
                let nextPart = try? currentPackage.part(at: currentIndex - 1) {
-                self.loadPart(part: nextPart)
+                try? self.loadPart(part: nextPart)
             }
         }
     }
@@ -155,12 +156,26 @@ class EditorWorker: EditorWorkerLogic {
     func openFile(file: File, engineProvider: EngineProvider) {
         if let engine: IINKEngine = engineProvider.engine {
             let filePath = FileManager.default.pathForFileInIinkDirectory(fileName: file.fileName) as NSString
+            // Save current state for potential rollback
+            let previousPackage = self.currentPackage
+            let previousPart = self.editor?.part
+            let previousFileName = self.currentFileName
             self.unloadPart()
             self.currentFileName = filePath.lastPathComponent
             self.currentPackage = try? engine.openPackage(filePath.decomposedStringWithCanonicalMapping)
             if let currentPackage = self.currentPackage,
                let part: IINKContentPart = try? currentPackage.part(at: 0) {
-                self.loadPart(part: part)
+                do {
+                    try self.loadPart(part: part)
+                } catch {
+                    // Unknown configuration profile: restore the previous part
+                    self.currentPackage = previousPackage
+                    self.currentFileName = previousFileName
+                    if let previousPart = previousPart {
+                        try? self.loadPart(part: previousPart)
+                    }
+                    return
+                }
             }
             self.delegate?.didOpenFile()
         }
@@ -303,22 +318,27 @@ class EditorWorker: EditorWorkerLogic {
     }
 
     private func setPartConfigurationProfile( part: inout IINKContentPart, configuration: String) {
-        guard let partMetaData = part.metadata else {
+        guard !configuration.isEmpty, let partMetaData = part.metadata else {
             return
         }
         try? partMetaData.set(string: configuration, forKey: ConfigurationsProvider.configProfileMetadataKey)
         part.metadata = partMetaData
     }
 
-    private func loadPart(part: IINKContentPart) {
+    private func loadPart(part: IINKContentPart) throws {
         self.editor?.part = nil
         // Reset viewing parameters
         self.editor?.renderer.viewScale = 1
         self.editor?.renderer.viewOffset = CGPoint.zero
         self.editor?.configuration.reset()
         // Retrieve the configuration profile and inject it to the editor
-        if let configurationJson = ConfigurationsProvider.configurationJson(from: part) {
-            try? self.editor?.configuration.inject(configurationJson)
+        do {
+            if let configurationJson = try ConfigurationsProvider.configurationJson(from: part) {
+                try? self.editor?.configuration.inject(configurationJson)
+            }
+        } catch {
+            print("[EditorWorker] Failed to load configuration profile for part: \(error)")
+            throw EditorError.partLoadingFailed
         }
         // Set part
         self.editor?.part = part
