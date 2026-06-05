@@ -4,7 +4,7 @@ struct ConfigurationsProvider {
 
     static let defaultConfiguration = "interactivity"
     static let configProfileMetadataKey = "configuration-profile"
-    private static let partTypeConfigurationsPath = Bundle.main.bundlePath.appending("/configurations/")
+    private static let partTypeConfigurationsPath = (Bundle.main.resourcePath ?? Bundle.main.bundlePath).appending("/configurations/")
 
     static func configurationJson(from part: IINKContentPart) -> String? {
         let configurationPath = Self.configurationPath(from: part)

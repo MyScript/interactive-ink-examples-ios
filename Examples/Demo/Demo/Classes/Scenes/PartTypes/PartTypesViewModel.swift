@@ -47,7 +47,7 @@ class PartTypesViewModel {
     private func supportedPartTypesAndProfiles() -> [PartTypeModel] {
         var result = [PartTypeModel]()
         if let supportedPartTypes = engine?.supportedPartTypes {
-            let configurationsPath = Bundle.main.bundlePath.appending("/configurations/")
+            let configurationsPath = (Bundle.main.resourcePath ?? Bundle.main.bundlePath).appending("/configurations/")
             for partType in supportedPartTypes {
                 // Append PartType with default config profile
                 result.append(PartTypeModel(partType: partType,

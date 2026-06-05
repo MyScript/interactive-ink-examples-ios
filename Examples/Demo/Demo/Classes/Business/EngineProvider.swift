@@ -30,7 +30,11 @@ class EngineProvider {
         }
 
         // Configure the iink runtime environment
-        let configurationPath = Bundle.main.bundlePath.appending("/recognition-assets/conf")
+        guard let resourcePath = Bundle.main.resourcePath else {
+            self.engineErrorMessage = "Bundle resource path is unavailable"
+            return nil
+        }
+        let configurationPath = resourcePath.appending("/recognition-assets/conf")
         do {
             try engine.configuration.set(stringArray: [configurationPath],
                                          forKey: "configuration-manager.search-path") // Tells the engine where to load the recognition assets from.
