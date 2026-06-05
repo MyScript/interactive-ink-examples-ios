@@ -51,6 +51,8 @@ class EditorViewModel {
     private weak var smartGuideDelegate: SmartGuideViewControllerDelegate?
     private var smartGuideDisabled: Bool = false
     private var didSetConstraints: Bool = false
+    private var lastTranslationX: CGFloat = 0
+    private var lastTranslationY: CGFloat = 0
 
     init(engine: IINKEngine?,
          inputMode: InputMode,
@@ -131,11 +133,19 @@ class EditorViewModel {
         if state == UIGestureRecognizer.State.began {
             self.originalViewOffset = self.editor?.renderer.viewOffset ?? CGPoint.zero
         }
-        var newOffset:CGPoint = CGPoint(x: originalViewOffset.x - translation.x, y: originalViewOffset.y - translation.y)
-        self.editor?.clampViewOffset(&newOffset)
+        let deltaX = translation.x - self.lastTranslationX
+        let deltaY = translation.y - self.lastTranslationY
+        let newOffset = CGPoint(
+            x: self.originalViewOffset.x - deltaX,
+            y: self.originalViewOffset.y - deltaY
+        )
         self.editor?.renderer.viewOffset = newOffset
-        if state == UIGestureRecognizer.State.ended {
-            self.originalViewOffset = self.editor?.renderer.viewOffset ?? CGPoint.zero
+        self.lastTranslationX = translation.x
+        self.lastTranslationY = translation.y
+        self.originalViewOffset = self.editor?.renderer.viewOffset ?? CGPoint.zero
+        if state == .ended {
+            self.lastTranslationX = 0
+            self.lastTranslationY = 0
         }
         NotificationCenter.default.post(name: DisplayViewController.refreshNotification, object: nil)
     }
