@@ -1,6 +1,7 @@
 // Copyright @ MyScript. All rights reserved.
 
 import Foundation
+import UniformTypeIdentifiers
 
 /// This class is the Coordinator of the Project. It's role is to deal with all the navigation (in this case instanciate and present/dismiss viewControllers, and eventually passing data to the next controller)
 
@@ -143,6 +144,16 @@ final class MainCoordinator {
         imagePickerController.sourceType = .savedPhotosAlbum
         imagePickerController.allowsEditing = false
         self.mainViewController?.present(imagePickerController, animated: true, completion: nil)
+    }
+
+    // MARK: - Import Picker
+
+    func presentImportPicker(delegate: UIDocumentPickerDelegate) {
+        let iinkType = UTType(filenameExtension: "iink") ?? .data
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [iinkType])
+        documentPicker.delegate = delegate
+        documentPicker.allowsMultipleSelection = false
+        self.mainViewController?.present(documentPicker, animated: true, completion: nil)
     }
 
     // MARK: - Alerting

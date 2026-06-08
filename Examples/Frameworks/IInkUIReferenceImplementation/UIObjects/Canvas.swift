@@ -272,8 +272,11 @@ extension Canvas : IINKICanvas {
     }
 
     func blendOffscreen(_ offscreenId: UInt32, src: CGRect, dest: CGRect, color: UInt32) {
-        guard let buffer:CGLayer = self.offscreenRenderSurfaces?.getSurfaceBuffer(forId: offscreenId), let scale = self.offscreenRenderSurfaces?.scale else { return }
-        let size = buffer.size
+        guard let offscreenRenderSurfaces = self.offscreenRenderSurfaces else { return }
+        guard let surfaceContext = offscreenRenderSurfaces.getSurfaceContext(forId: offscreenId) else { return }
+        guard let image = surfaceContext.makeImage() else { return }
+        let scale = offscreenRenderSurfaces.scale
+        let size = offscreenRenderSurfaces.getSurfaceSize(forId: offscreenId)
 
         self.context?.saveGState()
         self.context?.clip(to: dest)
@@ -284,7 +287,7 @@ extension Canvas : IINKICanvas {
         let y:CGFloat = dest.origin.y - src_.origin.y / src_.size.height * dest.size.height
         let width:CGFloat = size.width / src_.size.width * dest.size.width
         let height:CGFloat = size.height / src_.size.height * dest.size.height
-        self.context?.draw(buffer, in: CGRect(x: x, y: y, width: width, height: height))
+        self.context?.draw(image, in: CGRect(x: x, y: y, width: width, height: height))
         self.context?.restoreGState()
     }
 }

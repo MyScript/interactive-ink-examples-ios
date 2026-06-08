@@ -63,17 +63,10 @@ extension DisplayViewModel : IINKIRenderTarget {
     }
 
     func createOffscreenRenderSurface(width: Int32, height: Int32, alphaMask: Bool) -> UInt32 {
-        defer {
-            UIGraphicsEndImageContext()
-        }
         let scale:CGFloat = self.offscreenRenderSurfaces.scale
-        let size = CGSize(width: scale*CGFloat(width), height: scale*CGFloat(height))
-        UIGraphicsBeginImageContextWithOptions(size, false, 1)
-        if let context = UIGraphicsGetCurrentContext(), let buffer = CGLayer(context, size: size, auxiliaryInfo: nil) {
-            context.scaleBy(x:size.width, y:size.height)
-            return self.offscreenRenderSurfaces.addSurface(with: buffer)
-        }
-        return 0
+        let pixelWidth = Int(scale * CGFloat(width))
+        let pixelHeight = Int(scale * CGFloat(height))
+        return self.offscreenRenderSurfaces.addSurface(width: pixelWidth, height: pixelHeight)
     }
 
     func releaseOffscreenRenderSurface(_ surfaceId: UInt32) {
@@ -83,9 +76,9 @@ extension DisplayViewModel : IINKIRenderTarget {
     func createOffscreenRenderCanvas(_ surfaceId: UInt32) -> IINKICanvas {
         let canvas = Canvas()
         var pixelSize:CGSize = CGSize.zero
-        if let buffer:CGLayer = self.offscreenRenderSurfaces.getSurfaceBuffer(forId: surfaceId) {
-            pixelSize = buffer.size
-            canvas.context = buffer.context
+        if let surfaceContext = self.offscreenRenderSurfaces.getSurfaceContext(forId: surfaceId) {
+            pixelSize = self.offscreenRenderSurfaces.getSurfaceSize(forId: surfaceId)
+            canvas.context = surfaceContext
         }
         let scale:CGFloat = offscreenRenderSurfaces.scale
         let size = CGSize(width: pixelSize.width / scale, height: pixelSize.height / scale)

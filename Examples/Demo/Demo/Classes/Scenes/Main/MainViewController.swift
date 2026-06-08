@@ -10,6 +10,7 @@ protocol MainViewControllerDisplayLogic: AnyObject {
     func displayOpenDocumentOptions()
     func displayNewDocumentOptions(cancelEnabled: Bool)
     func displayImagePicker()
+    func displayImportPicker()
 }
 
 /// This is the Main ViewController of the project.
@@ -211,6 +212,22 @@ extension MainViewController: MainViewControllerDisplayLogic {
 
     func displayImagePicker() {
         self.coordinator?.presentImagePicker(delegate: self)
+    }
+
+    func displayImportPicker() {
+        self.coordinator?.presentImportPicker(delegate: self)
+    }
+}
+
+extension MainViewController: UIDocumentPickerDelegate {
+
+    func documentPicker(_ controller: UIDocumentPickerViewController,
+                        didPickDocumentsAt urls: [URL]) {
+        self.coordinator?.dissmissModal()
+        guard let url = urls.first else {
+            return
+        }
+        self.viewModel?.importFile(url: url, engineProvider: EngineProvider.sharedInstance)
     }
 }
 

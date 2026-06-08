@@ -178,6 +178,10 @@ class MainViewModel: NSObject {
         self.editorWorker.openFile(file: file, engineProvider: engineProvider)
     }
 
+    func importFile(url: URL, engineProvider: EngineProvider) {
+        self.editorWorker.importFile(url, engineProvider: engineProvider)
+    }
+
     func moreActions(barButtonIdem: UIBarButtonItem) {
         var actions: [ActionModel] = []
         let exportAction = ActionModel(actionText: "Export") { [weak self] action in
@@ -200,6 +204,11 @@ class MainViewModel: NSObject {
             self?.delegate?.displayOpenDocumentOptions()
         }
         actions.append(openAction)
+        let importAction = ActionModel(actionText: "Import") { [weak self] action in
+            try? self?.editorWorker.save()
+            self?.delegate?.displayImportPicker()
+        }
+        actions.append(importAction)
         let saveAction = ActionModel(actionText: "Save") { [weak self] action in
             do {
                 try self?.editorWorker.save()

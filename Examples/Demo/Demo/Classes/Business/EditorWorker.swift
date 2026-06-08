@@ -18,6 +18,7 @@ protocol EditorWorkerLogic {
     func clear() throws
     func convert(selection: (NSObjectProtocol & IINKIContentSelection)?) throws
     mutating func openFile(file: File, engineProvider: EngineProvider)
+    mutating func importFile(_ file: URL, engineProvider: EngineProvider)
     func resetView()
     func save() throws
     func addImageBlock(data: Data, position: CGPoint) throws
@@ -179,6 +180,25 @@ class EditorWorker: EditorWorkerLogic {
             }
             self.delegate?.didOpenFile()
         }
+    }
+
+    func importFile(_ file: URL, engineProvider: EngineProvider) {
+        let fileName = file.lastPathComponent
+        let destinationPath = FileManager.default.pathForFileInIinkDirectory(fileName: fileName)
+        let needsScopedAccess = file.startAccessingSecurityScopedResource()
+        defer { if needsScopedAccess { file.stopAccessingSecurityScopedResource() } }
+        do {
+            let destinationURL = URL(fileURLWithPath: destinationPath)
+            if FileManager.default.fileExists(atPath: destinationPath) {
+                try FileManager.default.removeItem(at: destinationURL)
+            }
+            try FileManager.default.copyItem(at: file, to: destinationURL)
+        } catch {
+            print("Error while importing file: " + error.localizedDescription)
+            return
+        }
+        let importedFile = File(fileName: fileName, modificationDate: Date(), fileSize: 0)
+        self.openFile(file: importedFile, engineProvider: engineProvider)
     }
 
     func resetView() {
