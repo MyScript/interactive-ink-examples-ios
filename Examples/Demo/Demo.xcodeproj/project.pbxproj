@@ -66,6 +66,7 @@
 		04AA5D9927D9FC28007F89FD /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AA5D9827D9FC28007F89FD /* AlertModel.swift */; };
 		04AA5D9B27DA01B5007F89FD /* AlertBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AA5D9A27DA01B5007F89FD /* AlertBuilder.swift */; };
 		17CEE5362EE1C88200496FE5 /* libiink in Frameworks */ = {isa = PBXBuildFile; productRef = 17CEE5352EE1C88200496FE5 /* libiink */; };
+		24C8E4B4305D6AD5006D9248 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C8E4B3305D6AD5006D9248 /* SceneDelegate.swift */; };
 		55BCB8A91F4F308500550A18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCB8881F4F308500550A18 /* Assets.xcassets */; };
 		55D8477B1F4F31C400274C93 /* recognition-assets in Resources */ = {isa = PBXBuildFile; fileRef = 55D8477A1F4F31C400274C93 /* recognition-assets */; };
 		71728ED82CB0463000829CD7 /* ConfigurationsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71728ED72CB0463000829CD7 /* ConfigurationsProvider.swift */; };
@@ -137,6 +138,7 @@
 		04A93C5127BD350C00E9C675 /* ToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModel.swift; sourceTree = "<group>"; };
 		04AA5D9827D9FC28007F89FD /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
 		04AA5D9A27DA01B5007F89FD /* AlertBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuilder.swift; sourceTree = "<group>"; };
+		24C8E4B3305D6AD5006D9248 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		55BCB8881F4F308500550A18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		55BCB8A01F4F308500550A18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55D8477A1F4F31C400274C93 /* recognition-assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "recognition-assets"; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 				040B515126BC442200CA10AD /* Business */,
 				0489C65326D38DF80005091C /* Scenes */,
 				04A93C4C27BD00DF00E9C675 /* Utils */,
+				24C8E4B3305D6AD5006D9248 /* SceneDelegate.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -530,6 +533,7 @@
 				04AA5D9B27DA01B5007F89FD /* AlertBuilder.swift in Sources */,
 				040B510826BBD9A700CA10AD /* InputView.swift in Sources */,
 				040B514C26BC20C300CA10AD /* AppDelegate.swift in Sources */,
+				24C8E4B4305D6AD5006D9248 /* SceneDelegate.swift in Sources */,
 				04456CB7279718A500AE14FF /* NSAttributedString+Helper.swift in Sources */,
 				0489C68326D38DF80005091C /* MainViewModel.swift in Sources */,
 				0422C77427C3E75300DEDA3A /* UIColor+additions.swift in Sources */,
